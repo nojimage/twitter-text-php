@@ -14,6 +14,9 @@ require_once dirname(__FILE__).'/bootstrap.php';
 
 $browser = (PHP_SAPI != 'cli');
 
+/**
+ *
+ */
 function pretty_format($a) {
   return preg_replace(array(
     "/\n/", '/ +\[/', '/ +\)/', '/Array +\(/', '/(?<!\() \[/', '/\[([^]]+)\]/',
@@ -23,40 +26,105 @@ function pretty_format($a) {
   ), print_r($a, true));
 }
 
+/**
+ *
+ */
+function output_preamble() {
+  global $browser;
+  if (!$browser) return;
+  echo <<<EOHTML
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Twitter Text (PHP Edition) Library » Conformance</title>
+<style>
+body { font-family: sans-serif; font-size: 12px; }
+.pass { color: #090; }
+.fail { color: #f00; }
+</style>
+</head>
+<body>
+EOHTML;
+}
+
+/**
+ *
+ */
+function output_closing() {
+  global $browser;
+  if (!$browser) return;
+  echo <<<EOHTML
+</body>
+</html>
+EOHTML;
+}
+
+/**
+ *
+ */
+function output_h1($text) {
+  global $browser;
+  if ($browser) {
+    echo '<h1>' . $text . '</h1>';
+  } else {
+    echo "\033[1m" . $text . "\033[0m" . PHP_EOL;
+    echo str_repeat('=', mb_strlen($text)) . PHP_EOL;
+  }
+  echo PHP_EOL;
+}
+
+/**
+ *
+ */
+function output_h2($text) {
+  global $browser;
+  if ($browser) {
+    echo '<h2>' . $text . '</h2>';
+  } else {
+    echo "\033[1m" . $text . "\033[0m" . PHP_EOL;
+    echo str_repeat('-', mb_strlen($text)) . PHP_EOL;
+  }
+  echo PHP_EOL;
+}
+
+/**
+ *
+ */
+function output_h3($text) {
+  global $browser;
+  if ($browser) {
+    echo '<h3>' . $text . '</h3>';
+  } else {
+    echo "\033[1m" . $text . "\033[0m" . PHP_EOL;
+  }
+  echo PHP_EOL;
+}
+
+/**
+ *
+ */
+function output_skip_test() {
+  global $browser;
+  $text = 'Skipping Test...';
+  if ($browser) {
+    echo '<p>' . $text. '</p>';
+  } else {
+    echo "   \033[1;35m". $text . "\033[0m" . PHP_EOL;
+  }
+  echo PHP_EOL;
+}
+
 $pass_total = 0;
 $fail_total = 0;
 $pass_group = 0;
 $fail_group = 0;
 
-if ($browser) echo <<<EOHTML
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en-GB" xml:lang="en-GB" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<title>Twitter Text (PHP Edition) Library » Conformance</title>
-<style type="text/css">
-<!--/*--><![CDATA[/*><!--*/
-body {
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-}
-.pass { color: #090; }
-.fail { color: #f00; }
-/*]]>*/-->
-</style>
-</head>
-<body>
-EOHTML;
+output_preamble();
 
-echo ($browser ? '<h1>' : "\033[1m");
-echo 'Twitter Text (PHP Edition) Library » Conformance';
-echo ($browser ? '</h1>' : "\033[0m".PHP_EOL.'==============================================='.PHP_EOL);
-echo PHP_EOL;
+output_h1('Twitter Text (PHP Edition) Library » Conformance');
 
-echo ($browser ? '<h2>' : "\033[1m");
-echo 'Extraction Conformance';
-echo ($browser ? '</h2>' : "\033[0m".PHP_EOL.'----------------------'.PHP_EOL);
-echo PHP_EOL;
+output_h2('Extraction Conformance');
 
 # Load the test data.
 $data = Spyc::YAMLLoad($DATA.'/extract.yml');
@@ -75,16 +143,10 @@ $functions = array(
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
-  echo ($browser ? '<h3>' : "\033[1m");
-  echo 'Test Group - '.ucfirst(str_replace('_', ' ', $group));
-  echo ($browser ? '</h3>' : ":\033[0m".PHP_EOL);
-  echo PHP_EOL;
+  output_h3('Test Group - '.ucfirst(str_replace('_', ' ', $group)));
 
   if (!array_key_exists($group, $functions)) {
-    echo ($browser ? '<p>' : "   \033[1;35m");
-    echo 'Skipping Test...';
-    echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
-    echo PHP_EOL;
+    output_skip_test();
     continue;
   }
   $function = $functions[$group];
@@ -127,10 +189,7 @@ foreach ($data['tests'] as $group => $tests) {
   echo PHP_EOL;
 }
 
-echo ($browser ? '<h2>' : "\033[1m");
-echo 'Autolink Conformance';
-echo ($browser ? '</h2>' : "\033[0m".PHP_EOL.'--------------------'.PHP_EOL);
-echo PHP_EOL;
+output_h2('Autolink Conformance');
 
 # Load the test data.
 $data = Spyc::YAMLLoad($DATA.'/autolink.yml');
@@ -147,16 +206,10 @@ $functions = array(
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
-  echo ($browser ? '<h3>' : "\033[1m");
-  echo 'Test Group - '.ucfirst(str_replace('_', ' ', $group));
-  echo ($browser ? '</h3>' : ":\033[0m".PHP_EOL);
-  echo PHP_EOL;
+  output_h3('Test Group - '.ucfirst(str_replace('_', ' ', $group)));
 
   if (!array_key_exists($group, $functions)) {
-    echo ($browser ? '<p>' : "   \033[1;35m");
-    echo 'Skipping Test...';
-    echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
-    echo PHP_EOL;
+    output_skip_test();
     continue;
   }
   $function = $functions[$group];
@@ -216,10 +269,7 @@ foreach ($data['tests'] as $group => $tests) {
   echo PHP_EOL;
 }
 
-echo ($browser ? '<h2>' : "\033[1m");
-echo 'Hit Highlighter Conformance';
-echo ($browser ? '</h2>' : "\033[0m".PHP_EOL.'---------------------------'.PHP_EOL);
-echo PHP_EOL;
+output_h2('Hit Highlighter Conformance');
 
 # Load the test data.
 $data = Spyc::YAMLLoad($DATA.'/hit_highlighting.yml');
@@ -233,16 +283,10 @@ $functions = array(
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
-  echo ($browser ? '<h3>' : "\033[1m");
-  echo 'Test Group - '.ucfirst(str_replace('_', ' ', $group));
-  echo ($browser ? '</h3>' : ":\033[0m".PHP_EOL);
-  echo PHP_EOL;
+  output_h3('Test Group - '.ucfirst(str_replace('_', ' ', $group)));
 
   if (!array_key_exists($group, $functions)) {
-    echo ($browser ? '<p>' : "   \033[1;35m");
-    echo 'Skipping Test...';
-    echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
-    echo PHP_EOL;
+    output_skip_test();
     continue;
   }
   $function = $functions[$group];
@@ -290,7 +334,7 @@ printf('Total Results: %d passes, %d failures', $pass_total, $fail_total);
 echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
 echo PHP_EOL;
 
-if ($browser) echo <<<EOHTML
-</body>
-</html>
-EOHTML;
+output_closing();
+
+################################################################################
+# vim:et:ft=php:nowrap:sts=2:sw=2:ts=2
