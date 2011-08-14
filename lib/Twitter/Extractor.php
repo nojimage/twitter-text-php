@@ -75,7 +75,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The hashtag elements in the tweet.
    */
   public function extractHashtags() {
-    preg_match_all(self::REGEX_HASHTAG, $this->tweet, $matches);
+    preg_match_all(self::$patterns['auto_link_hashtags'], $this->tweet, $matches);
     return $matches[3];
   }
 
@@ -85,7 +85,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The URL elements in the tweet.
    */
   public function extractURLs() {
-    preg_match_all(self::$REGEX_VALID_URL, $this->tweet, $matches);
+    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches);
     list($all, $before, $url, $protocol, $domain, $path, $query) = array_pad($matches, 7, '');
     return $url;
   }
@@ -98,7 +98,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The usernames elements in the tweet.
    */
   public function extractMentionedUsernames() {
-    preg_match_all(self::REGEX_USERNAME_MENTION, $this->tweet, $matches);
+    preg_match_all(self::$patterns['extract_mentions'], $this->tweet, $matches);
     list($all, $before, $username, $after) = array_pad($matches, 4, '');
     $usernames = array();
     for ($i = 0; $i < count($username); $i ++) {
@@ -117,8 +117,8 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The usernames replied to in a tweet.
    */
   public function extractRepliedUsernames() {
-    preg_match(self::$REGEX_REPLY_USERNAME, $this->tweet, $matches);
-    return isset($matches[2]) ? $matches[2] : '';
+    preg_match(self::$patterns['extract_reply'], $this->tweet, $matches);
+    return isset($matches[1]) ? $matches[1] : '';
   }
 
   /**
@@ -127,7 +127,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The hashtag elements in the tweet.
    */
   public function extractHashtagsWithIndices() {
-    preg_match_all(self::REGEX_HASHTAG, $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    preg_match_all(self::$patterns['auto_link_hashtags'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $m = &$matches[3];
     for ($i = 0; $i < count($m); $i++) {
       $m[$i] = array_combine(array('hashtag', 'indices'), $m[$i]);
@@ -146,7 +146,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The URLs elements in the tweet.
    */
   public function extractURLsWithIndices() {
-    preg_match_all(self::$REGEX_VALID_URL, $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $m = &$matches[2];
     for ($i = 0; $i < count($m); $i++) {
       $m[$i] = array_combine(array('url', 'indices'), $m[$i]);
@@ -165,7 +165,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The username elements in the tweet.
    */
   public function extractMentionedUsernamesWithIndices() {
-    preg_match_all(self::REGEX_USERNAME_MENTION, $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    preg_match_all(self::$patterns['extract_mentions'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $m = &$matches[2];
     for ($i = 0; $i < count($m); $i++) {
       $m[$i] = array_combine(array('screen_name', 'indices'), $m[$i]);
@@ -178,4 +178,29 @@ class Twitter_Extractor extends Twitter_Regex {
     return $m;
   }
 
+  /**
+   * Extracts all the usernames and the indices they occur at from the tweet.
+   *
+   * @return  array  The username elements in the tweet.
+   */
+  public function extractMentionedUsernamesOrListsWithIndices() {
+    preg_match_all(self::$patterns['extract_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    $m = array();
+    for ($i = 0; $i < count($matches[2]); $i++) {
+      $m[] = array($matches[2][$i][0], $matches[3][$i][0], $matches[2][$i][1]);
+    }
+    for ($i = 0; $i < count($m); $i++) {
+      $m[$i] = array_combine(array('screen_name', 'list_slug', 'indices'), $m[$i]);
+      # XXX: Fix for PREG_OFFSET_CAPTURE returning byte offsets...
+      $start = mb_strlen(substr($this->tweet, 0, $matches[1][$i][1]));
+      $start += mb_strlen($matches[1][$i][0]);
+      $length = mb_strlen($m[$i]['screen_name'].$m[$i]['list_slug']);
+      $m[$i]['indices'] = array($start, $start + $length + 1);
+    }
+    return $m;
+  }
+
 }
+
+################################################################################
+# vim:et:ft=php:nowrap:sts=2:sw=2:ts=2

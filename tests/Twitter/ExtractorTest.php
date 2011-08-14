@@ -133,4 +133,22 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
     return $this->providerHelper('mentions_with_indices');
   }
 
+  /**
+   * @dataProvider  extractMentionedUsernamesOrListsWithIndicesProvider
+   */
+  public function testExtractMentionedUsernamesOrListsWithIndices($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractMentionedUsernamesOrListsWithIndices();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   *
+   */
+  public function extractMentionedUsernamesOrListsWithIndicesProvider() {
+    return $this->providerHelper('mentions_or_lists_with_indices');
+  }
+
 }
+
+################################################################################
+# vim:et:ft=php:nowrap:sts=2:sw=2:ts=2

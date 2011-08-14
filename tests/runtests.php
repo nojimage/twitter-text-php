@@ -18,6 +18,12 @@ $browser = (PHP_SAPI != 'cli');
  *
  */
 function pretty_format($a) {
+  if (is_bool($a)) {
+    return $a ? 'true' : 'false';
+  }
+  if (is_string($a)) {
+    return "'${a}'";
+  }
   return preg_replace(array(
     "/\n/", '/ +\[/', '/ +\)/', '/Array +\(/', '/(?<!\() \[/', '/\[([^]]+)\]/',
     '/"(\d+)"/', '/(?<=^| )\((?= )/', '/(?<= )\)(?=$| )/',
@@ -138,6 +144,7 @@ $functions = array(
   'hashtags_with_indices' => 'extractHashtagsWithIndices',
   'urls_with_indices'     => 'extractURLsWithIndices',
   'mentions_with_indices' => 'extractMentionedUsernamesWithIndices',
+  'mentions_or_lists_with_indices' => 'extractMentionedUsernamesOrListsWithIndices',
 );
 
 # Perform testing.
@@ -155,7 +162,7 @@ foreach ($data['tests'] as $group => $tests) {
   if ($browser) echo '<ul>', PHP_EOL;
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
-    echo $test['description'], ' ... ';
+    echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
     $extracted = Twitter_Extractor::create($test['text'])->$function();
     if ($test['expected'] == $extracted) {
       $pass_group++;
@@ -218,7 +225,7 @@ foreach ($data['tests'] as $group => $tests) {
   if ($browser) echo '<ul>', PHP_EOL;
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
-    echo $test['description'], ' ... ';
+    echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
     $linked = Twitter_Autolink::create($test['text'], false)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
@@ -295,7 +302,7 @@ foreach ($data['tests'] as $group => $tests) {
   if ($browser) echo '<ul>', PHP_EOL;
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
-    echo $test['description'], ' ... ';
+    echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
     $highlighted = Twitter_HitHighlighter::create($test['text'])->$function($test['hits']);
     if ($test['expected'] == $highlighted) {
       $pass_group++;
@@ -314,6 +321,69 @@ foreach ($data['tests'] as $group => $tests) {
         echo '   Original: '.$test['text'], PHP_EOL;
         echo '   Expected: '.pretty_format($test['expected']), PHP_EOL;
         echo '   Actual:   '.pretty_format($highlighted), PHP_EOL;
+      }
+    }
+    if ($browser) echo '</li>';
+    echo PHP_EOL;
+  }
+  if ($browser) echo '</ul>';
+  echo PHP_EOL;
+  $pass_total += $pass_group;
+  $fail_total += $fail_group;
+  echo ($browser ? '<p class="group">' : "   \033[1;33m");
+  printf('Group Results: %d passes, %d failures', $pass_group, $fail_group);
+  echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
+  echo PHP_EOL;
+}
+
+output_h2('Validation Conformance');
+
+# Load the test data.
+$data = Spyc::YAMLLoad($DATA.'/validate.yml');
+
+# Define the functions to be tested.
+$functions = array(
+  'tweets' => 'validateTweet',
+  'usernames' => 'validateUsername',
+  'lists' => 'validateList',
+  'hashtags' => 'validateHashtag',
+  'urls' => 'validateURL',
+);
+
+# Perform testing.
+foreach ($data['tests'] as $group => $tests) {
+
+  output_h3('Test Group - '.ucfirst(str_replace('_', ' ', $group)));
+
+  if (!array_key_exists($group, $functions)) {
+    output_skip_test();
+    continue;
+  }
+  $function = $functions[$group];
+  $pass_group = 0;
+  $fail_group = 0;
+  if ($browser) echo '<ul>', PHP_EOL;
+  foreach ($tests as $test) {
+    echo ($browser ? '<li>' : ' - ');
+    echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
+    $validated = Twitter_Validation::create($test['text'])->$function();
+    if ($test['expected'] == $validated) {
+      $pass_group++;
+      echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
+    } else {
+      $fail_group++;
+      echo ($browser ? '<span class="fail">FAIL</span>' : "\033[1;31mFAIL\033[0m");
+      if ($browser) {
+        echo '<pre>';
+        echo 'Original: '.htmlspecialchars($test['text'], ENT_QUOTES, 'UTF-8', false), PHP_EOL;
+        echo 'Expected: '.pretty_format($test['expected']), PHP_EOL;
+        echo 'Actual:   '.pretty_format($validated). '';
+        echo '</pre>';
+      } else {
+        echo PHP_EOL, PHP_EOL;
+        echo '   Original: '.$test['text'], PHP_EOL;
+        echo '   Expected: '.pretty_format($test['expected']), PHP_EOL;
+        echo '   Actual:   '.pretty_format($validated), PHP_EOL;
       }
     }
     if ($browser) echo '</li>';

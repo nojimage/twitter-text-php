@@ -331,7 +331,7 @@ class Twitter_Autolink extends Twitter_Regex {
    */
   public function addLinksToHashtags() {
     return preg_replace_callback(
-      self::REGEX_HASHTAG,
+      self::$patterns['auto_link_hashtags'],
       array($this, '_addLinksToHashtags'),
       $this->tweet);
   }
@@ -343,7 +343,7 @@ class Twitter_Autolink extends Twitter_Regex {
    */
   public function addLinksToURLs() {
     return preg_replace_callback(
-      self::$REGEX_VALID_URL,
+      self::$patterns['valid_url'],
       array($this, '_addLinksToURLs'),
       $this->tweet);
   }
@@ -355,7 +355,7 @@ class Twitter_Autolink extends Twitter_Regex {
    */
   public function addLinksToUsernamesAndLists() {
     return preg_replace_callback(
-      self::REGEX_USERNAME_LIST,
+      self::$patterns['auto_link_usernames_or_lists'],
       array($this, '_addLinksToUsernamesAndLists'),
       $this->tweet);
   }
@@ -447,3 +447,6 @@ class Twitter_Autolink extends Twitter_Regex {
   }
 
 }
+
+################################################################################
+# vim:et:ft=php:nowrap:sts=2:sw=2:ts=2

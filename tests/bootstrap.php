@@ -18,4 +18,8 @@ $DATA = $ROOT.'/tests/data/twitter-text-conformance';
 require_once $ROOT.'/lib/Twitter/Autolink.php';
 require_once $ROOT.'/lib/Twitter/Extractor.php';
 require_once $ROOT.'/lib/Twitter/HitHighlighter.php';
+require_once $ROOT.'/lib/Twitter/Validation.php';
 require_once $ROOT.'/tests/spyc/spyc.php';
+
+################################################################################
+# vim:et:ft=php:nowrap:sts=2:sw=2:ts=2
