@@ -74,8 +74,7 @@ abstract class Twitter_Regex {
     #   0x202F         Zs # NARROW NO-BREAK SPACE
     #   0x205F         Zs # MEDIUM MATHEMATICAL SPACE
     #   0x3000         Zs # IDEOGRAPHIC SPACE
-    $re['spaces'] = '[\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}]';
-    #$re['spaces'] = '[\x09-\x0D\x20\x85\xA0]|\xe1\x9a\x80|\xe1\xa0\x8e|\xe2\x80[\x80-\x8a\xa8\xa9\xaf\xdf]|\xe3\x80\x80';
+    $tmp['spaces'] = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
 
     # Expression to match at sign characters:
     $tmp['at_signs'] = '@＠';
@@ -92,9 +91,8 @@ abstract class Twitter_Regex {
     $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}\x{015f}';
 
     $re['extract_mentions'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})(['.$tmp['at_signs'].$tmp['latin_accents'].']?)/iu';
-    ####$re['extract_mentions'] = '/(^|[^a-z0-9_])'.$re['at_signs'].'([a-z0-9_]{1,20})(?=(.|$))/iu';
     $re['extract_mentions_or_lists'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.|$))/iu';
-    $re['extract_reply'] = '/^(?:'.$re['spaces'].')*['.$tmp['at_signs'].']([a-z0-9_]{1,20})/iu';
+    $re['extract_reply'] = '/^(?:['.$tmp['spaces'].'])*['.$tmp['at_signs'].']([a-z0-9_]{1,20})/iu';
     $re['list_name'] = '/[a-z][a-z0-9_\-\x{0080}-\x{00ff}]{0,24}/iu';
     $re['end_screen_name_match'] = '/^(?:['.$tmp['at_signs'].']|['.$tmp['latin_accents'].']|:\/\/)/iu';
 
@@ -134,17 +132,17 @@ abstract class Twitter_Regex {
     #   0x2F800-0x2FA1F Kanji (CJK supplement)
     #   0x3005          Kanji (CJK supplement)
     #   0x303B          Kanji (CJK supplement)
-    $tmp['cj_hashtag_characters'] = '\x{30A1}-\x{30FA}\x{30FC}-\x{30FE}\x{FF10}-\x{FF19}\x{FF21}-\x{FF3A}\x{FF41}-\x{FF5A}\x{3041}-\x{3096}\x{3099}-\x{309E}\x{3400}-\x{4DBF}\x{4E00}-\x{9FFF}\x{020000}-\x{02a6df}\x{02a700}-\x{02b73f}\x{02b740}-\x{02b81f}\x{02f800}-\x{02fa1f}\x{3005}\x{303B}';
+    $tmp['cj_hashtag_characters'] = '\x{30A1}-\x{30FA}\x{30FC}-\x{30FE}\x{FF10}-\x{FF19}\x{FF21}-\x{FF3A}\x{FF41}-\x{FF5A}\x{3041}-\x{3096}\x{3099}-\x{309E}\x{3400}-\x{4DBF}\x{4E00}-\x{9FFF}\x{3005}\x{303B}\x{020000}-\x{02a6df}\x{02a700}-\x{02b73f}\x{02b740}-\x{02b81f}\x{02f800}-\x{02fa1f}';
 
-    $tmp['hashtag_boundary'] = '(?:^|$|'.$re['spaces'].'|「|」|。|、|\.|!|\?|！|？|,)';
+    $tmp['hashtag_boundary'] = '(?:^|$|['.$tmp['spaces'].']|「|」|。|、|\.|!|\?|！|？|,)';
     $tmp['hashtag_alpha'] = '[a-z_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
     $tmp['hashtag_alphanumeric'] = '[a-z0-9_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
     $tmp['hashtag'] = '('.$tmp['hashtag_boundary'].')(#|＃)('.$tmp['hashtag_alphanumeric'].'*'.$tmp['hashtag_alpha'].$tmp['hashtag_alphanumeric'].'*)(?='.$tmp['hashtag_boundary'].')';
 
     $re['auto_link_hashtags'] = '/'.$tmp['hashtag'].'/iu';
 
-    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_\/]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][-_a-z0-9\x{0080}-\x{00ff}]{0,24})?(['.$tmp['at_signs'].$tmp['latin_accents'].']?)/iu';
-    ####$re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?/iu';
+    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_\/]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][-_a-z0-9\x{0080}-\x{00ff}]{0,24})?(['.$tmp['at_signs'].$tmp['latin_accents'].$tmp['spaces'].']?)/iu';
+    #$re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?/iu';
     $re['auto_link_emoticon'] = '/(8\-\#|8\-E|\+\-\(|\`\@|\`O|\&lt;\|:~\(|\}:o\{|:\-\[|\&gt;o\&lt;|X\-\/|\[:-\]\-I\-|\/\/\/\/Ö\\\\\\\\\|\(\|:\|\/\)|∑:\*\)|\( \| \))/iu';
 
     # URL related hash regex collection
@@ -161,22 +159,21 @@ abstract class Twitter_Regex {
     $tmp['wikipedia_disambiguation'] = '(?:\('.$tmp['valid_general_url_path_chars'].'+\))';
     $tmp['valid_url_path_chars'] = '(?:'.$tmp['wikipedia_disambiguation'].'|@'.$tmp['valid_general_url_path_chars'].'+\/|[\.,]'.$tmp['valid_general_url_path_chars'].'?|'.$tmp['valid_general_url_path_chars'].'+)';
 
-    $tmp['valid_url_path_ending_chars'] = '[a-z0-9=_#\/\+\-'.$tmp['latin_accents'].']|'.$tmp['wikipedia_disambiguation'];
+    $tmp['valid_url_path_ending_chars'] = '(?:[a-z0-9=_#\/\+\-'.$tmp['latin_accents'].']|'.$tmp['wikipedia_disambiguation'].')';
     $tmp['valid_url_query_chars'] = '[a-z0-9!\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|]';
     $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
 
-    $re['valid_url'] = '/(?:'                    # $1 Complete match (preg_match already matches everything.)
-      . '('.$tmp['valid_preceding_chars'].')'    # $2 Preceding character
+    $re['valid_url'] = '/(?:'                    # $1 Complete match (preg_match() already matches everything.)
+      . '('.$tmp['valid_preceding_chars'].')'    # $2 Preceding characters
       . '('                                      # $3 Complete URL
-      . '(https?:\/\/)'                          # $4 Protocol (or www)
-      . '('.$tmp['valid_domain'].')'             # $5 Domain(s) (and port)
+      . '(https?:\/\/)'                          # $4 Protocol
+      . '('.$tmp['valid_domain'].')'             # $5 Domain(s) (and optional port)
       . '(\/(?:'                                 # $6 URL Path
-      . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'|'
-      # XXX ???. $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'?|'
-      . $tmp['valid_url_path_ending_chars']
+      . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'|'  # 1+ path chars and a valid last character.
+      . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'?|' # Optional last character to handle /@foo/ case.
+      . $tmp['valid_url_path_ending_chars']                                       # Just a # case.
       . ')?)?'
-      . '(\?'.$tmp['valid_url_query_chars'].'*'  # $7 Query String
-      . $tmp['valid_url_query_ending_chars'].')?'
+      . '(\?'.$tmp['valid_url_query_chars'].'*'.$tmp['valid_url_query_ending_chars'].')?' # $7 Query String
       . ')'
       . ')/iux';
 
@@ -188,7 +185,7 @@ abstract class Twitter_Regex {
 
     $tmp['validate_url_userinfo'] = '(?:'.$tmp['validate_url_unreserved'].'|'.$tmp['validate_url_pct_encoded'].'|'.$tmp['validate_url_sub_delims'].'|:)*'; #/iox
 
-    $tmp['validate_url_dec_octet'] = '(?:[0-9]|(?:[1-9][0-9])|(?:1[0-9]{2})|(?:2[0-4][0-9])|(?:25[0-5]))'; #/i
+    $tmp['validate_url_dec_octet'] = '(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'; #/i
     $tmp['validate_url_ipv4'] = '(?:'.$tmp['validate_url_dec_octet'].'(?:\.'.$tmp['validate_url_dec_octet'].'){3})'; #/iox
 
     # Punting on real IPv6 validation for now
