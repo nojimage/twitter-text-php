@@ -79,7 +79,7 @@ class Twitter_Validation extends Twitter_Regex {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     preg_match(self::$patterns['auto_link_usernames_or_lists'], $this->tweet, $matches);
-    return isset($matches) && $matches[1] === '' && $matches[4] && mb_strlen($matches[4]);
+    return isset($matches) && $matches[1] === '' && $matches[4] && !empty($matches[4]);
   }
 
   /**
@@ -102,24 +102,29 @@ class Twitter_Validation extends Twitter_Regex {
     $match = array_shift($matches);
     if (!$matches || $match !== $this->tweet) return false;
     list($scheme, $authority, $path, $query, $fragment) = array_pad($matches, 5, '');
-    # Check scheme:
-    if (!preg_match(self::$patterns['validate_url_scheme'], $scheme)) return false;
-    if (!preg_match('/^https?$/i', $scheme)) return false;
-    # Check path:
-    if (!preg_match(self::$patterns['validate_url_path'], $path)) return false;
-    # Check query:
-    if (!preg_match(self::$patterns['validate_url_query'], $query)) return false;
-    # Check fragment:
-    if ($fragment) {
-      if (!preg_match(self::$patterns['validate_url_fragment'], $fragment)) return false;
+    # Check scheme, path, query, fragment:
+    if (!self::isValidMatch($scheme, self::$patterns['validate_url_scheme'])
+      || !preg_match('/^https?$/i', $scheme)
+      || !self::isValidMatch($path, self::$patterns['validate_url_path'])
+      || !self::isValidMatch($query, self::$patterns['validate_url_query'], true)
+      || !self::isValidMatch($fragment, self::$patterns['validate_url_fragment'], true)) {
+      return false;
     }
     # Check authority:
-    if ($unicode) {
-      if (!preg_match(self::$patterns['validate_url_unicode_authority'], $authority)) return false;
+    $authority_pattern = $unicode ? 'validate_url_unicode_authority' : 'validate_url_authority';
+    return self::isValidMatch($authority, self::$patterns[$authority_pattern]);
+  }
+
+  /**
+   *
+   */
+  protected static function isValidMatch($string, $pattern, $optional = false) {
+    $found = preg_match($pattern, $string, $matches);
+    if (!$optional) {
+      return ($string && $found && $matches[0] === $string);
     } else {
-      if (!preg_match(self::$patterns['validate_url_authority'], $authority)) return false;
+      return !($string && (!$found || $matches[0] !== $string));
     }
-    return true;
   }
 
 }
