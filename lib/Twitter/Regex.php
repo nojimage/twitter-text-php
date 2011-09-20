@@ -155,7 +155,7 @@ abstract class Twitter_Regex {
     $tmp['valid_domain_name'] = '(?:[^'.$tmp['domain_exclude_part'].'](?:[-]|[^'.$tmp['domain_exclude_part'].'])*)?[^'.$tmp['domain_exclude_part'].']';
     $tmp['valid_domain'] = $tmp['valid_subdomain'].'*'.$tmp['valid_domain_name'].'\.(?:xn--[a-z0-9]{2,}|[a-z]{2,})(?::[0-9]+)?';
 
-    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\$\/%#\[\]\-_~|'.$tmp['latin_accents'].']';
+    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
     $tmp['wikipedia_disambiguation'] = '(?:\('.$tmp['valid_general_url_path_chars'].'+\))';
     $tmp['valid_url_path_chars'] = '(?:'.$tmp['wikipedia_disambiguation'].'|@'.$tmp['valid_general_url_path_chars'].'+\/|[\.,]'.$tmp['valid_general_url_path_chars'].'?|'.$tmp['valid_general_url_path_chars'].'+)';
 
@@ -181,7 +181,7 @@ abstract class Twitter_Regex {
     $tmp['validate_url_unreserved'] = '[a-z0-9\-._~]';
     $tmp['validate_url_pct_encoded'] = '(?:%[0-9a-f]{2})';
     $tmp['validate_url_sub_delims'] = '[!$&\'()*+,;=]';
-    $tmp['validate_url_pchar'] = '(?:'.$tmp['validate_url_unreserved'].'|'.$tmp['validate_url_pct_encoded'].'|'.$tmp['validate_url_sub_delims'].'|:|@)'; #/iox
+    $tmp['validate_url_pchar'] = '(?:'.$tmp['validate_url_unreserved'].'|'.$tmp['validate_url_pct_encoded'].'|'.$tmp['validate_url_sub_delims'].'|[:\|@])'; #/iox
 
     $tmp['validate_url_userinfo'] = '(?:'.$tmp['validate_url_unreserved'].'|'.$tmp['validate_url_pct_encoded'].'|'.$tmp['validate_url_sub_delims'].'|:)*'; #/iox
 
