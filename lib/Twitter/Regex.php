@@ -119,6 +119,7 @@ abstract class Twitter_Regex {
     #
     #   0x30A1-0x30FA   Katakana (Full-Width)
     #   0x30FC-0x30FE   Katakana (Full-Width)
+    #   0xFF66-0xFF9F   Katakana (Half-Width)
     #   0xFF10-0xFF19   Latin (Full-Width)
     #   0xFF21-0xFF3A   Latin (Full-Width)
     #   0xFF41-0xFF5A   Latin (Full-Width)
@@ -132,7 +133,7 @@ abstract class Twitter_Regex {
     #   0x2F800-0x2FA1F Kanji (CJK supplement)
     #   0x3005          Kanji (CJK supplement)
     #   0x303B          Kanji (CJK supplement)
-    $tmp['cj_hashtag_characters'] = '\x{30A1}-\x{30FA}\x{30FC}-\x{30FE}\x{FF10}-\x{FF19}\x{FF21}-\x{FF3A}\x{FF41}-\x{FF5A}\x{3041}-\x{3096}\x{3099}-\x{309E}\x{3400}-\x{4DBF}\x{4E00}-\x{9FFF}\x{3005}\x{303B}\x{020000}-\x{02a6df}\x{02a700}-\x{02b73f}\x{02b740}-\x{02b81f}\x{02f800}-\x{02fa1f}';
+    $tmp['cj_hashtag_characters'] = '\x{30A1}-\x{30FA}\x{30FC}-\x{30FE}\x{FF66}-\x{FF9F}\x{FF10}-\x{FF19}\x{FF21}-\x{FF3A}\x{FF41}-\x{FF5A}\x{3041}-\x{3096}\x{3099}-\x{309E}\x{3400}-\x{4DBF}\x{4E00}-\x{9FFF}\x{3005}\x{303B}\x{020000}-\x{02a6df}\x{02a700}-\x{02b73f}\x{02b740}-\x{02b81f}\x{02f800}-\x{02fa1f}';
 
     $tmp['hashtag_boundary'] = '(?:^|$|['.$tmp['spaces'].']|[「」。、.,!?！？:;"\'])';
     $tmp['hashtag_alpha'] = '[a-z_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
