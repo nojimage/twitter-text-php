@@ -25,7 +25,9 @@ require_once 'Regex.php';
 class Twitter_Validation extends Twitter_Regex {
 
   /**
+   * The maximum length of a tweet.
    *
+   * @var  int
    */
   const MAX_LENGTH = 140;
 
@@ -52,7 +54,9 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a tweet is valid.
    *
+   * @return  boolean  Whether the tweet is valid.
    */
   public function validateTweet() {
     $length = mb_strlen($this->tweet);
@@ -63,7 +67,9 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a username is valid.
    *
+   * @return  boolean  Whether the username is valid.
    */
   public function validateUsername() {
     $length = mb_strlen($this->tweet);
@@ -73,7 +79,9 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a list is valid.
    *
+   * @return  boolean  Whether the list is valid.
    */
   public function validateList() {
     $length = mb_strlen($this->tweet);
@@ -84,7 +92,9 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a hashtag is valid.
    *
+   * @return  boolean  Whether the hashtag is valid.
    */
   public function validateHashtag() {
     $length = mb_strlen($this->tweet);
@@ -94,7 +104,12 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a URL is valid.
    *
+   * @param  boolean  $unicode_domains   Consider the domain to be unicode.
+   * @param  boolean  $require_protocol  Require a protocol for valid domain?
+   *
+   * @return  boolean  Whether the URL is valid.
    */
   public function validateURL($unicode_domains = true, $require_protocol = true) {
     $length = mb_strlen($this->tweet);
@@ -119,7 +134,13 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * A helper function to check for a valid match.  Used in URL validation.
    *
+   * @param  string   $string    The subject string to test.
+   * @param  string   $pattern   The pattern to match against.
+   * @param  boolean  $optional  Whether a match is compulsory or not.
+   *
+   * @return  boolean  Whether an exact match was found.
    */
   protected static function isValidMatch($string, $pattern, $optional = false) {
     $found = preg_match($pattern, $string, $matches);
