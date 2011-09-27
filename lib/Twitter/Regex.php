@@ -142,8 +142,7 @@ abstract class Twitter_Regex {
 
     $re['auto_link_hashtags'] = '/'.$tmp['hashtag'].'/iu';
 
-    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_\/]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][-_a-z0-9\x{0080}-\x{00ff}]{0,24})?(['.$tmp['at_signs'].$tmp['latin_accents'].$tmp['spaces'].']?)/iu';
-    #$re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?/iu';
+    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?/iu';
     $re['auto_link_emoticon'] = '/(8\-\#|8\-E|\+\-\(|\`\@|\`O|\&lt;\|:~\(|\}:o\{|:\-\[|\&gt;o\&lt;|X\-\/|\[:-\]\-I\-|\/\/\/\/Ö\\\\\\\\\|\(\|:\|\/\)|∑:\*\)|\( \| \))/iu';
 
     # URL related hash regex collection
