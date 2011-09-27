@@ -348,6 +348,7 @@ $functions = array(
   'lists' => 'validateList',
   'hashtags' => 'validateHashtag',
   'urls' => 'validateURL',
+  'urls_without_protocol' => 'validateURL',
 );
 
 # Perform testing.
@@ -366,7 +367,12 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $validated = Twitter_Validation::create($test['text'])->$function();
+    $validator = Twitter_Validation::create($test['text']);
+    if ($group === 'urls_without_protocol') {
+      $validated = $validator->$function(true, false);
+    } else {
+      $validated = $validator->$function();
+    }
     if ($test['expected'] == $validated) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");

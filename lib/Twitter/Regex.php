@@ -148,13 +148,23 @@ abstract class Twitter_Regex {
 
     # URL related hash regex collection
 
-    $tmp['valid_preceding_chars'] = '(?:[^-\/"\':!=A-Z0-9_'.$tmp['at_signs'].']|^|\:)';
+    $tmp['valid_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\.]|^)';
 
-    $tmp['domain_exclude_part'] = '[:punct:][:space:][:blank:]\x{00a0}';
+    $tmp['domain_valid_chars'] = '[^[:punct:][:space:][:blank:]\x{00a0}]';
 
-    $tmp['valid_subdomain'] = '(?:[^'.$tmp['domain_exclude_part'].'](?:[_-]|[^'.$tmp['domain_exclude_part'].'])*)?[^'.$tmp['domain_exclude_part'].']\.';
-    $tmp['valid_domain_name'] = '(?:[^'.$tmp['domain_exclude_part'].'](?:[-]|[^'.$tmp['domain_exclude_part'].'])*)?[^'.$tmp['domain_exclude_part'].']';
-    $tmp['valid_domain'] = $tmp['valid_subdomain'].'*'.$tmp['valid_domain_name'].'\.(?:xn--[a-z0-9]{2,}|[a-z]{2,})(?::[0-9]+)?';
+    $tmp['valid_subdomain'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[_-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
+    $tmp['valid_domain_name'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
+
+    $tmp['valid_gTLD'] = '(?:(?:aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)(?=[^[:alpha:]]|$))';
+    $tmp['valid_ccTLD'] = '(?:(?:ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)(?=[^[:alpha:]]|$))';
+    $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
+
+    $tmp['valid_domain'] = '(?:'.$tmp['valid_subdomain'].'*'.$tmp['valid_domain_name']
+      .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].'))';
+
+    $re['valid_short_domain'] = '/^'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'$/iu';
+
+    $tmp['valid_port_number'] = '[0-9]+';
 
     $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
     $tmp['wikipedia_disambiguation'] = '(?:\('.$tmp['valid_general_url_path_chars'].'+\))';
@@ -167,14 +177,15 @@ abstract class Twitter_Regex {
     $re['valid_url'] = '/(?:'                    # $1 Complete match (preg_match() already matches everything.)
       . '('.$tmp['valid_preceding_chars'].')'    # $2 Preceding characters
       . '('                                      # $3 Complete URL
-      . '(https?:\/\/)'                          # $4 Protocol
-      . '('.$tmp['valid_domain'].')'             # $5 Domain(s) (and optional port)
-      . '(\/(?:'                                 # $6 URL Path
+      . '(https?:\/\/)?'                         # $4 Protocol (optional)
+      . '('.$tmp['valid_domain'].')'             # $5 Domain(s)
+      . '(?::('.$tmp['valid_port_number'].'))?'  # $6 Port number (optional)
+      . '(\/(?:'                                 # $7 URL Path
       . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'|'  # 1+ path chars and a valid last character.
       . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'?|' # Optional last character to handle /@foo/ case.
       . $tmp['valid_url_path_ending_chars']                                       # Just a # case.
       . ')?)?'
-      . '(\?'.$tmp['valid_url_query_chars'].'*'.$tmp['valid_url_query_ending_chars'].')?' # $7 Query String
+      . '(\?'.$tmp['valid_url_query_chars'].'*'.$tmp['valid_url_query_ending_chars'].')?' # $8 Query String
       . ')'
       . ')/iux';
 
@@ -233,17 +244,15 @@ abstract class Twitter_Regex {
     # Modified version of RFC 3986 Appendix B
     $re['validate_url_unencoded'] = '/^' #  Full URL
       .'(?:'
-      .'([^:\/?#]+):'  #  $1 Scheme
-      .')'
-      .'(?:\/\/'
-      .'([^\/?#]*)'    #  $2 Authority
-      .')'
-      .'([^?#]*)'     #  $3 Path
+      .'([^:\/?#]+):\/\/' #  $1 Scheme
+      .')?'
+      .'([^\/?#]*)'       #  $2 Authority
+      .'([^?#]*)'         #  $3 Path
       .'(?:'
-      .'\?([^#]*)'    #  $4 Query
+      .'\?([^#]*)'        #  $4 Query
       .')?'
       .'(?:'
-      .'\#(.*)'       #  $5 Fragment
+      .'\#(.*)'           #  $5 Fragment
       .')?$/iux';
 
     # Invalid Characters:

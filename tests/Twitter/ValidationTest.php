@@ -103,6 +103,21 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
     return $this->providerHelper('urls');
   }
 
+  /**
+   * @dataProvider  validateURLWithoutProtocolProvider
+   */
+  public function testValidateURLWithoutProtocol($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->validateURL(true, false);
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   *
+   */
+  public function validateURLWithoutProtocolProvider() {
+    return $this->providerHelper('urls_without_protocol');
+  }
+
 }
 
 ################################################################################

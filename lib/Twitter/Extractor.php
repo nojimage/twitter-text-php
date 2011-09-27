@@ -86,7 +86,7 @@ class Twitter_Extractor extends Twitter_Regex {
    */
   public function extractURLs() {
     preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches);
-    list($all, $before, $url, $protocol, $domain, $path, $query) = array_pad($matches, 7, '');
+    list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($matches, 8, '');
     return $url;
   }
 

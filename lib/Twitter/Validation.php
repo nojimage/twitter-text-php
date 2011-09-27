@@ -95,7 +95,7 @@ class Twitter_Validation extends Twitter_Regex {
   /**
    *
    */
-  public function validateURL($unicode = true) {
+  public function validateURL($unicode_domains = true, $require_protocol = true) {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     preg_match(self::$patterns['validate_url_unencoded'], $this->tweet, $matches);
@@ -103,15 +103,17 @@ class Twitter_Validation extends Twitter_Regex {
     if (!$matches || $match !== $this->tweet) return false;
     list($scheme, $authority, $path, $query, $fragment) = array_pad($matches, 5, '');
     # Check scheme, path, query, fragment:
-    if (!self::isValidMatch($scheme, self::$patterns['validate_url_scheme'])
-      || !preg_match('/^https?$/i', $scheme)
+    if (($require_protocol && !(
+        self::isValidMatch($scheme, self::$patterns['validate_url_scheme'])
+        && preg_match('/^https?$/i', $scheme))
+      )
       || !self::isValidMatch($path, self::$patterns['validate_url_path'])
       || !self::isValidMatch($query, self::$patterns['validate_url_query'], true)
       || !self::isValidMatch($fragment, self::$patterns['validate_url_fragment'], true)) {
       return false;
     }
     # Check authority:
-    $authority_pattern = $unicode ? 'validate_url_unicode_authority' : 'validate_url_authority';
+    $authority_pattern = $unicode_domains ? 'validate_url_unicode_authority' : 'validate_url_authority';
     return self::isValidMatch($authority, self::$patterns[$authority_pattern]);
   }
 
