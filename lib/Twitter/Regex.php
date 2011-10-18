@@ -204,7 +204,7 @@ abstract class Twitter_Regex {
       . ')'
       . ')/iux';
 
-     # These URL validation pattern strings are based on the ABNF from RFC 3986
+    # These URL validation pattern strings are based on the ABNF from RFC 3986
     $tmp['validate_url_unreserved'] = '[a-z0-9\-._~]';
     $tmp['validate_url_pct_encoded'] = '(?:%[0-9a-f]{2})';
     $tmp['validate_url_sub_delims'] = '[!$&\'()*+,;=]';

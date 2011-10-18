@@ -145,9 +145,9 @@ class Twitter_Validation extends Twitter_Regex {
   protected static function isValidMatch($string, $pattern, $optional = false) {
     $found = preg_match($pattern, $string, $matches);
     if (!$optional) {
-      return ($string && $found && $matches[0] === $string);
+      return (($string || $string === '') && $found && $matches[0] === $string);
     } else {
-      return !($string && (!$found || $matches[0] !== $string));
+      return !(($string || $string === '') && (!$found || $matches[0] !== $string));
     }
   }
 
