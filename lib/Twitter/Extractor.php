@@ -87,6 +87,8 @@ class Twitter_Extractor extends Twitter_Regex {
   public function extractURLs() {
     preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches);
     list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($matches, 8, '');
+    # FIXME: Handle extraction of protocol-less domains.
+    # https://github.com/twitter/twitter-text-rb/commit/adb6e693b6d003819d615d19219c22d07f114a63
     return $url;
   }
 
@@ -142,6 +144,8 @@ class Twitter_Extractor extends Twitter_Regex {
     preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $results = &$matches[2];
     self::fixMultiByteIndices($this->tweet, $matches, $results, array('url'), 0);
+    # FIXME: Handle extraction of protocol-less domains.
+    # https://github.com/twitter/twitter-text-rb/commit/adb6e693b6d003819d615d19219c22d07f114a63
     return $results;
   }
 

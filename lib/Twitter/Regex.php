@@ -76,6 +76,12 @@ abstract class Twitter_Regex {
     #   0x3000         Zs # IDEOGRAPHIC SPACE
     $tmp['spaces'] = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
 
+    # Invalid Characters:
+    #   0xFFFE,0xFEFF # BOM
+    #   0xFFFF        # Special
+    #   0x202A-0x202E # Directional change
+    $tmp['invalid_characters'] = '\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}';
+
     # Expression to match at sign characters:
     $tmp['at_signs'] = '@＠';
 
@@ -147,10 +153,9 @@ abstract class Twitter_Regex {
 
     # URL related hash regex collection
 
-    $tmp['valid_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\.]|^)';
+    $tmp['valid_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\.'.$tmp['invalid_characters'].']|^)';
 
-    $tmp['domain_valid_chars'] = '[^[:punct:][:space:][:blank:]\x{00a0}]';
-
+    $tmp['domain_valid_chars'] = '[^[:punct:][:space:][:blank:][:cntrl:]'.$tmp['invalid_characters'].$tmp['spaces'].']';
     $tmp['valid_subdomain'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[_-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
     $tmp['valid_domain_name'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
 
@@ -161,15 +166,30 @@ abstract class Twitter_Regex {
     $tmp['valid_domain'] = '(?:'.$tmp['valid_subdomain'].'*'.$tmp['valid_domain_name']
       .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].'))';
 
+    # Used by the extractor:
+    $re['valid_ascii_domain'] = '/(?:(?:[[:alnum:]\-_]|'.$tmp['latin_accents'].')+\.)+(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].')/iu';
+
+    # Used by the extractor to filter out unwanted URLs:
     $re['valid_short_domain'] = '/^'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'$/iu';
 
     $tmp['valid_port_number'] = '[0-9]+';
 
-    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
-    $tmp['wikipedia_disambiguation'] = '(?:\('.$tmp['valid_general_url_path_chars'].'+\))';
-    $tmp['valid_url_path_chars'] = '(?:'.$tmp['wikipedia_disambiguation'].'|@'.$tmp['valid_general_url_path_chars'].'+\/|[\.,]'.$tmp['valid_general_url_path_chars'].'?|'.$tmp['valid_general_url_path_chars'].'+)';
+    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\.\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
+    # Allow URL paths to contain balanced parentheses:
+    # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
+    # 2. Used in IIS sessions, e.g. /S(dfd346)/
+    $tmp['valid_url_balanced_parens'] = '(?:\('.$tmp['valid_general_url_path_chars'].'+\))';
+    # Valid end-of-path characters (so /foo. does not gobble the period).
+    # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
+    $tmp['valid_url_path_ending_chars'] = '(?:[a-z0-9=_#\/\+\-'.$tmp['latin_accents'].']|(?:'.$tmp['valid_url_balanced_parens'].'))';
+    # Allow @ in a URL, but only in the middle.  Catch things like http://example.com/@user/
+    $tmp['valid_url_path'] = '(?:(?:'
+      . $tmp['valid_general_url_path_chars'].'*(?:'
+      . $tmp['valid_url_balanced_parens'].' '
+      . $tmp['valid_general_url_path_chars'].'*)*'
+      . $tmp['valid_url_path_ending_chars'].')|(?:@'
+      . $tmp['valid_general_url_path_chars'].'+\/))';
 
-    $tmp['valid_url_path_ending_chars'] = '(?:[a-z0-9=_#\/\+\-'.$tmp['latin_accents'].']|'.$tmp['wikipedia_disambiguation'].')';
     $tmp['valid_url_query_chars'] = '[a-z0-9!\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|]';
     $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
 
@@ -179,11 +199,7 @@ abstract class Twitter_Regex {
       . '(https?:\/\/)?'                         # $4 Protocol (optional)
       . '('.$tmp['valid_domain'].')'             # $5 Domain(s)
       . '(?::('.$tmp['valid_port_number'].'))?'  # $6 Port number (optional)
-      . '(\/(?:'                                 # $7 URL Path
-      . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'|'  # 1+ path chars and a valid last character.
-      . $tmp['valid_url_path_chars'].'+'.$tmp['valid_url_path_ending_chars'].'?|' # Optional last character to handle /@foo/ case.
-      . $tmp['valid_url_path_ending_chars']                                       # Just a # case.
-      . ')?)?'
+      . '(\/'.$tmp['valid_url_path'].'*)?'       # $7 URL Path
       . '(\?'.$tmp['valid_url_query_chars'].'*'.$tmp['valid_url_query_ending_chars'].')?' # $8 Query String
       . ')'
       . ')/iux';
@@ -254,11 +270,7 @@ abstract class Twitter_Regex {
       .'\#(.*)'           #  $5 Fragment
       .')?$/iux';
 
-    # Invalid Characters:
-    #   0xFFFE,0xFEFF # BOM
-    #   0xFFFF        # Special
-    #   0x202A-0x202E # Directional change
-    $re['invalid_characters'] = '/[\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}]/u';
+    $re['invalid_characters'] = '/['.$tmp['invalid_characters'].']/u';
 
     # Flag that initialization is complete:
     $initialized = true;
