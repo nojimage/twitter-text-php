@@ -429,21 +429,23 @@ class Twitter_Autolink extends Twitter_Regex {
   protected function _addLinksToUsernamesAndLists($matches) {
     list($all, $before, $at, $username, $slash_listname, $after) = array_pad($matches, 6, '');
     # If $after is not empty, there is an invalid character.
-    if (!empty($after)) return $all;
     if (!empty($slash_listname)) {
       # Replace the list and username
-      $element = $username . substr($slash_listname, 0, 26);
+      $element = $username . $slash_listname;
       $class = $this->class_list;
       $url = $this->url_base_list . $element;
-      $postfix = substr($slash_listname, 26);
     } else {
+      if (preg_match(self::$patterns['end_screen_name_match'], $after)) return $all;
       # Replace the username
       $element = $username;
       $class = $this->class_user;
       $url = $this->url_base_user . $element;
-      $postfix = '';
     }
-    return $before . $at . $this->wrap($url, $class, $element) . $postfix . $after;
+    # XXX: Due to use of preg_replace_callback() for multiple replacements in a
+    #      single tweet and also as only the match is replaced and we have to
+    #      use a look-ahead for $after because there is no equivalent for the
+    #      $' (dollar apostrophe) global from Ruby, we MUST NOT append $after.
+    return $before . $at . $this->wrap($url, $class, $element);
   }
 
 }

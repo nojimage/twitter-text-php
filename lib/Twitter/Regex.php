@@ -148,7 +148,11 @@ abstract class Twitter_Regex {
 
     $re['auto_link_hashtags'] = '/'.$tmp['hashtag'].'/iu';
 
-    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?/iu';
+    # XXX: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
+    #      $after in the following regular expression.  Note that we only use a
+    #      look-ahead capture here and don't append $after when we return.
+    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
+
     $re['auto_link_emoticon'] = '/(8\-\#|8\-E|\+\-\(|\`\@|\`O|\&lt;\|:~\(|\}:o\{|:\-\[|\&gt;o\&lt;|X\-\/|\[:-\]\-I\-|\/\/\/\/Ö\\\\\\\\\|\(\|:\|\/\)|∑:\*\)|\( \| \))/iu';
 
     # URL related hash regex collection
