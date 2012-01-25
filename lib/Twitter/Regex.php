@@ -82,8 +82,9 @@ abstract class Twitter_Regex {
     #   0x202A-0x202E # Directional change
     $tmp['invalid_characters'] = '\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}';
 
-    # Expression to match at sign characters:
+    # Expression to match at and hash sign characters:
     $tmp['at_signs'] = '@＠';
+    $tmp['hash_signs'] = '#＃';
 
     # Expression to match latin accented characters.
     #
@@ -96,11 +97,11 @@ abstract class Twitter_Regex {
     # Excludes 0x00F7 - division sign.
     $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}\x{015f}';
 
-    $re['extract_mentions'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})(['.$tmp['at_signs'].$tmp['latin_accents'].']?)/iu';
+    $re['extract_mentions'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})([:'.$tmp['at_signs'].$tmp['latin_accents'].']?)/iu';
     $re['extract_mentions_or_lists'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.|$))/iu';
     $re['extract_reply'] = '/^(?:['.$tmp['spaces'].'])*['.$tmp['at_signs'].']([a-z0-9_]{1,20})/iu';
     $re['list_name'] = '/[a-z][a-z0-9_\-\x{0080}-\x{00ff}]{0,24}/iu';
-    $re['end_screen_name_match'] = '/^(?:['.$tmp['at_signs'].']|['.$tmp['latin_accents'].']|:\/\/)/iu';
+    $re['end_screen_name_match'] = '/\A(?:['.$tmp['at_signs'].']|['.$tmp['latin_accents'].']|:\/\/)/iu';
 
     # Expression to match non-latin characters.
     #
@@ -141,12 +142,13 @@ abstract class Twitter_Regex {
     #   0x303B          Kanji (CJK supplement)
     $tmp['cj_hashtag_characters'] = '\x{30A1}-\x{30FA}\x{30FC}-\x{30FE}\x{FF66}-\x{FF9F}\x{FF10}-\x{FF19}\x{FF21}-\x{FF3A}\x{FF41}-\x{FF5A}\x{3041}-\x{3096}\x{3099}-\x{309E}\x{3400}-\x{4DBF}\x{4E00}-\x{9FFF}\x{3005}\x{303B}\x{020000}-\x{02a6df}\x{02a700}-\x{02b73f}\x{02b740}-\x{02b81f}\x{02f800}-\x{02fa1f}';
 
-    $tmp['hashtag_boundary'] = '(?:^|$|['.$tmp['spaces'].']|[「」。、.,!?！？:;"\'])';
     $tmp['hashtag_alpha'] = '[a-z_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
     $tmp['hashtag_alphanumeric'] = '[a-z0-9_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
+    $tmp['hashtag_boundary'] = '(?:^|$|[^&\/a-z0-9_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].'])';
     $tmp['hashtag'] = '('.$tmp['hashtag_boundary'].')(#|＃)('.$tmp['hashtag_alphanumeric'].'*'.$tmp['hashtag_alpha'].$tmp['hashtag_alphanumeric'].'*)';
 
     $re['auto_link_hashtags'] = '/'.$tmp['hashtag'].'/iu';
+    $re['end_hashtag_match'] = '/\A(?:['.$tmp['hash_signs'].']|https?:\/\/)/u';
 
     # XXX: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
     #      $after in the following regular expression.  Note that we only use a
@@ -157,24 +159,27 @@ abstract class Twitter_Regex {
 
     # URL related hash regex collection
 
-    $tmp['valid_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\.'.$tmp['invalid_characters'].']|^)';
+    $tmp['valid_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\$'.$tmp['hash_signs'].'\.'.$tmp['invalid_characters'].']|^)';
 
     $tmp['domain_valid_chars'] = '[^[:punct:][:space:][:blank:][:cntrl:]'.$tmp['invalid_characters'].$tmp['spaces'].']';
     $tmp['valid_subdomain'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[_-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
     $tmp['valid_domain_name'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
 
-    $tmp['valid_gTLD'] = '(?:(?:aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)(?=[^[:alpha:]]|$))';
-    $tmp['valid_ccTLD'] = '(?:(?:ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)(?=[^[:alpha:]]|$))';
+    $tmp['valid_gTLD'] = '(?:(?:aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx)(?=[^a-z]|$))';
+    $tmp['valid_ccTLD'] = '(?:(?:ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)(?=[^a-z]|$))';
     $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
 
     $tmp['valid_domain'] = '(?:'.$tmp['valid_subdomain'].'*'.$tmp['valid_domain_name']
       .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].'))';
 
     # Used by the extractor:
-    $re['valid_ascii_domain'] = '/(?:(?:[[:alnum:]\-_]|'.$tmp['latin_accents'].')+\.)+(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].')/iu';
+    $re['valid_ascii_domain'] = '/(?:(?:[a-z0-9\-_]|'.$tmp['latin_accents'].')+\.)+(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].')/iu';
+
+    # Used by the extractor for stricter t.co URL extraction:
+    $re['valid_tco_url'] = '/^https?:\/\/t\.co\/[a-z0-9]+/i';
 
     # Used by the extractor to filter out unwanted URLs:
-    $re['valid_short_domain'] = '/^'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'$/iu';
+    $re['invalid_short_domain'] = '/^'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'$/iu';
 
     $tmp['valid_port_number'] = '[0-9]+';
 
@@ -194,7 +199,7 @@ abstract class Twitter_Regex {
       . $tmp['valid_url_path_ending_chars'].')|(?:@'
       . $tmp['valid_general_url_path_chars'].'+\/))';
 
-    $tmp['valid_url_query_chars'] = '[a-z0-9!\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|]';
+    $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|]';
     $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
 
     $re['valid_url'] = '/(?:'                    # $1 Complete match (preg_match() already matches everything.)

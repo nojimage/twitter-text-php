@@ -87,8 +87,9 @@ class Twitter_Extractor extends Twitter_Regex {
   public function extractURLs() {
     preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches);
     list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($matches, 8, '');
-    # FIXME: Handle extraction of protocol-less domains.
+    # FIXME: Handle extraction of protocol-less domains and t.co short URLs.
     # https://github.com/twitter/twitter-text-rb/commit/adb6e693b6d003819d615d19219c22d07f114a63
+    # https://github.com/twitter/twitter-text-rb/commit/05de2c11a729f93d7680a6d4c12bff6d5ba4c164
     return $url;
   }
 

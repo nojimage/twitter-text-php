@@ -74,7 +74,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @var  string
    */
-  protected $url_base_hash = 'http://twitter.com/search?q=%23';
+  protected $url_base_hash = 'http://twitter.com/#!/search?q=%23';
 
   /**
    * Whether to include the value 'nofollow' in the 'rel' attribute.
