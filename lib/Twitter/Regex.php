@@ -91,11 +91,25 @@ abstract class Twitter_Regex {
     #   0x00C0-0x00D6
     #   0x00D8-0x00F6
     #   0x00F8-0x00FF
-    #   0x015F
+    #   0x0100-0x024f
+    #   0x0253-0x0254
+    #   0x0256-0x0257
+    #   0x0259
+    #   0x025b
+    #   0x0263
+    #   0x0268
+    #   0x026f
+    #   0x0272
+    #   0x0289
+    #   0x028b
+    #   0x02bb
+    #   0x1e00-0x1eff
     #
     # Excludes 0x00D7 - multiplication sign (confusable with 'x').
     # Excludes 0x00F7 - division sign.
-    $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}\x{015f}';
+    $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}';
+    $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
+    $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{1e00}-\x{1eff}';
 
     $re['extract_mentions'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})([:'.$tmp['at_signs'].$tmp['latin_accents'].']?)/iu';
     $re['extract_mentions_or_lists'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.|$))/iu';
