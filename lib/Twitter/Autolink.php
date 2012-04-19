@@ -60,21 +60,21 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @var  string
    */
-  protected $url_base_user = 'http://twitter.com/';
+  protected $url_base_user = 'https://twitter.com/';
 
   /**
    * URL base for list links (the username/list without the @ will be appended).
    *
    * @var  string
    */
-  protected $url_base_list = 'http://twitter.com/';
+  protected $url_base_list = 'https://twitter.com/';
 
   /**
    * URL base for hashtag links (the hashtag without the # will be appended).
    *
    * @var  string
    */
-  protected $url_base_hash = 'http://twitter.com/#!/search?q=%23';
+  protected $url_base_hash = 'https://twitter.com/#!/search?q=%23';
 
   /**
    * Whether to include the value 'nofollow' in the 'rel' attribute.
