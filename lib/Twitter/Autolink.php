@@ -385,6 +385,31 @@ class Twitter_Autolink extends Twitter_Regex {
   }
 
   /**
+   * Wraps a tweet element in an HTML anchor tag using the provided URL.
+   *
+   * This is a helper function to perform the generation of the hashtag link.
+   *
+   * @param  string  $url      The URL to use as the href.
+   * @param  string  $class    The CSS class(es) to apply (space separated).
+   * @param  string  $element  The tweet element to wrap.
+   *
+   * @return  string  The tweet element with a link applied.
+   */
+  protected function wrapHash($url, $class, $element) {
+    $link  = '<a';
+    $link .= ' href="'.$url.'"';
+    $link .= ' title="'.$element.'"';
+    if ($class) $link .= ' class="'.$class.'"';
+    $rel = array();
+    if ($this->external) $rel[] = 'external';
+    if ($this->nofollow) $rel[] = 'nofollow';
+    if (!empty($rel)) $link .= ' rel="'.implode(' ', $rel).'"';
+    if ($this->target) $link .= ' target="'.$this->target.'"';
+    $link .= '>'.$element.'</a>';
+    return $link;
+  }
+
+  /**
    * Callback used by the method that adds links to hashtags.
    *
    * @see  addLinksToHashtags()
@@ -397,7 +422,7 @@ class Twitter_Autolink extends Twitter_Regex {
     $replacement = $matches[1];
     $element = $matches[2] . $matches[3];
     $url = $this->url_base_hash . $matches[3];
-    $replacement .= $this->wrap($url, $this->class_hash, $element);
+    $replacement .= $this->wrapHash($url, $this->class_hash, $element);
     return $replacement;
   }
 
