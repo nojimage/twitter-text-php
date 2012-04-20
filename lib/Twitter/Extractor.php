@@ -75,7 +75,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The hashtag elements in the tweet.
    */
   public function extractHashtags() {
-    preg_match_all(self::$patterns['auto_link_hashtags'], $this->tweet, $matches);
+    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches);
     return $matches[3];
   }
 
@@ -101,8 +101,8 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The usernames elements in the tweet.
    */
   public function extractMentionedUsernames() {
-    preg_match_all(self::$patterns['extract_mentions'], $this->tweet, $matches);
-    list($all, $before, $username, $after) = array_pad($matches, 4, '');
+    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches);
+    list($all, $before, $at, $username, $after) = array_pad($matches, 5, '');
     $usernames = array();
     for ($i = 0; $i < count($username); $i ++) {
       # If $after is not empty, there is an invalid character.
@@ -120,7 +120,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The usernames replied to in a tweet.
    */
   public function extractRepliedUsernames() {
-    preg_match(self::$patterns['extract_reply'], $this->tweet, $matches);
+    preg_match(self::$patterns['valid_reply'], $this->tweet, $matches);
     return isset($matches[1]) ? $matches[1] : '';
   }
 
@@ -130,7 +130,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The hashtag elements in the tweet.
    */
   public function extractHashtagsWithIndices() {
-    preg_match_all(self::$patterns['auto_link_hashtags'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $results = &$matches[3];
     self::fixMultiByteIndices($this->tweet, $matches, $results, array('hashtag'), 1);
     return $results;
@@ -156,8 +156,8 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The username elements in the tweet.
    */
   public function extractMentionedUsernamesWithIndices() {
-    preg_match_all(self::$patterns['extract_mentions'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[2];
+    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    $results = &$matches[3];
     self::fixMultiByteIndices($this->tweet, $matches, $results, array('screen_name'), 1);
     return $results;
   }
@@ -168,10 +168,10 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The username elements in the tweet.
    */
   public function extractMentionedUsernamesOrListsWithIndices() {
-    preg_match_all(self::$patterns['extract_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $results = array();
-    for ($i = 0; $i < count($matches[2]); $i++) {
-      $results[] = array($matches[2][$i][0], $matches[3][$i][0], $matches[2][$i][1]);
+    for ($i = 0; $i < count($matches[3]); $i++) {
+      $results[] = array($matches[3][$i][0], $matches[4][$i][0], $matches[3][$i][1]);
     }
     self::fixMultiByteIndices($this->tweet, $matches, $results, array('screen_name', 'list_slug'), 1);
     return $results;

@@ -111,12 +111,6 @@ abstract class Twitter_Regex {
     $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
     $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{1e00}-\x{1eff}';
 
-    $re['extract_mentions'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})([:'.$tmp['at_signs'].$tmp['latin_accents'].']?)/iu';
-    $re['extract_mentions_or_lists'] = '/(^|[^a-z0-9_])['.$tmp['at_signs'].']([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.|$))/iu';
-    $re['extract_reply'] = '/^(?:['.$tmp['spaces'].'])*['.$tmp['at_signs'].']([a-z0-9_]{1,20})/iu';
-    $re['list_name'] = '/[a-z][a-z0-9_\-\x{0080}-\x{00ff}]{0,24}/iu';
-    $re['end_screen_name_match'] = '/\A(?:['.$tmp['at_signs'].']|['.$tmp['latin_accents'].']|:\/\/)/iu';
-
     # Expression to match non-latin characters.
     #
     # Cyrillic (Russian, Ukranian, ...):
@@ -205,22 +199,23 @@ abstract class Twitter_Regex {
 
     $tmp['hashtag_alpha'] = '[a-z_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
     $tmp['hashtag_alphanumeric'] = '[a-z0-9_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].']';
-    $tmp['hashtag_boundary'] = '(?:^|$|[^&a-z0-9_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].'])';
+    $tmp['hashtag_boundary'] = '(?:\A|\z|[^&a-z0-9_'.$tmp['latin_accents'].$tmp['non_latin_hashtag_chars'].$tmp['cj_hashtag_characters'].'])';
     $tmp['hashtag'] = '('.$tmp['hashtag_boundary'].')(#|＃)('.$tmp['hashtag_alphanumeric'].'*'.$tmp['hashtag_alpha'].$tmp['hashtag_alphanumeric'].'*)';
 
-    $re['auto_link_hashtags'] = '/'.$tmp['hashtag'].'/iu';
-    $re['end_hashtag_match'] = '/\A(?:['.$tmp['hash_signs'].']|https?:\/\/)/u';
+    $re['valid_hashtag'] = '/'.$tmp['hashtag'].'(?=(.*|$))/iu';
+    $re['end_hashtag_match'] = '/\A(?:['.$tmp['hash_signs'].']|:\/\/)/u';
 
     # XXX: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
     #      $after in the following regular expression.  Note that we only use a
     #      look-ahead capture here and don't append $after when we return.
-    $re['auto_link_usernames_or_lists'] = '/([^a-z0-9_]|^|RT:?)(['.$tmp['at_signs'].']+)([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
-
-    $re['auto_link_emoticon'] = '/(8\-\#|8\-E|\+\-\(|\`\@|\`O|\&lt;\|:~\(|\}:o\{|:\-\[|\&gt;o\&lt;|X\-\/|\[:-\]\-I\-|\/\/\/\/Ö\\\\\\\\\|\(\|:\|\/\)|∑:\*\)|\( \| \))/iu';
+    $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠]|^|RT:?)';
+    $re['valid_mentions_or_lists'] = '/'.$tmp['valid_mention_preceding_chars'].'(['.$tmp['at_signs'].'])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
+    $re['valid_reply'] = '/^(?:['.$tmp['spaces'].'])*['.$tmp['at_signs'].']([a-z0-9_]{1,20})/iu';
+    $re['end_mention_match'] = '/\A(?:['.$tmp['at_signs'].']|['.$tmp['latin_accents'].']|:\/\/)/iu';
 
     # URL related hash regex collection
 
-    $tmp['valid_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\$'.$tmp['hash_signs'].'\.'.$tmp['invalid_characters'].']|^)';
+    $tmp['valid_url_preceding_chars'] = '(?:[^-\/"\'!=A-Z0-9_'.$tmp['at_signs'].'\$'.$tmp['hash_signs'].'\.'.$tmp['invalid_characters'].']|^)';
 
     $tmp['domain_valid_chars'] = '[^[:punct:][:space:][:blank:][:cntrl:]'.$tmp['invalid_characters'].$tmp['spaces'].']';
     $tmp['valid_subdomain'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[_-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
@@ -263,13 +258,13 @@ abstract class Twitter_Regex {
     $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|]';
     $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
 
-    $re['valid_url'] = '/(?:'                    # $1 Complete match (preg_match() already matches everything.)
-      . '('.$tmp['valid_preceding_chars'].')'    # $2 Preceding characters
-      . '('                                      # $3 Complete URL
-      . '(https?:\/\/)?'                         # $4 Protocol (optional)
-      . '('.$tmp['valid_domain'].')'             # $5 Domain(s)
-      . '(?::('.$tmp['valid_port_number'].'))?'  # $6 Port number (optional)
-      . '(\/'.$tmp['valid_url_path'].'*)?'       # $7 URL Path
+    $re['valid_url'] = '/(?:'                     # $1 Complete match (preg_match() already matches everything.)
+      . '('.$tmp['valid_url_preceding_chars'].')' # $2 Preceding characters
+      . '('                                       # $3 Complete URL
+      . '(https?:\/\/)?'                          # $4 Protocol (optional)
+      . '('.$tmp['valid_domain'].')'              # $5 Domain(s)
+      . '(?::('.$tmp['valid_port_number'].'))?'   # $6 Port number (optional)
+      . '(\/'.$tmp['valid_url_path'].'*)?'        # $7 URL Path
       . '(\?'.$tmp['valid_url_query_chars'].'*'.$tmp['valid_url_query_ending_chars'].')?' # $8 Query String
       . ')'
       . ')/iux';

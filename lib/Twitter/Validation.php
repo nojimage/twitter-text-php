@@ -86,7 +86,7 @@ class Twitter_Validation extends Twitter_Regex {
   public function validateList() {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
-    preg_match(self::$patterns['auto_link_usernames_or_lists'], $this->tweet, $matches);
+    preg_match(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches);
     $matches = array_pad($matches, 5, '');
     return isset($matches) && $matches[1] === '' && $matches[4] && !empty($matches[4]) && $matches[5] === '';
   }
