@@ -102,9 +102,11 @@ class Twitter_Extractor extends Twitter_Regex {
    */
   public function extractMentionedUsernames() {
     preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches);
-    list($all, $before, $at, $username, $after) = array_pad($matches, 5, '');
+    list($all, $before, $at, $username, $after, $outer) = array_pad($matches, 6, '');
     $usernames = array();
     for ($i = 0; $i < count($username); $i ++) {
+      # Check username ending in
+      if (preg_match(self::$patterns['end_mention_match'], $outer[$i])) continue;
       # If $after is not empty, there is an invalid character.
       if (!empty($after[$i])) continue;
       array_push($usernames, $username[$i]);
