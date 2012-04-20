@@ -316,8 +316,8 @@ class Twitter_Autolink extends Twitter_Regex {
    */
   public function addLinks() {
     $original = $this->tweet;
-    $this->tweet = $this->addLinksToHashtags();
     $this->tweet = $this->addLinksToURLs();
+    $this->tweet = $this->addLinksToHashtags();
     $this->tweet = $this->addLinksToUsernamesAndLists();
     $modified = $this->tweet;
     $this->tweet = $original;
