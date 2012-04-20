@@ -125,16 +125,62 @@ abstract class Twitter_Regex {
     #   0x0500-0x0527 Cyrillic Supplement
     #   0x2DE0-0x2DFF Cyrillic Extended A
     #   0xA640-0xA69F Cyrillic Extended B
+    $tmp['non_latin_hashtag_chars'] = '\x{0400}-\x{04ff}\x{0500}-\x{0527}\x{2de0}-\x{2dff}\x{a640}-\x{a69f}';
+    # Hebrew:
     #
+    #   0x0591-0x05bf Hebrew
+    #   0x05c1-0x05c2
+    #   0x05c4-0x05c5
+    #   0x05c7
+    #   0x05d0-0x05ea
+    #   0x05f0-0x05f4
+    #   0xfb12-0xfb28 Hebrew Presentation Forms
+    #   0xfb2a-0xfb36
+    #   0xfb38-0xfb3c
+    #   0xfb3e
+    #   0xfb40-0xfb41
+    #   0xfb43-0xfb44
+    #   0xfb46-0xfb4f
+    $tmp['non_latin_hashtag_chars'] .= '\x{0591}-\x{05bf}\x{05c1}-\x{05c2}\x{05c4}-\x{05c5}\x{05c7}\x{05d0}-\x{05ea}\x{05f0}-\x{05f4}';
+    $tmp['non_latin_hashtag_chars'] .= '\x{fb12}-\x{fb28}\x{fb2a}-\x{fb36}\x{fb38}-\x{fb3c}\x{fb3e}\x{fb40}-\x{fb41}\x{fb43}-\x{fb44}\x{fb46}-\x{fb4f}';
+    # Arabic:
+    #
+    #   0x0610-0x061a Arabic
+    #   0x0620-0x065f
+    #   0x066e-0x06d3
+    #   0x06d5-0x06dc
+    #   0x06de-0x06e8
+    #   0x06ea-0x06ef
+    #   0x06fa-0x06fc
+    #   0x06ff
+    #   0x0750-0x077f Arabic Supplement
+    #   0x08a0        Arabic Extended A
+    #   0x08a2-0x08ac
+    #   0x08e4-0x08fe
+    #   0xfb50-0xfbb1 Arabic Pres. Forms A
+    #   0xfbd3-0xfd3d
+    #   0xfd50-0xfd8f
+    #   0xfd92-0xfdc7
+    #   0xfdf0-0xfdfb
+    #   0xfe70-0xfe74 Arabic Pres. Forms B
+    #   0xfe76-0xfefc
+    $tmp['non_latin_hashtag_chars'] .= '\x{0610}-\x{061a}\x{0620}-\x{065f}\x{066e}-\x{06d3}\x{06d5}-\x{06dc}\x{06de}-\x{06e8}\x{06ea}-\x{06ef}\x{06fa}-\x{06fc}\x{06ff}';
+    $tmp['non_latin_hashtag_chars'] .= '\x{0750}-\x{077f}\x{08a0}\x{08a2}-\x{08ac}\x{08e4}-\x{08fe}';
+    $tmp['non_latin_hashtag_chars'] .= '\x{fb50}-\x{fbb1}\x{fbd3}-\x{fd3d}\x{fd50}-\x{fd8f}\x{fd92}-\x{fdc7}\x{fdf0}-\x{fdfb}\x{fe70}-\x{fe74}\x{fe76}-\x{fefc}';
+    #
+    #   0x200c-0x200c Zero-Width Non-Joiner
+    #   0x0e01-0x0e3a Thai
+    $tmp['non_latin_hashtag_chars'] .= '\x{200c}\x{0e01}-\x{0e3a}';
     # Hangul (Korean):
     #
+    #   0x0e40-0x0e4e Hangul (Korean)
     #   0x1100-0x11FF Hangul Jamo
     #   0x3130-0x3185 Hangul Compatibility Jamo
     #   0xA960-0xA97F Hangul Jamo Extended A
     #   0xAC00-0xD7AF Hangul Syllables
     #   0xD7B0-0xD7FF Hangul Jamo Extended B
     #   0xFFA1-0xFFDC Half-Width Hangul
-    $tmp['non_latin_hashtag_chars'] = '\x{0400}-\x{04ff}\x{0500}-\x{0527}\x{2de0}-\x{2dff}\x{a640}-\x{a69f}\x{1100}-\x{11ff}\x{3130}-\x{3185}\x{a960}-\x{a97f}\x{ac00}-\x{d7af}\x{d7b0}-\x{d7ff}\x{ffa1}-\x{ffdc}';
+    $tmp['non_latin_hashtag_chars'] .= '\x{0e40}-\x{0e4e}\x{1100}-\x{11ff}\x{3130}-\x{3185}\x{a960}-\x{a97f}\x{ac00}-\x{d7af}\x{d7b0}-\x{d7ff}\x{ffa1}-\x{ffdc}';
 
     # Expression to match other characters.
     #
