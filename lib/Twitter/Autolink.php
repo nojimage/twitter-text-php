@@ -56,6 +56,13 @@ class Twitter_Autolink extends Twitter_Regex {
   protected $class_hash = 'hashtag';
 
   /**
+   * CSS class for auto-linked cashtag URLs.
+   *
+   * @var  string
+   */
+  protected $class_cash = 'cashtag';
+
+  /**
    * URL base for username links (the username without the @ will be appended).
    *
    * @var  string
@@ -75,6 +82,13 @@ class Twitter_Autolink extends Twitter_Regex {
    * @var  string
    */
   protected $url_base_hash = 'https://twitter.com/#!/search?q=%23';
+
+  /**
+   * URL base for cashtag links (the hashtag without the $ will be appended).
+   *
+   * @var  string
+   */
+  protected $url_base_cash = 'https://twitter.com/#!/search?q=%24';
 
   /**
    * Whether to include the value 'nofollow' in the 'rel' attribute.
@@ -229,6 +243,27 @@ class Twitter_Autolink extends Twitter_Regex {
   }
 
   /**
+   * CSS class for auto-linked cashtag URLs.
+   *
+   * @return  string  CSS class for cashtag links.
+   */
+  public function getCashtagClass() {
+    return $this->class_cash;
+  }
+
+  /**
+   * CSS class for auto-linked cashtag URLs.
+   *
+   * @param  string  $v  CSS class for cashtag links.
+   *
+   * @return  Twitter_Autolink  Fluid method chaining.
+   */
+  public function setCashtagClass($v) {
+    $this->class_cash = trim($v);
+    return $this;
+  }
+
+  /**
    * Whether to include the value 'nofollow' in the 'rel' attribute.
    *
    * @return  bool  Whether to add 'nofollow' to the 'rel' attribute.
@@ -318,6 +353,7 @@ class Twitter_Autolink extends Twitter_Regex {
     $original = $this->tweet;
     $this->tweet = $this->addLinksToURLs();
     $this->tweet = $this->addLinksToHashtags();
+    $this->tweet = $this->addLinksToCashtags();
     $this->tweet = $this->addLinksToUsernamesAndLists();
     $modified = $this->tweet;
     $this->tweet = $original;
@@ -333,6 +369,18 @@ class Twitter_Autolink extends Twitter_Regex {
     return preg_replace_callback(
       self::$patterns['valid_hashtag'],
       array($this, '_addLinksToHashtags'),
+      $this->tweet);
+  }
+
+  /**
+   * Adds links to cashtag elements in the tweet.
+   *
+   * @return  string  The modified tweet.
+   */
+  public function addLinksToCashtags() {
+    return preg_replace_callback(
+      self::$patterns['valid_cashtag'],
+      array($this, '_addLinksToCashtags'),
       $this->tweet);
   }
 
@@ -429,6 +477,29 @@ class Twitter_Autolink extends Twitter_Regex {
     $element = $hash . $tag;
     $url = $this->url_base_hash . $tag;
     $replacement .= $this->wrapHash($url, $this->class_hash, $element);
+    return $replacement;
+  }
+
+  /**
+   * Callback used by the method that adds links to cashtags.
+   *
+   * @see  addLinksToCashtags()
+   *
+   * @param  array  $matches  The regular expression matches.
+   *
+   * @return  string  The link-wrapped cashtag.
+   */
+  protected function _addLinksToCashtags($matches) {
+    list($all, $before, $cash, $tag, $after) = array_pad($matches, 5, '');
+    if (preg_match(self::$patterns['end_cashtag_match'], $after)
+        || (!preg_match('!\A["\']!', $before) && preg_match('!\A["\']!', $after))
+        || preg_match('!\A</!', $after)) {
+      return $all;
+    }
+    $replacement = $before;
+    $element = $cash . $tag;
+    $url = $this->url_base_cash . $tag;
+    $replacement .= $this->wrapHash($url, $this->class_cash, $element);
     return $replacement;
   }
 

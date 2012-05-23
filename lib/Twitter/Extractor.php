@@ -80,6 +80,16 @@ class Twitter_Extractor extends Twitter_Regex {
   }
 
   /**
+   * Extracts all the cashtags from the tweet.
+   *
+   * @return  array  The cashtag elements in the tweet.
+   */
+  public function extractCashtags() {
+    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches);
+    return $matches[3];
+  }
+
+  /**
    * Extracts all the URLs from the tweet.
    *
    * @return  array  The URL elements in the tweet.
@@ -135,6 +145,18 @@ class Twitter_Extractor extends Twitter_Regex {
     preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
     $results = &$matches[3];
     self::fixMultiByteIndices($this->tweet, $matches, $results, array('hashtag'), 1);
+    return $results;
+  }
+
+  /**
+   * Extracts all the cashtags and the indices they occur at from the tweet.
+   *
+   * @return  array  The cashtag elements in the tweet.
+   */
+  public function extractCashtagsWithIndices() {
+    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
+    $results = &$matches[3];
+    self::fixMultiByteIndices($this->tweet, $matches, $results, array('cashtag'), 1);
     return $results;
   }
 

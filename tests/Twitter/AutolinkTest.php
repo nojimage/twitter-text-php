@@ -101,6 +101,34 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   * @dataProvider  addLinksToCashtagsProvider
+   */
+  public function testAddLinksToCashtags($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text, false)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->addLinksToCashtags();
+    $linked = preg_replace(array(
+      '!<a class="([^"]*)" href="([^"]*)">([^<]*)</a>!',
+      '!title="＃([^"]+)"!'
+    ), array(
+      '<a href="$2" title="$3" class="$1">$3</a>',
+      'title="#$1"'
+    ), $linked);
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   *
+   */
+  public function addLinksToCashtagsProvider() {
+    return $this->providerHelper('cashtags');
+  }
+
+  /**
    * @dataProvider  addLinksToURLsProvider
    */
   public function testAddLinksToURLs($description, $text, $expected) {
@@ -130,6 +158,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->addLinks();
     $this->assertSame($expected, $linked, $description);

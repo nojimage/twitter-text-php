@@ -103,13 +103,14 @@ abstract class Twitter_Regex {
     #   0x0289
     #   0x028b
     #   0x02bb
+    #   0x0300-0x036f
     #   0x1e00-0x1eff
     #
     # Excludes 0x00D7 - multiplication sign (confusable with 'x').
     # Excludes 0x00F7 - division sign.
     $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}';
     $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
-    $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{1e00}-\x{1eff}';
+    $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}';
 
     # Expression to match non-latin characters.
     #
@@ -239,7 +240,7 @@ abstract class Twitter_Regex {
 
     $tmp['valid_port_number'] = '[0-9]+';
 
-    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\.\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
+    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
     # Allow URL paths to contain balanced parentheses:
     # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
     # 2. Used in IIS sessions, e.g. /S(dfd346)/
@@ -268,6 +269,11 @@ abstract class Twitter_Regex {
       . '(\?'.$tmp['valid_url_query_chars'].'*'.$tmp['valid_url_query_ending_chars'].')?' # $8 Query String
       . ')'
       . ')/iux';
+
+    $tmp['cash_signs'] = '\$';
+    $tmp['cashtag'] = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
+    $re['valid_cashtag'] = '/(^|['.$tmp['spaces'].'])(['.$tmp['cash_signs'].'])('.$tmp['cashtag'].')(?=($|\s|[[:punct:]]))/iu';
+    $re['end_cashtag_match'] = '/\A(?:['.$tmp['cash_signs'].']|:\/\/)/u';
 
     # These URL validation pattern strings are based on the ABNF from RFC 3986
     $tmp['validate_url_unreserved'] = '[a-z0-9\-._~]';
