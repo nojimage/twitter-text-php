@@ -240,7 +240,7 @@ abstract class Twitter_Regex {
 
     $tmp['valid_port_number'] = '[0-9]+';
 
-    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*\';:=\+\,\.\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
+    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
     # Allow URL paths to contain balanced parentheses:
     # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
     # 2. Used in IIS sessions, e.g. /S(dfd346)/
