@@ -104,6 +104,36 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   * @dataProvider  extractCashtagsProvider
+   */
+  public function testExtractCashtags($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractCashtags();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   *
+   */
+  public function extractCashtagsProvider() {
+    return $this->providerHelper('cashtags');
+  }
+
+  /**
+   * @dataProvider  extractCashtagsWithIndicesProvider
+   */
+  public function testExtractCashtagsWithIndices($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractCashtagsWithIndices();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   *
+   */
+  public function extractCashtagsWithIndicesProvider() {
+    return $this->providerHelper('cashtags_with_indices');
+  }
+
+  /**
    * @dataProvider  extractURLsWithIndicesProvider
    */
   public function testExtractURLsWithIndices($description, $text, $expected) {
