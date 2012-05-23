@@ -270,6 +270,11 @@ abstract class Twitter_Regex {
       . ')'
       . ')/iux';
 
+    $tmp['cash_signs'] = '\$';
+    $tmp['cashtag'] = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
+    $re['valid_cashtag'] = '/(^|['.$tmp['spaces'].'])(['.$tmp['cash_signs'].'])('.$tmp['cashtag'].')(?=($|\s|[[:punct:]]))/iu';
+    $re['end_cashtag_match'] = '/\A(?:['.$tmp['cash_signs'].']|:\/\/)/u';
+
     # These URL validation pattern strings are based on the ABNF from RFC 3986
     $tmp['validate_url_unreserved'] = '[a-z0-9\-._~]';
     $tmp['validate_url_pct_encoded'] = '(?:%[0-9a-f]{2})';
