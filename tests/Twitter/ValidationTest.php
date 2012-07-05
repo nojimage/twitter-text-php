@@ -118,6 +118,21 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
     return $this->providerHelper('urls_without_protocol');
   }
 
+  /**
+   * @dataProvider  getLengthProvider
+   */
+  public function testGetLength($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->getLength();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   *
+   */
+  public function getLengthProvider() {
+    return $this->providerHelper('lengths');
+  }
+
 }
 
 ################################################################################

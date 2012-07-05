@@ -349,6 +349,7 @@ $functions = array(
   'hashtags' => 'validateHashtag',
   'urls' => 'validateURL',
   'urls_without_protocol' => 'validateURL',
+  'lengths' => 'getLength',
 );
 
 # Perform testing.

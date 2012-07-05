@@ -32,6 +32,20 @@ class Twitter_Validation extends Twitter_Regex {
   const MAX_LENGTH = 140;
 
   /**
+   * The length of a short URL beginning with http:
+   *
+   * @var  int
+   */
+  const SHORT_URL_LENGTH = 20;
+
+  /**
+   * The length of a short URL beginning with http:
+   *
+   * @var  int
+   */
+  const SHORT_URL_LENGTH_HTTPS = 21;
+
+  /**
    * Provides fluent method chaining.
    *
    * @param  string  $tweet  The tweet to be validated.
@@ -131,6 +145,21 @@ class Twitter_Validation extends Twitter_Regex {
     # Check authority:
     $authority_pattern = $unicode_domains ? 'validate_url_unicode_authority' : 'validate_url_authority';
     return self::isValidMatch($authority, self::$patterns[$authority_pattern]);
+  }
+
+  /**
+   * Determines the length of a tweet.  Takes shortening of URLs into account.
+   *
+   * @return  int  the length of a tweet.
+   */
+  public function getLength() {
+    $length = mb_strlen($this->tweet);
+    $urls_with_indices = Twitter_Extractor::create($this->tweet)->extractURLsWithIndices();
+    foreach ($urls_with_indices as $x) {
+      $length += $x['indices'][0] - $x['indices'][1];
+      $length += stripos($x['url'], 'https://') === 0 ? self::SHORT_URL_LENGTH_HTTPS : self::SHORT_URL_LENGTH;
+    }
+    return $length;
   }
 
   /**
