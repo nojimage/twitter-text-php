@@ -36,26 +36,27 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @var  int
    */
-  const SHORT_URL_LENGTH = 20;
+  protected $short_url_length = 20;
 
   /**
    * The length of a short URL beginning with http:
    *
    * @var  int
    */
-  const SHORT_URL_LENGTH_HTTPS = 21;
+  protected $short_url_length_https = 21;
 
   /**
    * Provides fluent method chaining.
    *
    * @param  string  $tweet  The tweet to be validated.
+   * @param  mixed   $config Setup short URL length from Twitter API /help/configuration response.
    *
    * @see  __construct()
    *
    * @return  Twitter_Validation
    */
-  public static function create($tweet) {
-    return new self($tweet);
+  public static function create($tweet, $config = null) {
+    return new self($tweet, $config);
   }
 
   /**
@@ -63,8 +64,80 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @param  string  $tweet  The tweet to validate.
    */
-  public function __construct($tweet) {
+  public function __construct($tweet, $config = null) {
       parent::__construct($tweet);
+      if (!empty($config)) {
+        $this->setConfiguration($config);
+      }
+  }
+
+/**
+ * Setup short URL length from Twitter API /help/configuration response
+ *
+ * @param mixed $config
+ * @return \Twitter_Validation
+ * @link https://dev.twitter.com/docs/api/1/get/help/configuration
+ */
+  public function setConfiguration($config) {
+    if (is_array($config)) {
+      // setup from array
+      if (isset($config['short_url_length'])) {
+        $this->setShortUrlLength($config['short_url_length']);
+      }
+      if (isset($config['short_url_length_https'])) {
+        $this->setShortUrlLengthHttps($config['short_url_length_https']);
+      }
+    } elseif (is_object($config)) {
+      // setup from object
+      if (isset($config->short_url_length)) {
+        $this->setShortUrlLength($config->short_url_length);
+      }
+      if (isset($config->short_url_length_https)) {
+        $this->setShortUrlLengthHttps($config->short_url_length_https);
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the length of a short URL beginning with http:
+   *
+   * @param mixed $length
+   * @return \Twitter_Validation
+   */
+  public function setShortUrlLength($length) {
+    $this->short_url_length = intval($length);
+    return $this;
+  }
+
+/**
+ * Get the length of a short URL beginning with http:
+ *
+ * @return int
+ */
+  public function getShortUrlLength() {
+    return $this->short_url_length;
+  }
+
+  /**
+   * Set the length of a short URL beginning with https:
+   *
+   * @param mixed $length
+   * @return \Twitter_Validation
+   */
+  public function setShortUrlLengthHttps($length) {
+    $this->short_url_length_https = intval($length);
+    return $this;
+  }
+
+/**
+ * Get the length of a short URL beginning with https:
+ *
+ * @return int
+ */
+  public function getShortUrlLengthHttps() {
+    return $this->short_url_length_https;
   }
 
   /**
@@ -157,7 +230,7 @@ class Twitter_Validation extends Twitter_Regex {
     $urls_with_indices = Twitter_Extractor::create($this->tweet)->extractURLsWithIndices();
     foreach ($urls_with_indices as $x) {
       $length += $x['indices'][0] - $x['indices'][1];
-      $length += stripos($x['url'], 'https://') === 0 ? self::SHORT_URL_LENGTH_HTTPS : self::SHORT_URL_LENGTH;
+      $length += stripos($x['url'], 'https://') === 0 ? $this->short_url_length_https : $this->short_url_length;
     }
     return $length;
   }
