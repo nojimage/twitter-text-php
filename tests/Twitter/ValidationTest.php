@@ -28,6 +28,24 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
     return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
   }
 
+  public function testConfiglationFromArray() {
+    $validator = Twitter_Validation::create('', array(
+        'short_url_length' => 22,
+        'short_url_length_https' => 23,
+    ));
+    $this->assertSame(22, $validator->getShortUrlLength());
+    $this->assertSame(23, $validator->getShortUrlLengthHttps());
+  }
+
+  public function testConfiglationFromObject() {
+    $conf = new stdClass();
+    $conf->short_url_length = 22;
+    $conf->short_url_length_https = 23;
+    $validator = Twitter_Validation::create('', $conf);
+    $this->assertSame(22, $validator->getShortUrlLength());
+    $this->assertSame(23, $validator->getShortUrlLengthHttps());
+  }
+
   /**
    * @dataProvider  validateTweetProvider
    */
@@ -116,6 +134,21 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    */
   public function validateURLWithoutProtocolProvider() {
     return $this->providerHelper('urls_without_protocol');
+  }
+
+  /**
+   * @dataProvider  getLengthProvider
+   */
+  public function testGetLength($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->getLength();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   *
+   */
+  public function getLengthProvider() {
+    return $this->providerHelper('lengths');
   }
 
 }

@@ -138,10 +138,12 @@ $data = Spyc::YAMLLoad($DATA.'/extract.yml');
 # Define the functions to be tested.
 $functions = array(
   'hashtags' => 'extractHashtags',
+  'cashtags' => 'extractCashtags',
   'urls'     => 'extractURLs',
   'mentions' => 'extractMentionedUsernames',
   'replies'  => 'extractRepliedUsernames',
   'hashtags_with_indices' => 'extractHashtagsWithIndices',
+  'cashtags_with_indices' => 'extractCashtagsWithIndices',
   'urls_with_indices'     => 'extractURLsWithIndices',
   'mentions_with_indices' => 'extractMentionedUsernamesWithIndices',
   'mentions_or_lists_with_indices' => 'extractMentionedUsernamesOrListsWithIndices',
@@ -206,6 +208,7 @@ $functions = array(
   'usernames' => 'addLinksToUsernamesAndLists',
   'lists'     => 'addLinksToUsernamesAndLists',
   'hashtags'  => 'addLinksToHashtags',
+  'cashtags'  => 'addLinksToCashtags',
   'urls'      => 'addLinksToURLs',
   'all'       => 'addLinks',
 );
@@ -231,6 +234,7 @@ foreach ($data['tests'] as $group => $tests) {
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->$function();
     # XXX: Need to re-order for hashtag as it is written out differently...
@@ -349,6 +353,7 @@ $functions = array(
   'hashtags' => 'validateHashtag',
   'urls' => 'validateURL',
   'urls_without_protocol' => 'validateURL',
+  'lengths' => 'getLength',
 );
 
 # Perform testing.
