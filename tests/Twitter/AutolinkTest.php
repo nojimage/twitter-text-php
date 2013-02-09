@@ -37,6 +37,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->addLinksToUsernamesAndLists();
     $this->assertSame($expected, $linked, $description);
@@ -58,6 +59,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->addLinksToUsernamesAndLists();
     $this->assertSame($expected, $linked, $description);
@@ -79,6 +81,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->addLinksToHashtags();
     # XXX: Need to re-order for hashtag as it is written out differently...
@@ -108,6 +111,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->addLinksToCashtags();
@@ -137,6 +141,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->addLinksToURLs();
     $this->assertSame($expected, $linked, $description);

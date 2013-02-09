@@ -13,7 +13,9 @@ mb_internal_encoding('UTF-8');
 # Set up path variables.
 $ROOT = dirname(dirname(__FILE__));
 $DATA = $ROOT.'/tests/data/twitter-text-conformance';
-define('DATA', $DATA);
+if (!defined('DATA')) {
+  define('DATA', $DATA);
+}
 
 # Include required classes.
 require_once $ROOT.'/lib/Twitter/Autolink.php';

@@ -112,6 +112,16 @@ abstract class Twitter_Regex {
     $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
     $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}';
 
+    # Expression to match RTL characters.
+    #
+    #   0x0600-0x06FF Arabic
+    #   0x0750-0x077F Arabic Supplement
+    #   0x08A0-0x08FF Arabic Extended-A
+    #   0x0590-0x05FF Hebrew
+    #   0xFB50-0xFDFF Arabic Presentation Forms-A
+    #   0xFE70-0xFEFF Arabic Presentation Forms-B
+    $tmp['rtl_chars'] = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}';
+
     # Expression to match non-latin characters.
     #
     # Cyrillic (Russian, Ukranian, ...):
@@ -342,6 +352,8 @@ abstract class Twitter_Regex {
       .')?$/iux';
 
     $re['invalid_characters'] = '/['.$tmp['invalid_characters'].']/u';
+
+    $re['rtl_chars'] = '/['.$tmp['rtl_chars'].']/iu';
 
     # Flag that initialization is complete:
     $initialized = true;
