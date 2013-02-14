@@ -480,7 +480,6 @@ class Twitter_Autolink extends Twitter_Regex {
     if (preg_match(self::$patterns['rtl_chars'], $element)) {
       $class_hash .= ' rtl';
     }
-    var_dump($element . ':' . $class_hash);
     $replacement .= $this->wrapHash($url, $class_hash, $element);
     return $replacement;
   }
