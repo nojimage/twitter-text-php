@@ -45,17 +45,19 @@ run from the command line.
 You'll need the test data which is in YAML format from the following
 repository:
 
+<<<<<<< HEAD
+    http://github.com/mzsanford/twitter-text-conformance
+    
+As PHP has no native support for YAML you'll need spyc:
+=======
     https://github.com/twitter/twitter-text-conformance
 
-It has already been added as a git submodule so you should just need to run:
+    https://github.com/mustangostang/spyc/
+
+Both requirements have already been added as a git submodule so you should just need to run:
 
     git submodule init
     git submodule update
-
-As PHP has no native support for YAML you'll need to checkout spyc from svn
-into `tests/spyc`:
-
-    svn checkout https://spyc.googlecode.com/svn/trunk/ tests/spyc
 
 There are a couple of options for testing conformance:
 
