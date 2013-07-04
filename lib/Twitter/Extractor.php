@@ -103,21 +103,35 @@ class Twitter_Extractor extends Twitter_Regex {
       // If protocol is missing and domain contains non-ASCII characters,
       // extract ASCII-only domains.
       if (empty($protocol[$i])) {
-        if (!preg_match(self::$patterns['valid_ascii_domain'], $domain[$i], $domainMatches)) {
+        $last_url = null;
+        $last_url_invalid_match = null;
+        if (preg_match(self::$patterns['valid_ascii_domain'], $domain[$i], $domainMatches)) {
+          $last_url = $domainMatches[0];
+          $last_url_invalid_match = preg_match(self::$patterns['invalid_short_domain'], $domainMatches[0]);
+          if (!$last_url_invalid_match) {
+            $urls[] = $url[$i];
+          }
+        }
+
+        // no ASCII-only domain found. Skip the entire URL
+        if (empty($last_url)) {
           continue;
         }
-        if (preg_match(self::$patterns['invalid_short_domain'], $domainMatches[0])) {
-          continue;
+
+        // $last_url only contains domain. Need to add path and query if they exist.
+        if (!empty($path[$i]) && $last_url_invalid_match) {
+          // last_url was not added. Add it to urls here.
+          $urls[] = str_replace($domain[$i], $last_url, $url[$i]);
         }
       } else {
         // In the case of t.co URLs, don't allow additional path characters
         if (preg_match(self::$patterns['valid_tco_url'], $url[$i], $tcoUrlMatches)) {
           $url[$i] = $tcoUrlMatches[0];
         }
+        $urls[] = $url[$i];
       }
-
-      $urls[] = $url[$i];
     }
+
     return $urls;
   }
 
