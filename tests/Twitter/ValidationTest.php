@@ -5,6 +5,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Twitter Validation Class Unit Tests
@@ -24,7 +25,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @return  array  The test data to provide.
    */
   protected function providerHelper($test) {
-    $data = Spyc::YAMLLoad(DATA.'/validate.yml');
+    $data = Yaml::parse(DATA.'/validate.yml');
     return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
   }
 

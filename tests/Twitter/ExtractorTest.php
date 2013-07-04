@@ -5,6 +5,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Twitter Extractor Class Unit Tests
@@ -24,7 +25,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @return  array  The test data to provide.
    */
   protected function providerHelper($test) {
-    $data = Spyc::YAMLLoad(DATA.'/extract.yml');
+    $data = Yaml::parse(DATA.'/extract.yml');
     return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
   }
 

@@ -11,6 +11,7 @@
  */
 
 require_once dirname(__FILE__).'/bootstrap.php';
+use Symfony\Component\Yaml\Yaml;
 
 $browser = (PHP_SAPI != 'cli');
 
@@ -133,7 +134,7 @@ output_h1('Twitter Text (PHP Edition) Library » Conformance');
 output_h2('Extraction Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/extract.yml');
+$data = Yaml::parse($DATA.'/extract.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -201,7 +202,7 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Autolink Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/autolink.yml');
+$data = Yaml::parse($DATA.'/autolink.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -283,7 +284,7 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Hit Highlighter Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/hit_highlighting.yml');
+$data = Yaml::parse($DATA.'/hit_highlighting.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -343,7 +344,7 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Validation Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/validate.yml');
+$data = Yaml::parse($DATA.'/validate.yml');
 
 # Define the functions to be tested.
 $functions = array(
