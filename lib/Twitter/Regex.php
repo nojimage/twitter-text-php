@@ -243,7 +243,7 @@ abstract class Twitter_Regex {
     $re['valid_ascii_domain'] = '/(?:(?:[a-z0-9\-_]|'.$tmp['latin_accents'].')+\.)+(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].')/iu';
 
     # Used by the extractor for stricter t.co URL extraction:
-    $re['valid_tco_url'] = '/^https?:\/\/t\.co\/[a-z0-9]+/i';
+    $re['valid_tco_url'] = '/^https?:\/\/t\.co\/[a-z0-9]+/iu';
 
     # Used by the extractor to filter out unwanted URLs:
     $re['invalid_short_domain'] = '/^'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'$/iu';
