@@ -25,8 +25,4 @@
   <log type="plain" target="build/logs/plain.txt" />
 </logging>
 
-<php>
-  <const name="DATA" value="tests/data/twitter-text-conformance" />
-</php>
-
 </phpunit>
