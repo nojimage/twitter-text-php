@@ -221,7 +221,7 @@ abstract class Twitter_Regex {
     #      look-ahead capture here and don't append $after when we return.
     $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|RT:?)';
     $re['valid_mentions_or_lists'] = '/'.$tmp['valid_mention_preceding_chars'].'(['.$tmp['at_signs'].'])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
-    $re['valid_reply'] = '/^(?:['.$tmp['spaces'].'])*['.$tmp['at_signs'].']([a-z0-9_]{1,20})/iu';
+    $re['valid_reply'] = '/^(?:['.$tmp['spaces'].'])*['.$tmp['at_signs'].']([a-z0-9_]{1,20})(?=(.*|$))/iu';
     $re['end_mention_match'] = '/\A(?:['.$tmp['at_signs'].']|['.$tmp['latin_accents'].']|:\/\/)/iu';
 
     # URL related hash regex collection

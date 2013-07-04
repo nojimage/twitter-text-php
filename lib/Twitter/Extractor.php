@@ -132,8 +132,12 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The usernames replied to in a tweet.
    */
   public function extractRepliedUsernames() {
-    preg_match(self::$patterns['valid_reply'], $this->tweet, $matches);
-    return isset($matches[1]) ? $matches[1] : '';
+    $matched = preg_match(self::$patterns['valid_reply'], $this->tweet, $matches);
+    # Check username ending in
+    if ($matched && preg_match(self::$patterns['end_mention_match'], $matches[2])) {
+      $matched = false;
+    }
+    return $matched ? $matches[1] : null;
   }
 
   /**
