@@ -95,44 +95,13 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The URL elements in the tweet.
    */
   public function extractURLs() {
-    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches);
-    list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($matches, 8, array());
+    $urlsOnly = array();
+    $urlsWithIndices = $this->extractURLsWithIndices();
 
-    $urls = array();
-    for ($i = 0; $i < count($url); $i++) {
-      // If protocol is missing and domain contains non-ASCII characters,
-      // extract ASCII-only domains.
-      if (empty($protocol[$i])) {
-        $last_url = null;
-        $last_url_invalid_match = null;
-        if (preg_match(self::$patterns['valid_ascii_domain'], $domain[$i], $domainMatches)) {
-          $last_url = $domainMatches[0];
-          $last_url_invalid_match = preg_match(self::$patterns['invalid_short_domain'], $domainMatches[0]);
-          if (!$last_url_invalid_match) {
-            $urls[] = $url[$i];
-          }
-        }
-
-        // no ASCII-only domain found. Skip the entire URL
-        if (empty($last_url)) {
-          continue;
-        }
-
-        // $last_url only contains domain. Need to add path and query if they exist.
-        if (!empty($path[$i]) && $last_url_invalid_match) {
-          // last_url was not added. Add it to urls here.
-          $urls[] = str_replace($domain[$i], $last_url, $url[$i]);
-        }
-      } else {
-        // In the case of t.co URLs, don't allow additional path characters
-        if (preg_match(self::$patterns['valid_tco_url'], $url[$i], $tcoUrlMatches)) {
-          $url[$i] = $tcoUrlMatches[0];
-        }
-        $urls[] = $url[$i];
-      }
+    foreach ($urlsWithIndices as $urlWithIndex) {
+      $urlsOnly[] = $urlWithIndex['url'];
     }
-
-    return $urls;
+    return $urlsOnly;
   }
 
   /**
@@ -202,12 +171,74 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The URLs elements in the tweet.
    */
   public function extractURLsWithIndices() {
-    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[2];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('url'), 0);
-    # FIXME: Handle extraction of protocol-less domains.
-    # https://github.com/twitter/twitter-text-rb/commit/adb6e693b6d003819d615d19219c22d07f114a63
-    return $results;
+    if (strpos($this->tweet, '.') === false) {
+      return array();
+    }
+
+    $urls = array();
+    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+
+    foreach ($matches as $match) {
+      list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($match, 8, array(''));
+      $start_position = $all[1];
+      $end_position = $start_position + mb_strlen($url[0]);
+
+      $all = $all[0];
+      $before = $before[0];
+      $url = $url[0];
+      $protocol = $protocol[0];
+      $domain = $domain[0];
+      $port = $port[0];
+      $path = $path[0];
+      $query = $query[0];
+
+      // If protocol is missing and domain contains non-ASCII characters,
+      // extract ASCII-only domains.
+      if (empty($protocol)) {
+        $last_url = null;
+        $last_url_invalid_match = false;
+        $ascii_end_position = 0;
+
+        if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
+          $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
+          $ascii_start_position = mb_strpos($domain, $asciiDomain[0], $ascii_end_position);
+          $ascii_end_position = $ascii_start_position + mb_strlen($asciiDomain[0]);
+          $last_url = array(
+              'url' => $asciiDomain[0],
+              'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
+          );
+          $last_url_invalid_match = preg_match(self::$patterns['invalid_short_domain'], $asciiDomain[0]);
+          if (!$last_url_invalid_match) {
+            $urls[] = $last_url;
+          }
+        }
+
+        // no ASCII-only domain found. Skip the entire URL
+        if (empty($last_url)) {
+          continue;
+        }
+
+        // $last_url only contains domain. Need to add path and query if they exist.
+        if (!empty($path) && $last_url_invalid_match) {
+          // last_url was not added. Add it to urls here.
+          $last_url['url'] = preg_replace('/' . preg_quote($domain, '/') . '/u', $last_url['url'], $url);
+          $last_url['indices'][1] = $end_position;
+          $urls[] = $last_url;
+        }
+      } else {
+        // In the case of t.co URLs, don't allow additional path characters
+        if (preg_match(self::$patterns['valid_tco_url'], $url, $tcoUrlMatches)) {
+          $url = $tcoUrlMatches[0];
+          $end_position = $start_position + mb_strlen($url);
+        }
+        $urls[] = array(
+            'url' => $url,
+            'indices' => array($start_position, $end_position),
+        );
+      }
+    }
+
+    return $urls;
   }
 
   /**
