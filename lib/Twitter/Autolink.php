@@ -345,29 +345,6 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this;
   }
 
-  /**
-   * Adds links to all elements in the tweet.
-   *
-   * @param boolean $loose if false, using autoLinkEntities
-   * @return  string  The modified tweet.
-   */
-  public function addLinks($loose = false) {
-    if (!$loose) {
-      $entities = Twitter_Extractor::create($this->tweet)->extractEntitiesWithIndices();
-      return $this->autoLinkEntities($entities);
-    }
-
-    // loose mode
-    $original = $this->tweet;
-    $this->tweet = $this->addLinksToURLs();
-    $this->tweet = $this->addLinksToHashtags();
-    $this->tweet = $this->addLinksToCashtags();
-    $this->tweet = $this->addLinksToUsernamesAndLists();
-    $modified = $this->tweet;
-    $this->tweet = $original;
-    return $modified;
-  }
-
   public function autoLinkEntities($entities) {
     $text = '';
     $beginIndex = 0;
@@ -427,6 +404,29 @@ class Twitter_Autolink extends Twitter_Regex {
     $element = '$' . $entity['cashtag'];
     $url = $this->url_base_cash . $entity['cashtag'];
     return $this->wrapHash($url, $this->class_cash, $element);
+  }
+
+  /**
+   * Adds links to all elements in the tweet.
+   *
+   * @param boolean $loose if false, using autoLinkEntities
+   * @return  string  The modified tweet.
+   */
+  public function addLinks($loose = false) {
+    if (!$loose) {
+      $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractEntitiesWithIndices();
+      return $this->autoLinkEntities($entities);
+    }
+
+    // loose mode
+    $original = $this->tweet;
+    $this->tweet = $this->addLinksToURLs();
+    $this->tweet = $this->addLinksToHashtags();
+    $this->tweet = $this->addLinksToCashtags();
+    $this->tweet = $this->addLinksToUsernamesAndLists();
+    $modified = $this->tweet;
+    $this->tweet = $original;
+    return $modified;
   }
 
   /**
