@@ -75,8 +75,13 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The hashtag elements in the tweet.
    */
   public function extractHashtags() {
-    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches);
-    return $matches[3];
+    $hashtagsOnly = array();
+    $hashtagsWithIndices = $this->extractHashtagsWithIndices();
+
+    foreach ($hashtagsWithIndices as $hashtagWithIndex) {
+      $hashtagsOnly[] = $hashtagWithIndex['hashtag'];
+    }
+    return $hashtagsOnly;
   }
 
   /**
@@ -85,8 +90,13 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The cashtag elements in the tweet.
    */
   public function extractCashtags() {
-    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches);
-    return $matches[3];
+    $cashtagsOnly = array();
+    $cashtagsWithIndices = $this->extractCashtagsWithIndices();
+
+    foreach ($cashtagsWithIndices as $cashtagWithIndex) {
+      $cashtagsOnly[] = $cashtagWithIndex['cashtag'];
+    }
+    return $cashtagsOnly;
   }
 
   /**
