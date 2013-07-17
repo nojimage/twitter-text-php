@@ -348,9 +348,16 @@ class Twitter_Autolink extends Twitter_Regex {
   /**
    * Adds links to all elements in the tweet.
    *
+   * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
    */
-  public function addLinks() {
+  public function addLinks($loose = false) {
+    if (!$loose) {
+      $entities = Twitter_Extractor::create($this->tweet)->extractEntitiesWithIndices();
+      return $this->autoLinkEntities($entities);
+    }
+
+    // loose mode
     $original = $this->tweet;
     $this->tweet = $this->addLinksToURLs();
     $this->tweet = $this->addLinksToHashtags();
