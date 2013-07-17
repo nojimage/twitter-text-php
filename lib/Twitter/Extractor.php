@@ -122,17 +122,16 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The usernames elements in the tweet.
    */
   public function extractMentionedUsernames() {
-    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches);
-    list($all, $before, $at, $username, $after, $outer) = array_pad($matches, 6, '');
-    $usernames = array();
-    for ($i = 0; $i < count($username); $i ++) {
-      # Check username ending in
-      if (preg_match(self::$patterns['end_mention_match'], $outer[$i])) continue;
-      # If $after is not empty, there is an invalid character.
-      if (!empty($after[$i])) continue;
-      array_push($usernames, $username[$i]);
+    $usernamesOnly = array();
+    $mentionsWithIndices = $this->extractMentionedUsernamesOrListsWithIndices();
+
+    foreach ($mentionsWithIndices as $mentionWithIndex) {
+      if (empty($mentionWithIndex['screen_name'])) {
+        continue;
+      }
+      $usernamesOnly[] = $mentionWithIndex['screen_name'];
     }
-    return $usernames;
+    return $usernamesOnly;
   }
 
   /**
@@ -260,10 +259,15 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The username elements in the tweet.
    */
   public function extractMentionedUsernamesWithIndices() {
-    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[3];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('screen_name'), 1);
-    return $results;
+    $usernamesOnly = array();
+    $mentions = $this->extractMentionedUsernamesOrListsWithIndices();
+    foreach ($mentions as $mention) {
+      if (isset($mention['list_slug'])) {
+        unset($mention['list_slug']);
+      }
+      $usernamesOnly[] = $mention;
+    }
+    return $usernamesOnly;
   }
 
   /**
@@ -272,12 +276,34 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The username elements in the tweet.
    */
   public function extractMentionedUsernamesOrListsWithIndices() {
-    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = array();
-    for ($i = 0; $i < count($matches[3]); $i++) {
-      $results[] = array($matches[3][$i][0], $matches[4][$i][0], $matches[3][$i][1]);
+    if (!preg_match('/[@＠]/iu', $this->tweet)) {
+      return array();
     }
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('screen_name', 'list_slug'), 1);
+
+    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+    $results = array();
+
+    foreach ($matches as $match) {
+      list($all, $before, $at, $username, $list_slug, $outer) = array_pad($match, 6, array('', 0));
+      $start_position = $at[1] > 0 ? mb_strlen(substr($this->tweet, 0, $at[1])) : $at[1];
+      $end_position = $start_position + mb_strlen($at[0]) + mb_strlen($username[0]);
+      $entity = array(
+          'screen_name' => $username[0],
+          'list_slug' => $list_slug[0],
+          'indices' => array($start_position, $end_position),
+      );
+
+      if (preg_match(self::$patterns['end_mention_match'], $outer[0])) {
+        continue;
+      }
+
+      if (!empty($list_slug[0])) {
+        $entity['indices'][1] = $end_position + mb_strlen($list_slug[0]);
+      }
+
+      $results[] = $entity;
+    }
+
     return $results;
   }
 
