@@ -371,12 +371,14 @@ class Twitter_Autolink extends Twitter_Regex {
   }
 
   public function linkToUrl($entity) {
-    return $this->wrap($entity['url'], $this->class_url, $entity['url']);
+    $url = htmlspecialchars($entity['url'], ENT_QUOTES, 'UTF-8', false);
+    return $this->wrap($url, $this->class_url, $url);
   }
 
   public function linkToHashtag($entity) {
     $url = $this->url_base_hash . $entity['hashtag'];
-    $element = '#' . $entity['hashtag'];
+    $hash = mb_substr($this->tweet, $entity['indices'][0], 1);
+    $element = $hash . $entity['hashtag'];
     $class_hash = $this->class_hash;
     if (preg_match(self::$patterns['rtl_chars'], $element)) {
       $class_hash .= ' rtl';
@@ -401,7 +403,8 @@ class Twitter_Autolink extends Twitter_Regex {
   }
 
   public function linkToCashtag($entity) {
-    $element = '$' . $entity['cashtag'];
+    $doller = mb_substr($this->tweet, $entity['indices'][0], 1);
+    $element = $doller . $entity['cashtag'];
     $url = $this->url_base_cash . $entity['cashtag'];
     return $this->wrapHash($url, $this->class_cash, $element);
   }
@@ -432,9 +435,14 @@ class Twitter_Autolink extends Twitter_Regex {
   /**
    * Adds links to hashtag elements in the tweet.
    *
+   * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
    */
-  public function addLinksToHashtags() {
+  public function addLinksToHashtags($loose = false) {
+    if (!$loose) {
+      $entities = Twitter_Extractor::create($this->tweet)->extractHashtagsWithIndices();
+      return $this->autoLinkEntities($entities);
+    }
     return preg_replace_callback(
       self::$patterns['valid_hashtag'],
       array($this, '_addLinksToHashtags'),
@@ -444,9 +452,14 @@ class Twitter_Autolink extends Twitter_Regex {
   /**
    * Adds links to cashtag elements in the tweet.
    *
+   * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
    */
-  public function addLinksToCashtags() {
+  public function addLinksToCashtags($loose = false) {
+    if (!$loose) {
+      $entities = Twitter_Extractor::create($this->tweet)->extractCashtagsWithIndices();
+      return $this->autoLinkEntities($entities);
+    }
     return preg_replace_callback(
       self::$patterns['valid_cashtag'],
       array($this, '_addLinksToCashtags'),
@@ -456,9 +469,14 @@ class Twitter_Autolink extends Twitter_Regex {
   /**
    * Adds links to URL elements in the tweet.
    *
+   * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
    */
-  public function addLinksToURLs() {
+  public function addLinksToURLs($loose = false) {
+    if (!$loose) {
+      $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractURLsWithIndices();
+      return $this->autoLinkEntities($entities);
+    }
     return preg_replace_callback(
       self::$patterns['valid_url'],
       array($this, '_addLinksToURLs'),
@@ -468,9 +486,14 @@ class Twitter_Autolink extends Twitter_Regex {
   /**
    * Adds links to username/list elements in the tweet.
    *
+   * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
    */
-  public function addLinksToUsernamesAndLists() {
+  public function addLinksToUsernamesAndLists($loose = false) {
+    if (!$loose) {
+      $entities = Twitter_Extractor::create($this->tweet)->extractMentionedUsernamesOrListsWithIndices();
+      return $this->autoLinkEntities($entities);
+    }
     return preg_replace_callback(
       self::$patterns['valid_mentions_or_lists'],
       array($this, '_addLinksToUsernamesAndLists'),
