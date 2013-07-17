@@ -158,9 +158,10 @@ class Twitter_Extractor extends Twitter_Regex {
   /**
    * Extracts all the hashtags and the indices they occur at from the tweet.
    *
+   * @param boolean $checkUrlOverlap if true, check if extracted hashtags overlap URLs and remove overlapping ones
    * @return  array  The hashtag elements in the tweet.
    */
-  public function extractHashtagsWithIndices() {
+  public function extractHashtagsWithIndices($checkUrlOverlap = true) {
     if (!preg_match('/[#＃]/iu', $this->tweet)) {
       return array();
     }
@@ -181,6 +182,10 @@ class Twitter_Extractor extends Twitter_Regex {
           'hashtag' => $hashtag[0],
           'indices' => array($start_position, $end_position)
       );
+    }
+
+    if (!$checkUrlOverlap) {
+      return $tags;
     }
 
     # check url overlap
