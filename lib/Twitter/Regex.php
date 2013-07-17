@@ -268,7 +268,7 @@ abstract class Twitter_Regex {
 
     $tmp['valid_port_number'] = '[0-9]+';
 
-    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|'.$tmp['latin_accents'].']';
+    $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@'.$tmp['latin_accents'].']';
     # Allow URL paths to contain balanced parentheses:
     # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
     # 2. Used in IIS sessions, e.g. /S(dfd346)/
@@ -276,15 +276,14 @@ abstract class Twitter_Regex {
     # Valid end-of-path characters (so /foo. does not gobble the period).
     # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
     $tmp['valid_url_path_ending_chars'] = '(?:[a-z0-9=_#\/\+\-'.$tmp['latin_accents'].']|(?:'.$tmp['valid_url_balanced_parens'].'))';
-    # Allow @ in a URL, but only in the middle.  Catch things like http://example.com/@user/
     $tmp['valid_url_path'] = '(?:(?:'
       . $tmp['valid_general_url_path_chars'].'*(?:'
       . $tmp['valid_url_balanced_parens'].' '
       . $tmp['valid_general_url_path_chars'].'*)*'
-      . $tmp['valid_url_path_ending_chars'].')|(?:@'
+      . $tmp['valid_url_path_ending_chars'].')|(?:'
       . $tmp['valid_general_url_path_chars'].'+\/))';
 
-    $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|]';
+    $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
     $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
 
     $re['valid_url'] = '/(?:'                     # $1 Complete match (preg_match() already matches everything.)
