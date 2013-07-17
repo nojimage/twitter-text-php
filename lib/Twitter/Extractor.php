@@ -156,10 +156,41 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The hashtag elements in the tweet.
    */
   public function extractHashtagsWithIndices() {
-    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[3];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('hashtag'), 1);
-    return $results;
+    if (!preg_match('/[#＃]/iu', $this->tweet)) {
+      return array();
+    }
+
+    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+    $tags = array();
+
+    foreach ($matches as $match) {
+      list($all, $before, $hash, $hashtag, $outer) = array_pad($match, 3, array('', 0));
+      $start_position = $hash[1] > 0 ? mb_strlen(substr($this->tweet, 0, $hash[1])) : $hash[1];
+      $end_position = $start_position + mb_strlen($hash[0] . $hashtag[0]);
+
+      if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+        continue;
+      }
+
+      $tags[] = array(
+          'hashtag' => $hashtag[0],
+          'indices' => array($start_position, $end_position)
+      );
+    }
+
+    # check url overlap
+    $urls = $this->extractURLsWithIndices();
+    $entities = $this->removeOverlappingEntities(array_merge($tags, $urls));
+
+    $validTags = array();
+    foreach ($entities as $entity) {
+      if (empty($entity['hashtag'])) {
+        continue;
+      }
+      $validTags[] = $entity;
+    }
+
+    return $validTags;
   }
 
   /**
@@ -334,6 +365,41 @@ class Twitter_Extractor extends Twitter_Regex {
     }
   }
 
+  /**
+   * Remove overlapping entities.
+   * This returns a new array with no overlapping entities.
+   *
+   * @param array $entities
+   * @return array
+   */
+  protected function removeOverlappingEntities($entities) {
+    $result = array();
+    usort($entities, array($this, 'sortEntites'));
+
+    $prev = null;
+    foreach ($entities as $entity) {
+      if (isset($prev) && $entity['indices'][0] < $prev['indices'][1]) {
+        continue;
+      }
+      $prev = $entity;
+      $result[] = $entity;
+    }
+    return $result;
+  }
+
+  /**
+   * sort by entity start index
+   *
+   * @param array $a
+   * @param array $b
+   * @return int
+   */
+  protected function sortEntites($a, $b) {
+    if ($a['indices'][0] == $b['indices'][0]) {
+      return 0;
+    }
+     return ($a['indices'][0] < $b['indices'][0]) ? -1 : 1;
+  }
 }
 
 ################################################################################
