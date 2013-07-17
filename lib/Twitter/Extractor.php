@@ -199,10 +199,29 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The cashtag elements in the tweet.
    */
   public function extractCashtagsWithIndices() {
-    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[3];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('cashtag'), 1);
-    return $results;
+    if (!preg_match('/\$/iu', $this->tweet)) {
+      return array();
+    }
+
+    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+    $tags = array();
+
+    foreach ($matches as $match) {
+      list($all, $before, $dollar, $cash_text, $outer) = array_pad($match, 3, array('', 0));
+      $start_position = $dollar[1] > 0 ? mb_strlen(substr($this->tweet, 0, $dollar[1])) : $dollar[1];
+      $end_position = $start_position + mb_strlen($dollar[0] . $cash_text[0]);
+
+      if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+        continue;
+      }
+
+      $tags[] = array(
+          'cashtag' => $cash_text[0],
+          'indices' => array($start_position, $end_position)
+      );
+    }
+
+    return $tags;
   }
 
   /**
@@ -336,33 +355,6 @@ class Twitter_Extractor extends Twitter_Regex {
     }
 
     return $results;
-  }
-
-  /**
-   * Processes an array of matches and fixes up the offsets to support
-   * multibyte strings.  This needs to be done due to the state of unicode
-   * support in PHP.
-   *
-   * @param  string  $tweet    The tweet being matched.
-   * @param  array   $matches  The matches from the regular expression match.
-   * @param  array   $results  The extracted results from the matches.
-   * @param  array   $keys     The list of array keys to be added.
-   * @param  int     $tweak    An amount to adjust the end index by.
-   */
-  protected static function fixMultiByteIndices(&$tweet, &$matches, &$results, $keys, $tweak = 1) {
-    for ($i = 0; $i < count($results); $i++) {
-      # Add the array keys:
-      $results[$i] = array_combine(array_merge($keys, array('indices')), $results[$i]);
-      # Fix for PREG_OFFSET_CAPTURE returning byte offsets:
-      $start = mb_strlen(substr($tweet, 0, $matches[1][$i][1]));
-      $start += mb_strlen($matches[1][$i][0]);
-      # Determine the multibyte length of the matched string:
-      $length = array_sum(array_map(function ($key) use (&$results, $i) {
-        return mb_strlen($results[$i][$key]);
-      }, $keys));
-      # Ensure that the indices array contains the start and end index:
-      $results[$i]['indices'] = array($start, $start + $length + $tweak);
-    }
   }
 
   /**
