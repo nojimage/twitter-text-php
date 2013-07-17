@@ -8,6 +8,7 @@
  */
 
 require_once 'Regex.php';
+require_once 'Extractor.php';
 
 /**
  * Twitter Autolink Class
@@ -358,6 +359,67 @@ class Twitter_Autolink extends Twitter_Regex {
     $modified = $this->tweet;
     $this->tweet = $original;
     return $modified;
+  }
+
+  public function autoLinkEntities($entities) {
+    $text = '';
+    $beginIndex = 0;
+    foreach ($entities as $entity) {
+      if (isset($entity['screen_name'])) {
+        $text .= mb_substr($this->tweet, $beginIndex, $entity['indices'][0] - $beginIndex + 1);
+      } else {
+        $text .= mb_substr($this->tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
+      }
+
+      if (isset($entity['url'])) {
+        $text .= $this->linkToUrl($entity);
+      } elseif (isset($entity['hashtag'])) {
+        $text .= $this->linkToHashtag($entity);
+      } elseif (isset($entity['screen_name'])) {
+        $text .= $this->linkToMentionAndList($entity);
+      } elseif (isset($entity['cashtag'])) {
+        $text .= $this->linkToCashtag($entity);
+      }
+      $beginIndex = $entity['indices'][1];
+    }
+    $text .= mb_substr($this->tweet, $beginIndex, mb_strlen($this->tweet));
+    return $text;
+  }
+
+  public function linkToUrl($entity) {
+    return $this->wrap($entity['url'], $this->class_url, $entity['url']);
+  }
+
+  public function linkToHashtag($entity) {
+    $url = $this->url_base_hash . $entity['hashtag'];
+    $element = '#' . $entity['hashtag'];
+    $class_hash = $this->class_hash;
+    if (preg_match(self::$patterns['rtl_chars'], $element)) {
+      $class_hash .= ' rtl';
+    }
+    return $this->wrapHash($url, $class_hash, $element);
+  }
+
+  public function linkToMentionAndList($entity) {
+    if (!empty($entity['list_slug'])) {
+      # Replace the list and username
+      $element = $entity['screen_name'] . $entity['list_slug'];
+      $class = $this->class_list;
+      $url = $this->url_base_list . $element;
+    } else {
+      # Replace the username
+      $element = $entity['screen_name'];
+      $class = $this->class_user;
+      $url = $this->url_base_user . $element;
+    }
+
+    return $this->wrap($url, $class, $element);
+  }
+
+  public function linkToCashtag($entity) {
+    $element = '$' . $entity['cashtag'];
+    $url = $this->url_base_cash . $entity['cashtag'];
+    return $this->wrapHash($url, $this->class_cash, $element);
   }
 
   /**

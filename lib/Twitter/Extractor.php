@@ -75,6 +75,21 @@ class Twitter_Extractor extends Twitter_Regex {
   }
 
   /**
+   * Extract URLs, @mentions, lists and #hashtag from a given text/tweet.
+   *
+   * @return array list of extracted entities
+   */
+  public function extractEntitiesWithIndices() {
+    $entities = array();
+    $entities = array_merge($entities, $this->extractURLsWithIndices());
+    $entities = array_merge($entities, $this->extractHashtagsWithIndices(false));
+    $entities = array_merge($entities, $this->extractMentionedUsernamesOrListsWithIndices());
+    $entities = array_merge($entities, $this->extractCashtagsWithIndices());
+    $entities = $this->removeOverlappingEntities($entities);
+    return $entities;
+  }
+
+  /**
    * Extracts all the hashtags from the tweet.
    *
    * @return  array  The hashtag elements in the tweet.
