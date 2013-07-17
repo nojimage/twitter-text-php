@@ -30,54 +30,99 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider  addLinksToUsernamesProvider
+   * @dataProvider  autoLinkUsernamesProvider
    */
-  public function testAddLinksToUsernames($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text, false)
+  public function testAutolinkUsernames($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
-      ->addLinksToUsernamesAndLists();
+      ->autoLinkUsernamesAndLists();
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkUsernamesProvider
+   */
+  public function testAddLinksToUsernames($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->addLinksToUsernamesAndLists(true);
     $this->assertSame($expected, $linked, $description);
   }
 
   /**
    *
    */
-  public function addLinksToUsernamesProvider() {
+  public function autoLinkUsernamesProvider() {
     return $this->providerHelper('usernames');
   }
 
   /**
-   * @dataProvider  addLinksToListsProvider
+   * @dataProvider  autoLinkListsProvider
    */
-  public function testAddLinksToLists($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text, false)
+  public function testAutoLinkLists($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
-      ->addLinksToUsernamesAndLists();
+      ->autoLinkUsernamesAndLists();
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkListsProvider
+   */
+  public function testAddLinksToLists($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->addLinksToUsernamesAndLists(true);
     $this->assertSame($expected, $linked, $description);
   }
 
   /**
    *
    */
-  public function addLinksToListsProvider() {
+  public function autoLinkListsProvider() {
     return $this->providerHelper('lists');
   }
 
   /**
-   * @dataProvider  addLinksToHashtagsProvider
+   * @dataProvider  autoLinkHashtagsProvider
+   */
+  public function testAutoLinkHashtags($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->autoLinkHashtags();
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkHashtagsProvider
    */
   public function testAddLinksToHashtags($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text, false)
+    $linked = Twitter_Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -91,15 +136,30 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function addLinksToHashtagsProvider() {
+  public function autoLinkHashtagsProvider() {
     return $this->providerHelper('hashtags');
   }
 
   /**
-   * @dataProvider  addLinksToCashtagsProvider
+   * @dataProvider  autoLinkCashtagsProvider
+   */
+  public function testAutoLinkCashtags($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->autoLinkCashtags();
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkCashtagsProvider
    */
   public function testAddLinksToCashtags($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text, false)
+    $linked = Twitter_Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -113,37 +173,67 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function addLinksToCashtagsProvider() {
+  public function autoLinkCashtagsProvider() {
     return $this->providerHelper('cashtags');
   }
 
   /**
-   * @dataProvider  addLinksToURLsProvider
+   * @dataProvider  autoLinkURLsProvider
    */
-  public function testAddLinksToURLs($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text, false)
+  public function testAutoLinkURLs($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
-      ->addLinksToURLs();
+      ->autoLinkURLs();
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkURLsProvider
+   */
+  public function testAddLinksToURLs($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->addLinksToURLs(true);
     $this->assertSame($expected, $linked, $description);
   }
 
   /**
    *
    */
-  public function addLinksToURLsProvider() {
+  public function autoLinkURLsProvider() {
     return $this->providerHelper('urls');
   }
 
   /**
-   * @dataProvider  addLinksProvider
+   * @dataProvider  autoLinkProvider
+   */
+  public function testAutoLinks($description, $text, $expected) {
+    $linked = Twitter_Autolink::create($text)
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->autoLink();
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkProvider
    */
   public function testAddLinks($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text, false)
+    $linked = Twitter_Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -157,7 +247,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function addLinksProvider() {
+  public function autoLinkProvider() {
     return $this->providerHelper('all');
   }
 

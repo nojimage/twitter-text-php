@@ -369,6 +369,62 @@ class Twitter_Autolink extends Twitter_Regex {
     $text .= mb_substr($this->tweet, $beginIndex, mb_strlen($this->tweet));
     return $text;
   }
+  
+  /**
+   * Auto-link hashtags, URLs, usernames and lists.
+   *
+   * @return string that auto-link HTML added
+   */
+  public function autoLink() {
+    $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractEntitiesWithIndices();
+    return $this->autoLinkEntities($entities);
+  }
+
+  /**
+   * Auto-link the @username and @username/list references in the provided text. Links to @username references will
+   * have the usernameClass CSS classes added. Links to @username/list references will have the listClass CSS class
+   * added.
+   *
+   * @return string that auto-link HTML added
+   */
+  public function autoLinkUsernamesAndLists() {
+    $entities = Twitter_Extractor::create($this->tweet)->extractMentionedUsernamesOrListsWithIndices();
+    return $this->autoLinkEntities($entities);
+  }
+
+  /**
+   * Auto-link #hashtag references in the provided Tweet text. The #hashtag links will have the hashtagClass CSS class
+   * added.
+   *
+   * @return string that auto-link HTML added
+   */
+  public function autoLinkHashtags() {
+    $entities = Twitter_Extractor::create($this->tweet)->extractHashtagsWithIndices();
+    return $this->autoLinkEntities($entities);
+  }
+
+  /**
+   * Auto-link URLs in the Tweet text provided.
+   * <p/>
+   * This only auto-links URLs with protocol.
+   *
+   * @return string that auto-link HTML added
+   */
+  public function autoLinkURLs() {
+    $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractURLsWithIndices();
+    return $this->autoLinkEntities($entities);
+  }
+
+  /**
+   * Auto-link $cashtag references in the provided Tweet text. The $cashtag links will have the cashtagClass CSS class
+   * added.
+   *
+   * @return string that auto-link HTML added
+   */
+  public function autoLinkCashtags() {
+    $entities = Twitter_Extractor::create($this->tweet)->extractCashtagsWithIndices();
+    return $this->autoLinkEntities($entities);
+  }
 
   public function linkToUrl($entity) {
     $url = htmlspecialchars($entity['url'], ENT_QUOTES, 'UTF-8', false);
@@ -414,11 +470,11 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
+   * @deprecated since version 1.1.0
    */
   public function addLinks($loose = false) {
     if (!$loose) {
-      $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractEntitiesWithIndices();
-      return $this->autoLinkEntities($entities);
+      return $this->autoLink();
     }
 
     // loose mode
@@ -437,11 +493,11 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
+   * @deprecated since version 1.1.0
    */
   public function addLinksToHashtags($loose = false) {
     if (!$loose) {
-      $entities = Twitter_Extractor::create($this->tweet)->extractHashtagsWithIndices();
-      return $this->autoLinkEntities($entities);
+      return $this->autoLinkHashtags();
     }
     return preg_replace_callback(
       self::$patterns['valid_hashtag'],
@@ -454,11 +510,11 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
+   * @deprecated since version 1.1.0
    */
   public function addLinksToCashtags($loose = false) {
     if (!$loose) {
-      $entities = Twitter_Extractor::create($this->tweet)->extractCashtagsWithIndices();
-      return $this->autoLinkEntities($entities);
+      return $this->autoLinkCashtags();
     }
     return preg_replace_callback(
       self::$patterns['valid_cashtag'],
@@ -470,12 +526,12 @@ class Twitter_Autolink extends Twitter_Regex {
    * Adds links to URL elements in the tweet.
    *
    * @param boolean $loose if false, using autoLinkEntities
-   * @return  string  The modified tweet.
+   * @return  string  The modified tweet
+   * @deprecated since version 1.1.0.
    */
   public function addLinksToURLs($loose = false) {
     if (!$loose) {
-      $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractURLsWithIndices();
-      return $this->autoLinkEntities($entities);
+      return $this->autoLinkURLs();
     }
     return preg_replace_callback(
       self::$patterns['valid_url'],
@@ -488,11 +544,11 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param boolean $loose if false, using autoLinkEntities
    * @return  string  The modified tweet.
+   * @deprecated since version 1.1.0
    */
   public function addLinksToUsernamesAndLists($loose = false) {
     if (!$loose) {
-      $entities = Twitter_Extractor::create($this->tweet)->extractMentionedUsernamesOrListsWithIndices();
-      return $this->autoLinkEntities($entities);
+      return $this->autoLinkUsernamesAndLists();
     }
     return preg_replace_callback(
       self::$patterns['valid_mentions_or_lists'],
@@ -554,10 +610,9 @@ class Twitter_Autolink extends Twitter_Regex {
    * Callback used by the method that adds links to hashtags.
    *
    * @see  addLinksToHashtags()
-   *
    * @param  array  $matches  The regular expression matches.
-   *
    * @return  string  The link-wrapped hashtag.
+   * @deprecated since version 1.1.0
    */
   protected function _addLinksToHashtags($matches) {
     list($all, $before, $hash, $tag, $after) = array_pad($matches, 5, '');
@@ -581,10 +636,9 @@ class Twitter_Autolink extends Twitter_Regex {
    * Callback used by the method that adds links to cashtags.
    *
    * @see  addLinksToCashtags()
-   *
    * @param  array  $matches  The regular expression matches.
-   *
    * @return  string  The link-wrapped cashtag.
+   * @deprecated since version 1.1.0
    */
   protected function _addLinksToCashtags($matches) {
     list($all, $before, $cash, $tag, $after) = array_pad($matches, 5, '');
@@ -604,10 +658,9 @@ class Twitter_Autolink extends Twitter_Regex {
    * Callback used by the method that adds links to URLs.
    *
    * @see  addLinksToURLs()
-   *
    * @param  array  $matches  The regular expression matches.
-   *
    * @return  string  The link-wrapped URL.
+   * @deprecated since version 1.1.0
    */
   protected function _addLinksToURLs($matches) {
     list($all, $before, $url, $protocol, $domain, $path, $query) = array_pad($matches, 7, '');
@@ -620,10 +673,9 @@ class Twitter_Autolink extends Twitter_Regex {
    * Callback used by the method that adds links to username/list pairs.
    *
    * @see  addLinksToUsernamesAndLists()
-   *
    * @param  array  $matches  The regular expression matches.
-   *
    * @return  string  The link-wrapped username/list pair.
+   * @deprecated since version 1.1.0
    */
   protected function _addLinksToUsernamesAndLists($matches) {
     list($all, $before, $at, $username, $slash_listname, $after) = array_pad($matches, 6, '');
