@@ -47,12 +47,12 @@ repository:
 
     https://github.com/twitter/twitter-text-conformance
 
-    https://github.com/mustangostang/spyc/
+    https://github.com/symfony/Yaml
 
-Both requirements have already been added as a git submodule so you should just need to run:
+Both requirements already included in composer.json, so you should just need to run:
 
-    git submodule init
-    git submodule update
+    curl -s https://getcomposer.org/installer | php
+    php composer.phar install --dev
 
 There are a couple of options for testing conformance:
 
