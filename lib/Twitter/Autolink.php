@@ -536,9 +536,10 @@ class Twitter_Autolink extends Twitter_Regex {
    * @return  string  The tweet element with a link applied.
    */
   protected function wrapHash($url, $class, $element) {
+    $title = preg_replace('/＃/u', '#', $element);
     $link  = '<a';
     $link .= ' href="'.$url.'"';
-    $link .= ' title="'.$element.'"';
+    $link .= ' title="'.$title.'"';
     if ($class) $link .= ' class="'.$class.'"';
     $rel = array();
     if ($this->external) $rel[] = 'external';

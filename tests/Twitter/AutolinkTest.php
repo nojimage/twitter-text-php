@@ -84,16 +84,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
-      ->addLinksToHashtags();
-    # XXX: Need to re-order for hashtag as it is written out differently...
-    #      We use the same wrapping function for adding links for all methods.
-    $linked = preg_replace(array(
-      '!<a class="([^"]*)" href="([^"]*)">([^<]*)</a>!',
-      '!title="＃([^"]+)"!'
-    ), array(
-      '<a href="$2" title="$3" class="$1">$3</a>',
-      'title="#$1"'
-    ), $linked);
+      ->addLinksToHashtags(true);
     $this->assertSame($expected, $linked, $description);
   }
 
@@ -115,14 +106,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
       ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
-      ->addLinksToCashtags();
-    $linked = preg_replace(array(
-      '!<a class="([^"]*)" href="([^"]*)">([^<]*)</a>!',
-      '!title="＃([^"]+)"!'
-    ), array(
-      '<a href="$2" title="$3" class="$1">$3</a>',
-      'title="#$1"'
-    ), $linked);
+      ->addLinksToCashtags(true);
     $this->assertSame($expected, $linked, $description);
   }
 
