@@ -228,25 +228,43 @@ abstract class Twitter_Regex {
 
     $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_'.$tmp['at_signs'].'\$'.$tmp['hash_signs'].'\.'.$tmp['invalid_characters'].']|^)';
 
-    $tmp['domain_valid_chars'] = '[^[:punct:][:space:][:blank:][:cntrl:]'.$tmp['invalid_characters'].$tmp['spaces'].']';
+    $tmp['domain_valid_chars'] = '[0-9a-z'.$tmp['latin_accents'].']';
     $tmp['valid_subdomain'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[_-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
     $tmp['valid_domain_name'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
+    $tmp['domain_valid_unicode_chars'] = '[^[:punct:][:space:][:blank:][:cntrl:]'.$tmp['invalid_characters'].$tmp['spaces'].']';
 
     $tmp['valid_gTLD'] = '(?:(?:aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx)(?=[^0-9a-z]|$))';
     $tmp['valid_ccTLD'] = '(?:(?:ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)(?=[^0-9a-z]|$))';
     $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
 
-    $tmp['valid_domain'] = '(?:'.$tmp['valid_subdomain'].'*'.$tmp['valid_domain_name']
-      .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].'))';
-
+    $tmp['valid_domain'] = '(?:'                                                // subdomains + domain + TLD
+        .$tmp['valid_subdomain'].'+'.$tmp['valid_domain_name']                  // e.g. www.twitter.com, foo.co.jp, bar.co.uk
+        .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].'))'
+      .'|(?:'                                                                   // domain + gTLD
+        .$tmp['valid_domain_name']                                              // e.g. twitter.com
+        .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_punycode'].')'
+      .')'
+      .'|(?:(?:(?<=http:\/\/)|(?<=https:\/\/))'
+        .'(?:'
+          .'(?:'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].')'              // protocol + domain + ccTLD
+          .'|(?:'                                                               // protocol + unicode domain + TLD
+            .$tmp['domain_valid_unicode_chars'].'+\.'
+            .'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].')'
+          .')'
+        .')'
+      .')'
+      .'|(?:'                                                                   // domain + ccTLD + '/'
+        .$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'(?=\/)'                  // e.g. t.co/
+      .')';
     # Used by the extractor:
-    $re['valid_ascii_domain'] = '/(?:(?:[a-z0-9\-_]|'.$tmp['latin_accents'].')+\.)+(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].')/iu';
+    $re['valid_ascii_domain'] = '/'.$tmp['valid_subdomain'].'*'.$tmp['valid_domain_name'].'(?:'.$tmp['valid_gTLD'].'|'.$tmp['valid_ccTLD'].'|'.$tmp['valid_punycode'].')/iu';
 
     # Used by the extractor for stricter t.co URL extraction:
     $re['valid_tco_url'] = '/^https?:\/\/t\.co\/[a-z0-9]+/iu';
 
     # Used by the extractor to filter out unwanted URLs:
-    $re['invalid_short_domain'] = '/^'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'$/iu';
+    $re['invalid_short_domain'] = '/\A'.$tmp['valid_domain_name'].$tmp['valid_ccTLD'].'\Z/iu';
+    $re['invalid_url_without_protocol_match_begin'] = '/[-_.\/]/iu';
 
     $tmp['valid_port_number'] = '[0-9]+';
 

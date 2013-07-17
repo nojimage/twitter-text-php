@@ -180,7 +180,7 @@ class Twitter_Extractor extends Twitter_Regex {
 
     foreach ($matches as $match) {
       list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($match, 8, array(''));
-      $start_position = $all[1];
+      $start_position = $url[1] > 0 ? mb_strlen(substr($this->tweet, 0, $url[1])) : $url[1];
       $end_position = $start_position + mb_strlen($url[0]);
 
       $all = $all[0];
@@ -198,6 +198,9 @@ class Twitter_Extractor extends Twitter_Regex {
         $last_url = null;
         $last_url_invalid_match = false;
         $ascii_end_position = 0;
+        if (preg_match(self::$patterns['invalid_url_without_protocol_match_begin'], $before)) {
+          continue;
+        }
 
         if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
           $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
