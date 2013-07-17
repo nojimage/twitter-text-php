@@ -28,6 +28,11 @@ require_once 'Regex.php';
 class Twitter_Extractor extends Twitter_Regex {
 
   /**
+   * @var boolean
+   */
+  protected $extractURLWithoutProtocol = true;
+
+  /**
    * Provides fluent method chaining.
    *
    * @param  string  $tweet        The tweet to be converted.
@@ -230,7 +235,8 @@ class Twitter_Extractor extends Twitter_Regex {
    * @return  array  The URLs elements in the tweet.
    */
   public function extractURLsWithIndices() {
-    if (strpos($this->tweet, '.') === false) {
+    $needle = $this->extractURLWithoutProtocol() ? '.' : ':';
+    if (strpos($this->tweet, $needle) === false) {
       return array();
     }
 
@@ -254,6 +260,11 @@ class Twitter_Extractor extends Twitter_Regex {
       // If protocol is missing and domain contains non-ASCII characters,
       // extract ASCII-only domains.
       if (empty($protocol)) {
+        if (!$this->extractURLWithoutProtocol
+          || preg_match(self::$patterns['invalid_url_without_protocol_match_begin'], $before)) {
+          continue;
+        }
+
         $last_url = null;
         $last_url_invalid_match = false;
         $ascii_end_position = 0;
@@ -355,6 +366,20 @@ class Twitter_Extractor extends Twitter_Regex {
     }
 
     return $results;
+  }
+
+  /**
+   * setter/getter for extractURLWithoutProtocol
+   *
+   * @param boolean $flag
+   * @return \Twitter_Extractor
+   */
+  public function extractURLWithoutProtocol($flag = null) {
+    if (is_null($flag)) {
+      return $this->extractURLWithoutProtocol;
+    }
+    $this->extractURLWithoutProtocol = (bool)$flag;
+    return $this;
   }
 
   /**

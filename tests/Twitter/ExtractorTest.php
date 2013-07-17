@@ -179,6 +179,15 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
     return $this->providerHelper('mentions_or_lists_with_indices');
   }
 
+  public function testExtractURLsWithoutProtocol() {
+    $extracted = Twitter_Extractor::create('text: example.com http://foobar.example.com')->extractUrlWithoutProtocol(false)->extractURLs();
+    $this->assertSame(array('http://foobar.example.com'), $extracted, 'Unextract url without protocol');
+  }
+
+  public function testExtractURLsWithIndicesWithoutProtocol() {
+    $extracted = Twitter_Extractor::create('text: example.com')->extractUrlWithoutProtocol(false)->extractURLsWithIndices();
+    $this->assertSame(array(), $extracted, 'Unextract url without protocol');
+  }
 }
 
 ################################################################################
