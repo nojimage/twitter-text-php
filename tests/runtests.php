@@ -206,12 +206,12 @@ $data = Yaml::parse($DATA.'/autolink.yml');
 
 # Define the functions to be tested.
 $functions = array(
-  'usernames' => 'addLinksToUsernamesAndLists',
-  'lists'     => 'addLinksToUsernamesAndLists',
-  'hashtags'  => 'addLinksToHashtags',
-  'cashtags'  => 'addLinksToCashtags',
-  'urls'      => 'addLinksToURLs',
-  'all'       => 'addLinks',
+  'usernames' => 'autoLinkUsernamesAndLists',
+  'lists'     => 'autoLinkUsernamesAndLists',
+  'hashtags'  => 'autoLinkHashtags',
+  'cashtags'  => 'autoLinkCashtags',
+  'urls'      => 'autoLinkURLs',
+  'all'       => 'autoLink',
 );
 
 # Perform testing.
@@ -238,17 +238,6 @@ foreach ($data['tests'] as $group => $tests) {
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
       ->$function();
-    # XXX: Need to re-order for hashtag as it is written out differently...
-    #      We use the same wrapping function for adding links for all methods.
-    if ($group == 'hashtags') {
-      $linked = preg_replace(array(
-        '!<a class="([^"]*)" href="([^"]*)">([^<]*)</a>!',
-        '!title="＃([^"]+)"!'
-      ), array(
-        '<a href="$2" title="$3" class="$1">$3</a>',
-        'title="#$1"'
-      ), $linked);
-    }
     if ($test['expected'] == $linked) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
