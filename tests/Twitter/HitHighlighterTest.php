@@ -30,7 +30,15 @@ class Twitter_HitHighlighterTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider  addHitHighlightingProvider
+   * @dataProvider  highlightProvider
+   */
+  public function testHighlight($description, $text, $hits, $expected) {
+    $extracted = Twitter_HitHighlighter::create($text)->highlight($hits);
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  highlightProvider
    */
   public function testAddHitHighlighting($description, $text, $hits, $expected) {
     $extracted = Twitter_HitHighlighter::create($text)->addHitHighlighting($hits);
@@ -40,7 +48,7 @@ class Twitter_HitHighlighterTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function addHitHighlightingProvider() {
+  public function highlightProvider() {
     return array_merge($this->providerHelper('plain_text'), $this->providerHelper('with_links'));
   }
 

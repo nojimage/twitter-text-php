@@ -277,8 +277,8 @@ $data = Yaml::parse($DATA.'/hit_highlighting.yml');
 
 # Define the functions to be tested.
 $functions = array(
-  'plain_text' => 'addHitHighlighting',
-  'with_links' => 'addHitHighlighting',
+  'plain_text' => 'highlight',
+  'with_links' => 'highlight',
 );
 
 # Perform testing.

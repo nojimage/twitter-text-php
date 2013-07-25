@@ -98,7 +98,7 @@ class Twitter_HitHighlighter extends Twitter_Regex {
    *
    * @return  string  The hit highlighted tweet.
    */
-  public function addHitHighlighting(array $hits) {
+  public function highlight(array $hits) {
     if (empty($hits)) return $this->tweet;
     $tweet = '';
     $tags = array('<'.$this->tag.'>', '</'.$this->tag.'>');
@@ -160,6 +160,19 @@ class Twitter_HitHighlighter extends Twitter_Regex {
       }
     }
     return $tweet;
+  }
+
+  /**
+   * Hit highlights the tweet.
+   *
+   * @param  array  $hits  An array containing the start and end index pairs
+   *                       for the highlighting.
+   *
+   * @return  string  The hit highlighted tweet.
+   * @deprecated since version 1.1.0
+   */
+  public function addHitHighlighting(array $hits) {
+    return $this->highlight($hits);
   }
 
   /**
