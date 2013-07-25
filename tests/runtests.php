@@ -141,13 +141,13 @@ $functions = array(
   'hashtags' => 'extractHashtags',
   'cashtags' => 'extractCashtags',
   'urls'     => 'extractURLs',
-  'mentions' => 'extractMentionedUsernames',
-  'replies'  => 'extractRepliedUsernames',
+  'mentions' => 'extractMentionedScreennames',
+  'replies'  => 'extractReplyScreenname',
   'hashtags_with_indices' => 'extractHashtagsWithIndices',
   'cashtags_with_indices' => 'extractCashtagsWithIndices',
   'urls_with_indices'     => 'extractURLsWithIndices',
-  'mentions_with_indices' => 'extractMentionedUsernamesWithIndices',
-  'mentions_or_lists_with_indices' => 'extractMentionedUsernamesOrListsWithIndices',
+  'mentions_with_indices' => 'extractMentionedScreennamesWithIndices',
+  'mentions_or_lists_with_indices' => 'extractMentionsOrListsWithIndices',
 );
 
 # Perform testing.

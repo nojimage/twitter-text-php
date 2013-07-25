@@ -30,7 +30,15 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider  extractMentionedUsernamesProvider
+   * @dataProvider  extractMentionedScreennamesProvider
+   */
+  public function testExtractMentionedScreennames($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractMentionedScreennames();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractMentionedScreennamesProvider
    */
   public function testExtractMentionedUsernames($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractMentionedUsernames();
@@ -40,12 +48,20 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractMentionedUsernamesProvider() {
+  public function extractMentionedScreennamesProvider() {
     return $this->providerHelper('mentions');
   }
 
   /**
-   * @dataProvider  extractRepliedUsernamesProvider
+   * @dataProvider  extractReplyScreennameProvider
+   */
+  public function testExtractReplyScreenname($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractReplyScreenname();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractReplyScreennameProvider
    */
   public function testExtractRepliedUsernames($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractRepliedUsernames();
@@ -55,7 +71,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractRepliedUsernamesProvider() {
+  public function extractReplyScreennameProvider() {
     return $this->providerHelper('replies');
   }
 
@@ -150,7 +166,15 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider  extractMentionedUsernamesWithIndicesProvider
+   * @dataProvider  extractMentionedScreennamesWithIndicesProvider
+   */
+  public function testExtractMentionedScreennamesWithIndices($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractMentionedScreennamesWithIndices();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractMentionedScreennamesWithIndicesProvider
    */
   public function testExtractMentionedUsernamesWithIndices($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractMentionedUsernamesWithIndices();
@@ -160,12 +184,20 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractMentionedUsernamesWithIndicesProvider() {
+  public function extractMentionedScreennamesWithIndicesProvider() {
     return $this->providerHelper('mentions_with_indices');
   }
 
   /**
-   * @dataProvider  extractMentionedUsernamesOrListsWithIndicesProvider
+   * @dataProvider  extractMentionsOrListsWithIndicesProvider
+   */
+  public function testExtractMentionsOrListsWithIndices($description, $text, $expected) {
+    $extracted = Twitter_Extractor::create($text)->extractMentionsOrListsWithIndices();
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractMentionsOrListsWithIndicesProvider
    */
   public function testExtractMentionedUsernamesOrListsWithIndices($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractMentionedUsernamesOrListsWithIndices();
@@ -175,7 +207,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractMentionedUsernamesOrListsWithIndicesProvider() {
+  public function extractMentionsOrListsWithIndicesProvider() {
     return $this->providerHelper('mentions_or_lists_with_indices');
   }
 

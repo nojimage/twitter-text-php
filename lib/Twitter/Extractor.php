@@ -141,7 +141,7 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * @return  array  The usernames elements in the tweet.
    */
-  public function extractMentionedUsernames() {
+  public function extractMentionedScreennames() {
     $usernamesOnly = array();
     $mentionsWithIndices = $this->extractMentionedUsernamesOrListsWithIndices();
 
@@ -155,19 +155,42 @@ class Twitter_Extractor extends Twitter_Regex {
   }
 
   /**
+   * Extract all the usernames from the tweet.
+   *
+   * A mention is an occurrence of a username anywhere in a tweet.
+   *
+   * @return  array  The usernames elements in the tweet.
+   * @deprecated since version 1.1.0
+   */
+  public function extractMentionedUsernames() {
+    return $this->extractMentionedScreennames();
+  }
+
+  /**
    * Extract all the usernames replied to from the tweet.
    *
    * A reply is an occurrence of a username at the beginning of a tweet.
    *
    * @return  array  The usernames replied to in a tweet.
    */
-  public function extractRepliedUsernames() {
+  public function extractReplyScreenname() {
     $matched = preg_match(self::$patterns['valid_reply'], $this->tweet, $matches);
     # Check username ending in
     if ($matched && preg_match(self::$patterns['end_mention_match'], $matches[2])) {
       $matched = false;
     }
     return $matched ? $matches[1] : null;
+  }
+  /**
+   * Extract all the usernames replied to from the tweet.
+   *
+   * A reply is an occurrence of a username at the beginning of a tweet.
+   *
+   * @return  array  The usernames replied to in a tweet.
+   * @deprecated since version 1.1.0
+   */
+  public function extractRepliedUsernames() {
+    return $this->extractReplyScreenname();
   }
 
   /**
@@ -339,7 +362,7 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * @return  array  The username elements in the tweet.
    */
-  public function extractMentionedUsernamesWithIndices() {
+  public function extractMentionedScreennamesWithIndices() {
     $usernamesOnly = array();
     $mentions = $this->extractMentionedUsernamesOrListsWithIndices();
     foreach ($mentions as $mention) {
@@ -355,8 +378,18 @@ class Twitter_Extractor extends Twitter_Regex {
    * Extracts all the usernames and the indices they occur at from the tweet.
    *
    * @return  array  The username elements in the tweet.
+   * @deprecated since version 1.1.0
    */
-  public function extractMentionedUsernamesOrListsWithIndices() {
+  public function extractMentionedUsernamesWithIndices() {
+    return $this->extractMentionedScreennamesWithIndices();
+  }
+
+  /**
+   * Extracts all the usernames and the indices they occur at from the tweet.
+   *
+   * @return  array  The username elements in the tweet.
+   */
+  public function extractMentionsOrListsWithIndices() {
     if (!preg_match('/[@＠]/iu', $this->tweet)) {
       return array();
     }
@@ -386,6 +419,16 @@ class Twitter_Extractor extends Twitter_Regex {
     }
 
     return $results;
+  }
+
+  /**
+   * Extracts all the usernames and the indices they occur at from the tweet.
+   *
+   * @return  array  The username elements in the tweet.
+   * @deprecated since version 1.1.0
+   */
+  public function extractMentionedUsernamesOrListsWithIndices() {
+    return $this->extractMentionsOrListsWithIndices();
   }
 
   /**
