@@ -583,40 +583,63 @@ class Twitter_Autolink extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $url = $this->url_base_hash . $entity['hashtag'];
+
+    $attributes = array();
+    $class = array();
     $hash = mb_substr($tweet, $entity['indices'][0], 1);
-    $element = $hash . $entity['hashtag'];
-    $class_hash = $this->class_hash;
-    if (preg_match(self::$patterns['rtl_chars'], $element)) {
-      $class_hash .= ' rtl';
+    $linkText = $hash . $entity['hashtag'];
+
+    $attributes['href'] = $this->url_base_hash . $entity['hashtag'];
+    $attributes['title'] = '#' . $entity['hashtag'];
+    if (!empty($this->class_hash)) {
+      $class[] = $this->class_hash;
     }
-    return $this->wrapHash($url, $class_hash, $element);
+    if (preg_match(self::$patterns['rtl_chars'], $linkText)) {
+      $class[] = 'rtl';
+    }
+    if (!empty($class)) {
+      $attributes['class'] = join(' ', $class);
+    }
+
+    return $this->linkToText($entity, $linkText, $attributes);
   }
 
   public function linkToMentionAndList($entity) {
+    $attributes = array();
+
     if (!empty($entity['list_slug'])) {
       # Replace the list and username
-      $element = $entity['screen_name'] . $entity['list_slug'];
+      $linkText = $entity['screen_name'] . $entity['list_slug'];
       $class = $this->class_list;
-      $url = $this->url_base_list . $element;
+      $url = $this->url_base_list . $linkText;
     } else {
       # Replace the username
-      $element = $entity['screen_name'];
+      $linkText = $entity['screen_name'];
       $class = $this->class_user;
-      $url = $this->url_base_user . $element;
+      $url = $this->url_base_user . $linkText;
     }
+    if (!empty($class)) {
+      $attributes['class'] = $class;
+    }
+    $attributes['href'] = $url;
 
-    return $this->wrap($url, $class, $element);
+    return $this->linkToText($entity, $linkText, $attributes);
   }
 
   public function linkToCashtag($entity, $tweet = null) {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
+    $attributes = array();
     $doller = mb_substr($tweet, $entity['indices'][0], 1);
-    $element = $doller . $entity['cashtag'];
-    $url = $this->url_base_cash . $entity['cashtag'];
-    return $this->wrapHash($url, $this->class_cash, $element);
+    $linkText = $doller . $entity['cashtag'];
+    $attributes['href'] = $this->url_base_cash . $entity['cashtag'];
+    $attributes['title'] = $linkText;
+    if (!empty($this->class_cash)) {
+      $attributes['class'] = $this->class_cash;
+    }
+
+    return $this->linkToText($entity, $linkText, $attributes);
   }
 
   /**
