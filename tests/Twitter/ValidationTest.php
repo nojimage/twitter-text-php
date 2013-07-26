@@ -48,7 +48,15 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider  validateTweetProvider
+   * @dataProvider  isValidTweetTextProvider
+   */
+  public function testIsValidTweetText($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->isValidTweetText();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   * @dataProvider  isValidTweetTextProvider
    */
   public function testValidateTweet($description, $text, $expected) {
     $validated = Twitter_Validation::create($text)->validateTweet();
@@ -58,12 +66,20 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function validateTweetProvider() {
+  public function isValidTweetTextProvider() {
     return $this->providerHelper('tweets');
   }
 
   /**
-   * @dataProvider  validateUsernameProvider
+   * @dataProvider  isValidUsernameProvider
+   */
+  public function testIsValidUsername($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->isValidUsername();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   * @dataProvider  isValidUsernameProvider
    */
   public function testValidateUsername($description, $text, $expected) {
     $validated = Twitter_Validation::create($text)->validateUsername();
@@ -73,12 +89,20 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function validateUsernameProvider() {
+  public function isValidUsernameProvider() {
     return $this->providerHelper('usernames');
   }
 
   /**
-   * @dataProvider  validateListProvider
+   * @dataProvider  isValidListProvider
+   */
+  public function testIsValidList($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->isValidList();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   * @dataProvider  isValidListProvider
    */
   public function testValidateList($description, $text, $expected) {
     $validated = Twitter_Validation::create($text)->validateList();
@@ -88,12 +112,20 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function validateListProvider() {
+  public function isValidListProvider() {
     return $this->providerHelper('lists');
   }
 
   /**
-   * @dataProvider  validateHashtagProvider
+   * @dataProvider  isValidHashtagProvider
+   */
+  public function testIsValidHashtag($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->isValidHashtag();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   * @dataProvider  isValidHashtagProvider
    */
   public function testValidateHashtag($description, $text, $expected) {
     $validated = Twitter_Validation::create($text)->validateHashtag();
@@ -103,12 +135,20 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function validateHashtagProvider() {
+  public function isValidHashtagProvider() {
     return $this->providerHelper('hashtags');
   }
 
   /**
-   * @dataProvider  validateURLProvider
+   * @dataProvider  isValidURLProvider
+   */
+  public function testIsValidURL($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->isValidURL();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   * @dataProvider  isValidURLProvider
    */
   public function testValidateURL($description, $text, $expected) {
     $validated = Twitter_Validation::create($text)->validateURL();
@@ -118,27 +158,35 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function validateURLProvider() {
+  public function isValidURLProvider() {
     return $this->providerHelper('urls');
   }
 
   /**
-   * @dataProvider  validateURLWithoutProtocolProvider
+   * @dataProvider  isValidURLWithoutProtocolProvider
    */
-  public function testValidateURLWithoutProtocol($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->validateURL(true, false);
+  public function testIsValidURLWithoutProtocol($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->isValidURL(true, false);
     $this->assertSame($expected, $validated, $description);
   }
 
   /**
    *
    */
-  public function validateURLWithoutProtocolProvider() {
+  public function isValidURLWithoutProtocolProvider() {
     return $this->providerHelper('urls_without_protocol');
   }
 
   /**
-   * @dataProvider  getLengthProvider
+   * @dataProvider  getTweetLengthProvider
+   */
+  public function testGetTweetLength($description, $text, $expected) {
+    $validated = Twitter_Validation::create($text)->getTweetLength();
+    $this->assertSame($expected, $validated, $description);
+  }
+
+  /**
+   * @dataProvider  getTweetLengthProvider
    */
   public function testGetLength($description, $text, $expected) {
     $validated = Twitter_Validation::create($text)->getLength();
@@ -148,7 +196,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function getLengthProvider() {
+  public function getTweetLengthProvider() {
     return $this->providerHelper('lengths');
   }
 

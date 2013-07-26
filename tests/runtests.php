@@ -337,13 +337,13 @@ $data = Yaml::parse($DATA.'/validate.yml');
 
 # Define the functions to be tested.
 $functions = array(
-  'tweets' => 'validateTweet',
-  'usernames' => 'validateUsername',
-  'lists' => 'validateList',
-  'hashtags' => 'validateHashtag',
-  'urls' => 'validateURL',
-  'urls_without_protocol' => 'validateURL',
-  'lengths' => 'getLength',
+  'tweets' => 'isValidTweetText',
+  'usernames' => 'isValidUsername',
+  'lists' => 'isValidList',
+  'hashtags' => 'isValidHashtag',
+  'urls' => 'isValidURL',
+  'urls_without_protocol' => 'isValidURL',
+  'lengths' => 'getTweetLength',
 );
 
 # Perform testing.

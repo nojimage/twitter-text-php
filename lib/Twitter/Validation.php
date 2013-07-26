@@ -145,7 +145,7 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @return  boolean  Whether the tweet is valid.
    */
-  public function validateTweet() {
+  public function isValidTweetText() {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     if ($length > self::MAX_LENGTH) return false;
@@ -154,11 +154,21 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a tweet is valid.
+   *
+   * @return  boolean  Whether the tweet is valid.
+   * @deprecated since version 1.1.0
+   */
+  public function validateTweet() {
+    return $this->isValidTweetText();
+  }
+
+  /**
    * Check whether a username is valid.
    *
    * @return  boolean  Whether the username is valid.
    */
-  public function validateUsername() {
+  public function isValidUsername() {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     $extracted = Twitter_Extractor::create($this->tweet)->extractMentionedUsernames();
@@ -166,11 +176,21 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a username is valid.
+   *
+   * @return  boolean  Whether the username is valid.
+   * @deprecated since version 1.1.0
+   */
+  public function validateUsername() {
+    return $this->isValidUsername();
+  }
+
+  /**
    * Check whether a list is valid.
    *
    * @return  boolean  Whether the list is valid.
    */
-  public function validateList() {
+  public function isValidList() {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     preg_match(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches);
@@ -179,15 +199,35 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a list is valid.
+   *
+   * @return  boolean  Whether the list is valid.
+   * @deprecated since version 1.1.0
+   */
+  public function validateList() {
+    return $this->isValidList();
+  }
+
+  /**
    * Check whether a hashtag is valid.
    *
    * @return  boolean  Whether the hashtag is valid.
    */
-  public function validateHashtag() {
+  public function isValidHashtag() {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     $extracted = Twitter_Extractor::create($this->tweet)->extractHashtags();
     return count($extracted) === 1 && $extracted[0] === substr($this->tweet, 1);
+  }
+
+  /**
+   * Check whether a hashtag is valid.
+   *
+   * @return  boolean  Whether the hashtag is valid.
+   * @deprecated since version 1.1.0
+   */
+  public function validateHashtag() {
+    return $this->isValidHashtag();
   }
 
   /**
@@ -198,7 +238,7 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @return  boolean  Whether the URL is valid.
    */
-  public function validateURL($unicode_domains = true, $require_protocol = true) {
+  public function isValidURL($unicode_domains = true, $require_protocol = true) {
     $length = mb_strlen($this->tweet);
     if (!$this->tweet || !$length) return false;
     preg_match(self::$patterns['validate_url_unencoded'], $this->tweet, $matches);
@@ -221,18 +261,41 @@ class Twitter_Validation extends Twitter_Regex {
   }
 
   /**
+   * Check whether a URL is valid.
+   *
+   * @param  boolean  $unicode_domains   Consider the domain to be unicode.
+   * @param  boolean  $require_protocol  Require a protocol for valid domain?
+   *
+   * @return  boolean  Whether the URL is valid.
+   * @deprecated since version 1.1.0
+   */
+  public function validateURL($unicode_domains = true, $require_protocol = true) {
+    return $this->isValidURL($unicode_domains, $require_protocol);
+  }
+
+  /**
    * Determines the length of a tweet.  Takes shortening of URLs into account.
    *
    * @return  int  the length of a tweet.
    */
-  public function getLength() {
-    $length = mb_strlen($this->tweet);
+  public function getTweetLength() {
+     $length = mb_strlen($this->tweet);
     $urls_with_indices = Twitter_Extractor::create($this->tweet)->extractURLsWithIndices();
     foreach ($urls_with_indices as $x) {
       $length += $x['indices'][0] - $x['indices'][1];
       $length += stripos($x['url'], 'https://') === 0 ? $this->short_url_length_https : $this->short_url_length;
     }
     return $length;
+  }
+
+  /**
+   * Determines the length of a tweet.  Takes shortening of URLs into account.
+   *
+   * @return  int  the length of a tweet.
+   * @deprecated since version 1.1.0
+   */
+  public function getLength() {
+    return $this->getTweetLength();
   }
 
   /**
