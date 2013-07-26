@@ -122,6 +122,12 @@ class Twitter_Autolink extends Twitter_Regex {
   protected $target = '_blank';
 
   /**
+   *
+   * @var Twitter_Extractor
+   */
+  protected $extractor = null;
+
+  /**
    * Provides fluent method chaining.
    *
    * @param  string  $tweet        The tweet to be converted.
@@ -157,6 +163,7 @@ class Twitter_Autolink extends Twitter_Regex {
     } else {
       parent::__construct($tweet);
     }
+    $this->extractor = Twitter_Extractor::create();
   }
 
   /**
@@ -384,7 +391,7 @@ class Twitter_Autolink extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $entities = Twitter_Extractor::create($tweet)->extractURLWithoutProtocol(false)->extractEntitiesWithIndices();
+    $entities = $this->extractor->extractURLWithoutProtocol(false)->extractEntitiesWithIndices($tweet);
     return $this->autoLinkEntities($tweet, $entities);
   }
 
@@ -399,7 +406,7 @@ class Twitter_Autolink extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $entities = Twitter_Extractor::create($tweet)->extractMentionedUsernamesOrListsWithIndices();
+    $entities = $this->extractor->extractMentionsOrListsWithIndices($tweet);
     return $this->autoLinkEntities($tweet, $entities);
   }
 
@@ -413,7 +420,7 @@ class Twitter_Autolink extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $entities = Twitter_Extractor::create($tweet)->extractHashtagsWithIndices();
+    $entities = $this->extractor->extractHashtagsWithIndices($tweet);
     return $this->autoLinkEntities($tweet, $entities);
   }
 
@@ -428,7 +435,7 @@ class Twitter_Autolink extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $entities = Twitter_Extractor::create($tweet)->extractURLWithoutProtocol(false)->extractURLsWithIndices();
+    $entities = $this->extractor->extractURLWithoutProtocol(false)->extractURLsWithIndices($tweet);
     return $this->autoLinkEntities($tweet, $entities);
   }
 
@@ -442,7 +449,7 @@ class Twitter_Autolink extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $entities = Twitter_Extractor::create($tweet)->extractCashtagsWithIndices();
+    $entities = $this->extractor->extractCashtagsWithIndices($tweet);
     return $this->autoLinkEntities($tweet, $entities);
   }
 
