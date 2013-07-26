@@ -359,6 +359,14 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this;
   }
 
+  /**
+   * Autolink with entities
+   *
+   * @param string $tweet
+   * @param array $entities
+   * @return string
+   * @since 1.1.0
+   */
   public function autoLinkEntities($tweet = null, $entities) {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
@@ -394,6 +402,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * @param  string The tweet to be converted
    * @param  mixed  The entities info
    * @return string that auto-link HTML added
+   * @since 1.1.0
    */
   public function autoLinkWithJson($tweet = null, $json) {
     // concatenate entities
@@ -439,6 +448,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string The tweet to be converted
    * @return string that auto-link HTML added
+   * @since 1.1.0
    */
   public function autoLink($tweet = null) {
     if (is_null($tweet)) {
@@ -454,6 +464,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * added.
    *
    * @return string that auto-link HTML added
+   * @since 1.1.0
    */
   public function autoLinkUsernamesAndLists($tweet = null) {
     if (is_null($tweet)) {
@@ -468,6 +479,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * added.
    *
    * @return string that auto-link HTML added
+   * @since 1.1.0
    */
   public function autoLinkHashtags($tweet = null) {
     if (is_null($tweet)) {
@@ -483,6 +495,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * This only auto-links URLs with protocol.
    *
    * @return string that auto-link HTML added
+   * @since 1.1.0
    */
   public function autoLinkURLs($tweet = null) {
     if (is_null($tweet)) {
@@ -497,6 +510,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * added.
    *
    * @return string that auto-link HTML added
+   * @since 1.1.0
    */
   public function autoLinkCashtags($tweet = null) {
     if (is_null($tweet)) {
@@ -579,6 +593,13 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this->linkToText($entity, $linkText, $attributes);
   }
 
+  /**
+   * 
+   * @param array  $entity
+   * @param string $tweet
+   * @return string
+   * @since 1.1.0
+   */
   public function linkToHashtag($entity, $tweet = null) {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
@@ -604,6 +625,12 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this->linkToText($entity, $linkText, $attributes);
   }
 
+  /**
+   * 
+   * @param array  $entity
+   * @return string
+   * @since 1.1.0
+   */
   public function linkToMentionAndList($entity) {
     $attributes = array();
 
@@ -626,6 +653,13 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this->linkToText($entity, $linkText, $attributes);
   }
 
+  /**
+   * 
+   * @param array  $entity
+   * @param string $tweet
+   * @return string
+   * @since 1.1.0
+   */
   public function linkToCashtag($entity, $tweet = null) {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
@@ -733,6 +767,14 @@ class Twitter_Autolink extends Twitter_Regex {
       $this->tweet);
   }
 
+  /**
+   *
+   * @param array $entity
+   * @param string $text
+   * @param array $attributes
+   * @return string
+   * @since 1.1.0
+   */
   public function linkToText(array $entity, $text, $attributes = array()) {
     $rel = array();
     if ($this->external) $rel[] = 'external';
@@ -770,6 +812,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * @param  string  $element  The tweet element to wrap.
    *
    * @return  string  The tweet element with a link applied.
+   * @deprecated since version 1.1.0
    */
   protected function wrap($url, $class, $element) {
     $link  = '<a';
@@ -794,6 +837,7 @@ class Twitter_Autolink extends Twitter_Regex {
    * @param  string  $element  The tweet element to wrap.
    *
    * @return  string  The tweet element with a link applied.
+   * @deprecated since version 1.1.0
    */
   protected function wrapHash($url, $class, $element) {
     $title = preg_replace('/＃/u', '#', $element);
