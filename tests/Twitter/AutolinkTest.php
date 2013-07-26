@@ -262,6 +262,47 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
     return $this->providerHelper('all');
   }
 
+  /**
+   * @dataProvider  autoLinkWithJSONProvider
+   */
+  public function testAutoLinkWithJSONByObj($description, $text, $jsonText, $expected) {
+    $jsonObj = json_decode($jsonText);
+
+    $linked = $this->linker
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->autoLinkWithJson($text, $jsonObj);
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   * @dataProvider  autoLinkWithJSONProvider
+   */
+  public function testAutoLinkWithJSONByArray($description, $text, $jsonText, $expected) {
+    $jsonArray = json_decode($jsonText, true);
+
+    $linked = $this->linker
+      ->setNoFollow(false)->setExternal(false)->setTarget('')
+      ->setUsernameClass('tweet-url username')
+      ->setListClass('tweet-url list-slug')
+      ->setHashtagClass('tweet-url hashtag')
+      ->setCashtagClass('tweet-url cashtag')
+      ->setURLClass('')
+      ->autoLinkWithJson($text, $jsonArray);
+    $this->assertSame($expected, $linked, $description);
+  }
+
+  /**
+   *
+   */
+  public function autoLinkWithJSONProvider() {
+    return $this->providerHelper('json');
+  }
+
 }
 
 ################################################################################

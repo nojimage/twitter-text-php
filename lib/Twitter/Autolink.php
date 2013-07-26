@@ -122,6 +122,13 @@ class Twitter_Autolink extends Twitter_Regex {
   protected $target = '_blank';
 
   /**
+   * attribute for invisible span tag
+   *
+   * @var string
+   */
+  protected $invisibleTagAttrs = "style='position:absolute;left:-9999px;'";
+
+  /**
    *
    * @var Twitter_Extractor
    */
@@ -380,7 +387,53 @@ class Twitter_Autolink extends Twitter_Regex {
     $text .= mb_substr($tweet, $beginIndex, mb_strlen($tweet));
     return $text;
   }
-  
+
+  /**
+   * Auto-link hashtags, URLs, usernames and lists, with JSON entities.
+   *
+   * @param  string The tweet to be converted
+   * @param  mixed  The entities info
+   * @return string that auto-link HTML added
+   */
+  public function autoLinkWithJson($tweet = null, $json) {
+    // concatenate entities
+    $entities = array();
+    if (is_object($json)) {
+      $json = $this->object2array($json);
+    }
+    if (is_array($json)) {
+      foreach ($json as $key => $vals) {
+        $entities = array_merge($entities, $json[$key]);
+      }
+    }
+
+    // map JSON entity to twitter-text entity
+    foreach ($entities as $idx => $entity) {
+      if (!empty($entity['text'])) {
+        $entities[$idx]['hashtag'] = $entity['text'];
+      }
+    }
+
+    $entities = $this->extractor->removeOverlappingEntities($entities);
+    return $this->autoLinkEntities($tweet, $entities);
+  }
+
+  /**
+   * convert Object to Array
+   *
+   * @param mixed $obj
+   * @return array
+   */
+  protected function object2array($obj) {
+    $array = (array)$obj;
+    foreach ($array as $key => $var) {
+      if (is_object($var) || is_array($var)) {
+        $array[$key] = $this->object2array($var);
+      }
+    }
+    return $array;
+  }
+
   /**
    * Auto-link hashtags, URLs, usernames and lists.
    *
@@ -454,8 +507,76 @@ class Twitter_Autolink extends Twitter_Regex {
   }
 
   public function linkToUrl($entity) {
-    $url = htmlspecialchars($entity['url'], ENT_QUOTES, 'UTF-8', false);
-    return $this->wrap($url, $this->class_url, $url);
+    if (!empty($this->class_url)) $attributes['class'] = $this->class_url;
+    $attributes['href'] = $entity['url'];
+    $linkText = $this->escapeHTML($entity['url']);
+
+    if (!empty($entity['display_url']) && !empty($entity['expanded_url'])) {
+      // Goal: If a user copies and pastes a tweet containing t.co'ed link, the resulting paste
+      // should contain the full original URL (expanded_url), not the display URL.
+      //
+      // Method: Whenever possible, we actually emit HTML that contains expanded_url, and use
+      // font-size:0 to hide those parts that should not be displayed (because they are not part of display_url).
+      // Elements with font-size:0 get copied even though they are not visible.
+      // Note that display:none doesn't work here. Elements with display:none don't get copied.
+      //
+      // Additionally, we want to *display* ellipses, but we don't want them copied.  To make this happen we
+      // wrap the ellipses in a tco-ellipsis class and provide an onCopy handler that sets display:none on
+      // everything with the tco-ellipsis class.
+      //
+      // As an example: The user tweets "hi http://longdomainname.com/foo"
+      // This gets shortened to "hi http://t.co/xyzabc", with display_url = "…nname.com/foo"
+      // This will get rendered as:
+      // <span class='tco-ellipsis'> <!-- This stuff should get displayed but not copied -->
+      //   …
+      //   <!-- There's a chance the onCopy event handler might not fire. In case that happens,
+      //        we include an &nbsp; here so that the … doesn't bump up against the URL and ruin it.
+      //        The &nbsp; is inside the tco-ellipsis span so that when the onCopy handler *does*
+      //        fire, it doesn't get copied.  Otherwise the copied text would have two spaces in a row,
+      //        e.g. "hi  http://longdomainname.com/foo".
+      //   <span style='font-size:0'>&nbsp;</span>
+      // </span>
+      // <span style='font-size:0'>  <!-- This stuff should get copied but not displayed -->
+      //   http://longdomai
+      // </span>
+      // <span class='js-display-url'> <!-- This stuff should get displayed *and* copied -->
+      //   nname.com/foo
+      // </span>
+      // <span class='tco-ellipsis'> <!-- This stuff should get displayed but not copied -->
+      //   <span style='font-size:0'>&nbsp;</span>
+      //   …
+      // </span>
+      //
+      // Exception: pic.twitter.com images, for which expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
+      // For those URLs, display_url is not a substring of expanded_url, so we don't do anything special to render the elided parts.
+      // For a pic.twitter.com URL, the only elided part will be the "https://", so this is fine.
+      $displayURL = $entity['display_url'];
+      $expandedURL = $entity['expanded_url'];
+      $displayURLSansEllipses = preg_replace('/…/u', '', $displayURL);
+      $diplayURLIndexInExpandedURL = mb_strpos($expandedURL, $displayURLSansEllipses);
+
+      if ($diplayURLIndexInExpandedURL !== false) {
+        $beforeDisplayURL = mb_substr($expandedURL, 0, $diplayURLIndexInExpandedURL);
+        $afterDisplayURL = mb_substr($expandedURL, $diplayURLIndexInExpandedURL + mb_strlen($displayURLSansEllipses));
+        $precedingEllipsis = (preg_match('/\A…/u', $displayURL)) ? '…' : '';
+        $followingEllipsis = (preg_match('/…\z/u', $displayURL)) ? '…' : '';
+
+        $invisibleSpan = "<span {$this->invisibleTagAttrs}>";
+
+        $linkText = "<span class='tco-ellipsis'>{$precedingEllipsis}{$invisibleSpan}&nbsp;</span></span>";
+        $linkText .= "{$invisibleSpan}{$this->escapeHTML($beforeDisplayURL)}</span>";
+        $linkText .= "<span class='js-display-url'>{$this->escapeHTML($displayURLSansEllipses)}</span>";
+        $linkText .= "{$invisibleSpan}{$this->escapeHTML($afterDisplayURL)}</span>";
+        $linkText .= "<span class='tco-ellipsis'>{$invisibleSpan}&nbsp;</span>{$followingEllipsis}</span>";
+      } else {
+        $linkText = $entity['display_url'];
+      }
+      $attributes['title'] = $entity['expanded_url'];
+    } else if (!empty($entity['display_url'])) {
+      $linkText = $entity['display_url'];
+    }
+
+    return $this->linkToText($entity, $linkText, $attributes);
   }
 
   public function linkToHashtag($entity, $tweet = null) {
@@ -587,6 +708,33 @@ class Twitter_Autolink extends Twitter_Regex {
       self::$patterns['valid_mentions_or_lists'],
       array($this, '_addLinksToUsernamesAndLists'),
       $this->tweet);
+  }
+
+  public function linkToText(array $entity, $text, $attributes = array()) {
+    $rel = array();
+    if ($this->external) $rel[] = 'external';
+    if ($this->nofollow) $rel[] = 'nofollow';
+    if (!empty($rel)) {
+      $attributes['rel'] = join(' ', $rel);
+    }
+    if ($this->target) $attributes['target'] = $this->target;
+
+    $link = '<a';
+    foreach ($attributes as $key => $val) {
+      $link .= ' ' . $key . '="' . $this->escapeHTML($val) . '"';
+    }
+    $link .= '>' . $text . '</a>';
+    return $link;
+  }
+
+  /**
+   * html escape
+   *
+   * @param string $text
+   * @return string
+   */
+  protected function escapeHTML($text) {
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
   }
 
   /**

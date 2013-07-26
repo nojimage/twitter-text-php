@@ -494,7 +494,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * @param array $entities
    * @return array
    */
-  protected function removeOverlappingEntities($entities) {
+  public function removeOverlappingEntities($entities) {
     $result = array();
     usort($entities, array($this, 'sortEntites'));
 

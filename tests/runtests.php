@@ -215,6 +215,7 @@ $functions = array(
   'hashtags'  => 'autoLinkHashtags',
   'cashtags'  => 'autoLinkCashtags',
   'urls'      => 'autoLinkURLs',
+  'json'      => 'autoLinkWithJson',
   'all'       => 'autoLink',
 );
 
@@ -235,14 +236,18 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $linked = $linker
-      ->setNoFollow(false)->setExternal(false)->setTarget('')
-      ->setUsernameClass('tweet-url username')
-      ->setListClass('tweet-url list-slug')
-      ->setHashtagClass('tweet-url hashtag')
-      ->setCashtagClass('tweet-url cashtag')
-      ->setURLClass('')
-      ->$function($test['text']);
+    $linker->setNoFollow(false)->setExternal(false)->setTarget('')
+              ->setUsernameClass('tweet-url username')
+              ->setListClass('tweet-url list-slug')
+              ->setHashtagClass('tweet-url hashtag')
+              ->setCashtagClass('tweet-url cashtag')
+              ->setURLClass('');
+    if ($group === 'json') {
+      $linked = $linker->$function($test['text'], json_decode($test['json']));
+    } else {
+      $linked = $linker->$function($test['text']);
+    }
+
     if ($test['expected'] == $linked) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
