@@ -14,8 +14,19 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
+ * @property   Twitter_Validation $validator
  */
 class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
+
+  protected function setUp() {
+    parent::setUp();
+    $this->validator = new Twitter_Validation();
+  }
+
+  protected function tearDown() {
+    unset($this->validator);
+    parent::tearDown();
+  }
 
   /**
    * A helper function for providers.
@@ -51,7 +62,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidTweetTextProvider
    */
   public function testIsValidTweetText($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->isValidTweetText();
+    $validated = $this->validator->isValidTweetText($text);
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -74,7 +85,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidUsernameProvider
    */
   public function testIsValidUsername($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->isValidUsername();
+    $validated = $this->validator->isValidUsername($text);
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -97,7 +108,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidListProvider
    */
   public function testIsValidList($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->isValidList();
+    $validated = $this->validator->isValidList($text);
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -120,7 +131,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidHashtagProvider
    */
   public function testIsValidHashtag($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->isValidHashtag();
+    $validated =$this->validator->isValidHashtag($text);
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -143,7 +154,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidURLProvider
    */
   public function testIsValidURL($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->isValidURL();
+    $validated = $this->validator->isValidURL($text);
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -166,7 +177,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidURLWithoutProtocolProvider
    */
   public function testIsValidURLWithoutProtocol($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->isValidURL(true, false);
+    $validated = $this->validator->isValidURL($text, true, false);
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -181,7 +192,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  getTweetLengthProvider
    */
   public function testGetTweetLength($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->getTweetLength();
+    $validated = $this->validator->getTweetLength($text);
     $this->assertSame($expected, $validated, $description);
   }
 
