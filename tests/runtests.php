@@ -153,6 +153,7 @@ $functions = array(
   'mentions_or_lists_with_indices' => 'extractMentionsOrListsWithIndices',
 );
 
+$extractor = Twitter_Extractor::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -169,7 +170,7 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $extracted = Twitter_Extractor::create($test['text'])->$function();
+    $extracted = $extractor->$function($test['text']);
     if ($test['expected'] == $extracted) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
@@ -217,6 +218,7 @@ $functions = array(
   'all'       => 'autoLink',
 );
 
+$linker = Twitter_Autolink::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -233,14 +235,14 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $linked = Twitter_Autolink::create($test['text'], false)
+    $linked = $linker
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
       ->setHashtagClass('tweet-url hashtag')
       ->setCashtagClass('tweet-url cashtag')
       ->setURLClass('')
-      ->$function();
+      ->$function($test['text']);
     if ($test['expected'] == $linked) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
@@ -284,6 +286,7 @@ $functions = array(
   'with_links' => 'highlight',
 );
 
+$highlighter = Twitter_HitHighlighter::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -300,7 +303,7 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $highlighted = Twitter_HitHighlighter::create($test['text'])->$function($test['hits']);
+    $highlighted = $highlighter->$function($test['text'], $test['hits']);
     if ($test['expected'] == $highlighted) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
@@ -349,6 +352,7 @@ $functions = array(
   'lengths' => 'getTweetLength',
 );
 
+$validator = Twitter_Validation::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -365,11 +369,10 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $validator = Twitter_Validation::create($test['text']);
     if ($group === 'urls_without_protocol') {
-      $validated = $validator->$function(true, false);
+      $validated = $validator->$function($test['text'], true, false);
     } else {
-      $validated = $validator->$function();
+      $validated = $validator->$function($test['text']);
     }
     if ($test['expected'] == $validated) {
       $pass_group++;
@@ -409,7 +412,7 @@ echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
 echo PHP_EOL;
 
 echo ($browser ? '<p class="total">' : "   \033[1;36m");
-printf('Time: %.2f sec Memory: %s kb ', microtime(true) - $timerStart, number_format(memory_get_peak_usage(true)) / 1024);
+printf('Time: %.2f sec Memory: %s kb ', microtime(true) - $timerStart, number_format(memory_get_peak_usage(true) / 1024));
 echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
 echo PHP_EOL;
 
