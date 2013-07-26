@@ -131,7 +131,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @return  Twitter_Autolink
    */
-  public static function create($tweet, $full_encode = false) {
+  public static function create($tweet = null, $full_encode = false) {
     return new self($tweet, $full_encode);
   }
 
@@ -147,8 +147,8 @@ class Twitter_Autolink extends Twitter_Regex {
    * @param  bool    $escape       Whether to escape the tweet (default: true).
    * @param  bool    $full_encode  Whether to encode all special characters.
    */
-  public function __construct($tweet, $escape = true, $full_encode = false) {
-    if ($escape) {
+  public function __construct($tweet = null, $escape = true, $full_encode = false) {
+    if ($escape && !empty($tweet)) {
       if ($full_encode) {
         parent::__construct(htmlentities($tweet, ENT_QUOTES, 'UTF-8', false));
       } else {
@@ -345,39 +345,47 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this;
   }
 
-  public function autoLinkEntities($entities) {
+  public function autoLinkEntities($tweet = null, $entities) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+
     $text = '';
     $beginIndex = 0;
     foreach ($entities as $entity) {
       if (isset($entity['screen_name'])) {
-        $text .= mb_substr($this->tweet, $beginIndex, $entity['indices'][0] - $beginIndex + 1);
+        $text .= mb_substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex + 1);
       } else {
-        $text .= mb_substr($this->tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
+        $text .= mb_substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
       }
 
       if (isset($entity['url'])) {
         $text .= $this->linkToUrl($entity);
       } elseif (isset($entity['hashtag'])) {
-        $text .= $this->linkToHashtag($entity);
+        $text .= $this->linkToHashtag($entity, $tweet);
       } elseif (isset($entity['screen_name'])) {
         $text .= $this->linkToMentionAndList($entity);
       } elseif (isset($entity['cashtag'])) {
-        $text .= $this->linkToCashtag($entity);
+        $text .= $this->linkToCashtag($entity, $tweet);
       }
       $beginIndex = $entity['indices'][1];
     }
-    $text .= mb_substr($this->tweet, $beginIndex, mb_strlen($this->tweet));
+    $text .= mb_substr($tweet, $beginIndex, mb_strlen($tweet));
     return $text;
   }
   
   /**
    * Auto-link hashtags, URLs, usernames and lists.
    *
+   * @param  string The tweet to be converted
    * @return string that auto-link HTML added
    */
-  public function autoLink() {
-    $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractEntitiesWithIndices();
-    return $this->autoLinkEntities($entities);
+  public function autoLink($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $entities = Twitter_Extractor::create($tweet)->extractURLWithoutProtocol(false)->extractEntitiesWithIndices();
+    return $this->autoLinkEntities($tweet, $entities);
   }
 
   /**
@@ -387,9 +395,12 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @return string that auto-link HTML added
    */
-  public function autoLinkUsernamesAndLists() {
-    $entities = Twitter_Extractor::create($this->tweet)->extractMentionedUsernamesOrListsWithIndices();
-    return $this->autoLinkEntities($entities);
+  public function autoLinkUsernamesAndLists($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $entities = Twitter_Extractor::create($tweet)->extractMentionedUsernamesOrListsWithIndices();
+    return $this->autoLinkEntities($tweet, $entities);
   }
 
   /**
@@ -398,9 +409,12 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @return string that auto-link HTML added
    */
-  public function autoLinkHashtags() {
-    $entities = Twitter_Extractor::create($this->tweet)->extractHashtagsWithIndices();
-    return $this->autoLinkEntities($entities);
+  public function autoLinkHashtags($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $entities = Twitter_Extractor::create($tweet)->extractHashtagsWithIndices();
+    return $this->autoLinkEntities($tweet, $entities);
   }
 
   /**
@@ -410,9 +424,12 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @return string that auto-link HTML added
    */
-  public function autoLinkURLs() {
-    $entities = Twitter_Extractor::create($this->tweet)->extractURLWithoutProtocol(false)->extractURLsWithIndices();
-    return $this->autoLinkEntities($entities);
+  public function autoLinkURLs($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $entities = Twitter_Extractor::create($tweet)->extractURLWithoutProtocol(false)->extractURLsWithIndices();
+    return $this->autoLinkEntities($tweet, $entities);
   }
 
   /**
@@ -421,9 +438,12 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @return string that auto-link HTML added
    */
-  public function autoLinkCashtags() {
-    $entities = Twitter_Extractor::create($this->tweet)->extractCashtagsWithIndices();
-    return $this->autoLinkEntities($entities);
+  public function autoLinkCashtags($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $entities = Twitter_Extractor::create($tweet)->extractCashtagsWithIndices();
+    return $this->autoLinkEntities($tweet, $entities);
   }
 
   public function linkToUrl($entity) {
@@ -431,9 +451,12 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this->wrap($url, $this->class_url, $url);
   }
 
-  public function linkToHashtag($entity) {
+  public function linkToHashtag($entity, $tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
     $url = $this->url_base_hash . $entity['hashtag'];
-    $hash = mb_substr($this->tweet, $entity['indices'][0], 1);
+    $hash = mb_substr($tweet, $entity['indices'][0], 1);
     $element = $hash . $entity['hashtag'];
     $class_hash = $this->class_hash;
     if (preg_match(self::$patterns['rtl_chars'], $element)) {
@@ -458,8 +481,11 @@ class Twitter_Autolink extends Twitter_Regex {
     return $this->wrap($url, $class, $element);
   }
 
-  public function linkToCashtag($entity) {
-    $doller = mb_substr($this->tweet, $entity['indices'][0], 1);
+  public function linkToCashtag($entity, $tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $doller = mb_substr($tweet, $entity['indices'][0], 1);
     $element = $doller . $entity['cashtag'];
     $url = $this->url_base_cash . $entity['cashtag'];
     return $this->wrapHash($url, $this->class_cash, $element);

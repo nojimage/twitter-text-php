@@ -44,7 +44,7 @@ abstract class Twitter_Regex {
    *
    * @param  string  $tweet  The tweet to parse.
    */
-  protected function __construct($tweet) {
+  protected function __construct($tweet = null) {
     $this->tweet = $tweet;
   }
 
