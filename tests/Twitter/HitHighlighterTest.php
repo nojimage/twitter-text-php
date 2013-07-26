@@ -14,8 +14,19 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
+ * @property   Twitter_HitHighlighter $highlighter
  */
 class Twitter_HitHighlighterTest extends PHPUnit_Framework_TestCase {
+
+  protected function setUp() {
+    parent::setUp();
+    $this->highlighter = new Twitter_HitHighlighter();
+  }
+
+  protected function tearDown() {
+    unset($this->highlighter);
+    parent::tearDown();
+  }
 
   /**
    * A helper function for providers.
@@ -33,7 +44,7 @@ class Twitter_HitHighlighterTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  highlightProvider
    */
   public function testHighlight($description, $text, $hits, $expected) {
-    $extracted = Twitter_HitHighlighter::create($text)->highlight($hits);
+    $extracted = $this->highlighter->highlight($text, $hits);
     $this->assertSame($expected, $extracted, $description);
   }
 
