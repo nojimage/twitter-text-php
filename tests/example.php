@@ -93,8 +93,8 @@ echo PHP_EOL;
 $code = <<<EOPHP
 <?php
 \$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
-\$data = Twitter_Extractor::create(\$tweet)
-  ->extract();
+\$data = Twitter_Extractor::create()
+  ->extract(\$tweet);
 print_r(\$data);
 EOPHP;
 if ($browser) {
@@ -108,17 +108,17 @@ if ($browser) {
   echo PHP_EOL, PHP_EOL;
 }
 
-$data = Twitter_Extractor::create($tweet)
-  ->extract();
+$data = Twitter_Extractor::create()
+  ->extract($tweet);
 
 if ($browser) {
   echo '<h3>Output</h3>', PHP_EOL;
   echo '<pre class="output">';
-  print_array($data);
+  print_r($data);
   echo '</pre>', PHP_EOL;
 } else {
   echo 'Output:', PHP_EOL, PHP_EOL;
-  print_array($data);
+  print_r($data);
   echo PHP_EOL, PHP_EOL;
 }
 
@@ -131,9 +131,9 @@ echo PHP_EOL;
 $code = <<<EOPHP
 <?php
 \$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
-\$html = Twitter_Autolink::create(\$tweet)
+\$html = Twitter_Autolink::create()
   ->setNoFollow(false)
-  ->addLinks();
+  ->autoLink(\$tweet);
 echo \$html;
 EOPHP;
 if ($browser) {
@@ -147,9 +147,9 @@ if ($browser) {
   echo PHP_EOL, PHP_EOL;
 }
 
-$html = Twitter_Autolink::create($tweet)
+$html = Twitter_Autolink::create()
   ->setNoFollow(false)
-  ->addLinks();
+  ->autoLink($tweet);
 
 if ($browser) {
   echo '<h3>Markup</h3>', PHP_EOL;
@@ -183,8 +183,8 @@ $code = <<<EOPHP
 <?php
 \$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 \$hits  = array(array(70, 77), array(101, 108));
-\$html = Twitter_HitHighlighter::create(\$tweet)
-  ->addHitHighlighting(\$hits);
+\$html = Twitter_HitHighlighter::create()
+  ->highlight(\$tweet, \$hits);
 echo \$html;
 EOPHP;
 if ($browser) {
@@ -198,8 +198,8 @@ if ($browser) {
   echo PHP_EOL, PHP_EOL;
 }
 
-$html = Twitter_HitHighlighter::create($tweet)
-  ->addHitHighlighting(array(array(70, 77), array(101, 108)));
+$html = Twitter_HitHighlighter::create()
+  ->highlight($tweet, array(array(70, 77), array(101, 108)));
 
 if ($browser) {
   echo '<h3>Markup</h3>', PHP_EOL;

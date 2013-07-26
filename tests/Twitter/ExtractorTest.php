@@ -5,6 +5,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Twitter Extractor Class Unit Tests
@@ -13,8 +14,19 @@
  * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
+ * @param      Twitter_Extractor $extractor
  */
 class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
+
+  protected function setUp() {
+    parent::setUp();
+    $this->extractor = Twitter_Extractor::create();
+  }
+
+  protected function tearDown() {
+    unset($this->extractor);
+    parent::tearDown();
+  }
 
   /**
    * A helper function for providers.
@@ -24,12 +36,20 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @return  array  The test data to provide.
    */
   protected function providerHelper($test) {
-    $data = Spyc::YAMLLoad(DATA.'/extract.yml');
+    $data = Yaml::parse(DATA.'/extract.yml');
     return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
   }
 
   /**
-   * @dataProvider  extractMentionedUsernamesProvider
+   * @dataProvider  extractMentionedScreennamesProvider
+   */
+  public function testExtractMentionedScreennames($description, $text, $expected) {
+    $extracted = $this->extractor->extractMentionedScreennames($text);
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractMentionedScreennamesProvider
    */
   public function testExtractMentionedUsernames($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractMentionedUsernames();
@@ -39,12 +59,20 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractMentionedUsernamesProvider() {
+  public function extractMentionedScreennamesProvider() {
     return $this->providerHelper('mentions');
   }
 
   /**
-   * @dataProvider  extractRepliedUsernamesProvider
+   * @dataProvider  extractReplyScreennameProvider
+   */
+  public function testExtractReplyScreenname($description, $text, $expected) {
+    $extracted = $this->extractor->extractReplyScreenname($text);
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractReplyScreennameProvider
    */
   public function testExtractRepliedUsernames($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractRepliedUsernames();
@@ -54,7 +82,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractRepliedUsernamesProvider() {
+  public function extractReplyScreennameProvider() {
     return $this->providerHelper('replies');
   }
 
@@ -62,7 +90,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  extractURLsProvider
    */
   public function testExtractURLs($description, $text, $expected) {
-    $extracted = Twitter_Extractor::create($text)->extractURLs();
+    $extracted = $this->extractor->extractURLs($text);
     $this->assertSame($expected, $extracted, $description);
   }
 
@@ -77,7 +105,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  extractHashtagsProvider
    */
   public function testExtractHashtags($description, $text, $expected) {
-    $extracted = Twitter_Extractor::create($text)->extractHashtags();
+    $extracted = $this->extractor->extractHashtags($text);
     $this->assertSame($expected, $extracted, $description);
   }
 
@@ -92,7 +120,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  extractHashtagsWithIndicesProvider
    */
   public function testExtractHashtagsWithIndices($description, $text, $expected) {
-    $extracted = Twitter_Extractor::create($text)->extractHashtagsWithIndices();
+    $extracted = $this->extractor->extractHashtagsWithIndices($text);
     $this->assertSame($expected, $extracted, $description);
   }
 
@@ -107,7 +135,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  extractCashtagsProvider
    */
   public function testExtractCashtags($description, $text, $expected) {
-    $extracted = Twitter_Extractor::create($text)->extractCashtags();
+    $extracted = $this->extractor->extractCashtags($text);
     $this->assertSame($expected, $extracted, $description);
   }
 
@@ -122,7 +150,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  extractCashtagsWithIndicesProvider
    */
   public function testExtractCashtagsWithIndices($description, $text, $expected) {
-    $extracted = Twitter_Extractor::create($text)->extractCashtagsWithIndices();
+    $extracted = $this->extractor->extractCashtagsWithIndices($text);
     $this->assertSame($expected, $extracted, $description);
   }
 
@@ -137,7 +165,7 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  extractURLsWithIndicesProvider
    */
   public function testExtractURLsWithIndices($description, $text, $expected) {
-    $extracted = Twitter_Extractor::create($text)->extractURLsWithIndices();
+    $extracted = $this->extractor->extractURLsWithIndices($text);
     $this->assertSame($expected, $extracted, $description);
   }
 
@@ -149,7 +177,15 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider  extractMentionedUsernamesWithIndicesProvider
+   * @dataProvider  extractMentionedScreennamesWithIndicesProvider
+   */
+  public function testExtractMentionedScreennamesWithIndices($description, $text, $expected) {
+    $extracted = $this->extractor->extractMentionedScreennamesWithIndices($text);
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractMentionedScreennamesWithIndicesProvider
    */
   public function testExtractMentionedUsernamesWithIndices($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractMentionedUsernamesWithIndices();
@@ -159,12 +195,20 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractMentionedUsernamesWithIndicesProvider() {
+  public function extractMentionedScreennamesWithIndicesProvider() {
     return $this->providerHelper('mentions_with_indices');
   }
 
   /**
-   * @dataProvider  extractMentionedUsernamesOrListsWithIndicesProvider
+   * @dataProvider  extractMentionsOrListsWithIndicesProvider
+   */
+  public function testExtractMentionsOrListsWithIndices($description, $text, $expected) {
+    $extracted = $this->extractor->extractMentionsOrListsWithIndices($text);
+    $this->assertSame($expected, $extracted, $description);
+  }
+
+  /**
+   * @dataProvider  extractMentionsOrListsWithIndicesProvider
    */
   public function testExtractMentionedUsernamesOrListsWithIndices($description, $text, $expected) {
     $extracted = Twitter_Extractor::create($text)->extractMentionedUsernamesOrListsWithIndices();
@@ -174,10 +218,19 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
-  public function extractMentionedUsernamesOrListsWithIndicesProvider() {
+  public function extractMentionsOrListsWithIndicesProvider() {
     return $this->providerHelper('mentions_or_lists_with_indices');
   }
 
+  public function testExtractURLsWithoutProtocol() {
+    $extracted = Twitter_Extractor::create('text: example.com http://foobar.example.com')->extractUrlWithoutProtocol(false)->extractURLs();
+    $this->assertSame(array('http://foobar.example.com'), $extracted, 'Unextract url without protocol');
+  }
+
+  public function testExtractURLsWithIndicesWithoutProtocol() {
+    $extracted = Twitter_Extractor::create('text: example.com')->extractUrlWithoutProtocol(false)->extractURLsWithIndices();
+    $this->assertSame(array(), $extracted, 'Unextract url without protocol');
+  }
 }
 
 ################################################################################

@@ -42,7 +42,7 @@ class Twitter_HitHighlighter extends Twitter_Regex {
    *
    * @return  Twitter_HitHighlighter
    */
-  public static function create($tweet, $full_encode = false) {
+  public static function create($tweet = null, $full_encode = false) {
     return new self($tweet, $full_encode);
   }
 
@@ -57,8 +57,8 @@ class Twitter_HitHighlighter extends Twitter_Regex {
    * @param  bool    $escape       Whether to escape the tweet (default: true).
    * @param  bool    $full_encode  Whether to encode all special characters.
    */
-  public function __construct($tweet, $escape = true, $full_encode = false) {
-    if ($escape) {
+  public function __construct($tweet = null, $escape = true, $full_encode = false) {
+    if (!empty($tweet) && $escape) {
       if ($full_encode) {
         parent::__construct(htmlentities($tweet, ENT_QUOTES, 'UTF-8', false));
       } else {
@@ -93,27 +93,33 @@ class Twitter_HitHighlighter extends Twitter_Regex {
   /**
    * Hit highlights the tweet.
    *
-   * @param  array  $hits  An array containing the start and end index pairs
-   *                       for the highlighting.
+   * @param string $tweet The tweet to be hit highlighted.
+   * @param array  $hits  An array containing the start and end index pairs
+   *                        for the highlighting.
+   * @param bool   $escape      Whether to escape the tweet (default: true).
+   * @param bool   $full_encode  Whether to encode all special characters.
    *
    * @return  string  The hit highlighted tweet.
    */
-  public function addHitHighlighting(array $hits) {
-    if (empty($hits)) return $this->tweet;
-    $tweet = '';
+  public function highlight($tweet = null, array $hits) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    if (empty($hits)) return $tweet;
+    $highlightTweet = '';
     $tags = array('<'.$this->tag.'>', '</'.$this->tag.'>');
     # Check whether we can simply replace or whether we need to chunk...
-    if (strpos($this->tweet, '<') === false) {
+    if (strpos($tweet, '<') === false) {
       $ti = 0; // tag increment (for added tags)
-      $tweet = $this->tweet;
+      $highlightTweet = $tweet;
       foreach ($hits as $hit) {
-        $tweet = self::mb_substr_replace($tweet, $tags[0], $hit[0] + $ti, 0);
+        $highlightTweet = self::mb_substr_replace($highlightTweet, $tags[0], $hit[0] + $ti, 0);
         $ti += mb_strlen($tags[0]);
-        $tweet = self::mb_substr_replace($tweet, $tags[1], $hit[1] + $ti, 0);
+        $highlightTweet = self::mb_substr_replace($highlightTweet, $tags[1], $hit[1] + $ti, 0);
         $ti += mb_strlen($tags[1]);
       }
     } else {
-      $chunks = preg_split('/[<>]/iu', $this->tweet);
+      $chunks = preg_split('/[<>]/iu', $tweet);
       $chunk = $chunks[0];
       $chunk_index = 0;
       $chunk_cursor = 0;
@@ -128,12 +134,12 @@ class Twitter_HitHighlighter extends Twitter_Regex {
         $tag = $tags[$index % 2];
         $placed = false;
         while ($chunk !== null && $hit >= ($i = $offset + mb_strlen($chunk))) {
-          $tweet .= mb_substr($chunk, $chunk_cursor);
+          $highlightTweet .= mb_substr($chunk, $chunk_cursor);
           if ($start_in_chunk && $hit === $i) {
-            $tweet .= $tag;
+            $highlightTweet .= $tag;
             $placed = true;
           }
-          if (isset($chunks[$chunk_index+1])) $tweet .= '<' . $chunks[$chunk_index+1] . '>';
+          if (isset($chunks[$chunk_index+1])) $highlightTweet .= '<' . $chunks[$chunk_index+1] . '>';
           $offset += mb_strlen($chunk);
           $chunk_cursor = 0;
           $chunk_index += 2;
@@ -142,24 +148,37 @@ class Twitter_HitHighlighter extends Twitter_Regex {
         }
         if (!$placed && $chunk !== null) {
           $hit_spot = $hit - $offset;
-          $tweet .= mb_substr($chunk, $chunk_cursor, $hit_spot - $chunk_cursor) . $tag;
+          $highlightTweet .= mb_substr($chunk, $chunk_cursor, $hit_spot - $chunk_cursor) . $tag;
           $chunk_cursor = $hit_spot;
           $start_in_chunk = ($index % 2 === 0);
           $placed = true;
         }
         # Ultimate fallback - hits that run off the end get a closing tag:
-        if (!$placed) $tweet .= $tag;
+        if (!$placed) $highlightTweet .= $tag;
       }
       if ($chunk !== null) {
         if ($chunk_cursor < mb_strlen($chunk)) {
-          $tweet .= mb_substr($chunk, $chunk_cursor);
+          $highlightTweet .= mb_substr($chunk, $chunk_cursor);
         }
         for ($index = $chunk_index + 1; $index < count($chunks); $index++) {
-          $tweet .= ($index % 2 === 0 ? $chunks[$index] : '<' . $chunks[$index] . '>');
+          $highlightTweet .= ($index % 2 === 0 ? $chunks[$index] : '<' . $chunks[$index] . '>');
         }
       }
     }
-    return $tweet;
+    return $highlightTweet;
+  }
+
+  /**
+   * Hit highlights the tweet.
+   *
+   * @param  array  $hits  An array containing the start and end index pairs
+   *                       for the highlighting.
+   *
+   * @return  string  The hit highlighted tweet.
+   * @deprecated since version 1.1.0
+   */
+  public function addHitHighlighting(array $hits) {
+    return $this->highlight($this->tweet, $hits);
   }
 
   /**

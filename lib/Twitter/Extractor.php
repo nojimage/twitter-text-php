@@ -28,6 +28,11 @@ require_once 'Regex.php';
 class Twitter_Extractor extends Twitter_Regex {
 
   /**
+   * @var boolean
+   */
+  protected $extractURLWithoutProtocol = true;
+
+  /**
    * Provides fluent method chaining.
    *
    * @param  string  $tweet        The tweet to be converted.
@@ -36,7 +41,7 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * @return  Twitter_Extractor
    */
-  public static function create($tweet) {
+  public static function create($tweet = null) {
     return new self($tweet);
   }
 
@@ -47,7 +52,7 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * @param  string  $tweet  The tweet to extract.
    */
-  public function __construct($tweet) {
+  public function __construct($tweet = null) {
     parent::__construct($tweet);
   }
 
@@ -55,52 +60,110 @@ class Twitter_Extractor extends Twitter_Regex {
    * Extracts all parts of a tweet and returns an associative array containing
    * the extracted elements.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The elements in the tweet.
    */
-  public function extract() {
+  public function extract($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
     return array(
-      'hashtags' => $this->extractHashtags(),
-      'urls'     => $this->extractURLs(),
-      'mentions' => $this->extractMentionedUsernames(),
-      'replyto'  => $this->extractRepliedUsernames(),
-      'hashtags_with_indices' => $this->extractHashtagsWithIndices(),
-      'urls_with_indices'     => $this->extractURLsWithIndices(),
-      'mentions_with_indices' => $this->extractMentionedUsernamesWithIndices(),
+      'hashtags' => $this->extractHashtags($tweet),
+      'urls'     => $this->extractURLs($tweet),
+      'mentions' => $this->extractMentionedUsernames($tweet),
+      'replyto'  => $this->extractRepliedUsernames($tweet),
+      'hashtags_with_indices' => $this->extractHashtagsWithIndices($tweet),
+      'urls_with_indices'     => $this->extractURLsWithIndices($tweet),
+      'mentions_with_indices' => $this->extractMentionedUsernamesWithIndices($tweet),
     );
+  }
+
+  /**
+   * Extract URLs, @mentions, lists and #hashtag from a given text/tweet.
+   *
+   * @param  string  $tweet  The tweet to extract.
+   * @return array list of extracted entities
+   */
+  public function extractEntitiesWithIndices($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $entities = array();
+    $entities = array_merge($entities, $this->extractURLsWithIndices($tweet));
+    $entities = array_merge($entities, $this->extractHashtagsWithIndices($tweet, false));
+    $entities = array_merge($entities, $this->extractMentionsOrListsWithIndices($tweet));
+    $entities = array_merge($entities, $this->extractCashtagsWithIndices($tweet));
+    $entities = $this->removeOverlappingEntities($entities);
+    return $entities;
   }
 
   /**
    * Extracts all the hashtags from the tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The hashtag elements in the tweet.
    */
-  public function extractHashtags() {
-    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches);
-    return $matches[3];
+  public function extractHashtags($tweet = null) {
+    $hashtagsOnly = array();
+    $hashtagsWithIndices = $this->extractHashtagsWithIndices($tweet);
+
+    foreach ($hashtagsWithIndices as $hashtagWithIndex) {
+      $hashtagsOnly[] = $hashtagWithIndex['hashtag'];
+    }
+    return $hashtagsOnly;
   }
 
   /**
    * Extracts all the cashtags from the tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The cashtag elements in the tweet.
    */
-  public function extractCashtags() {
-    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches);
-    return $matches[3];
+  public function extractCashtags($tweet = null) {
+    $cashtagsOnly = array();
+    $cashtagsWithIndices = $this->extractCashtagsWithIndices($tweet);
+
+    foreach ($cashtagsWithIndices as $cashtagWithIndex) {
+      $cashtagsOnly[] = $cashtagWithIndex['cashtag'];
+    }
+    return $cashtagsOnly;
   }
 
   /**
    * Extracts all the URLs from the tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The URL elements in the tweet.
    */
-  public function extractURLs() {
-    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches);
-    list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($matches, 8, '');
-    # FIXME: Handle extraction of protocol-less domains and t.co short URLs.
-    # https://github.com/twitter/twitter-text-rb/commit/adb6e693b6d003819d615d19219c22d07f114a63
-    # https://github.com/twitter/twitter-text-rb/commit/05de2c11a729f93d7680a6d4c12bff6d5ba4c164
-    return $url;
+  public function extractURLs($tweet = null) {
+    $urlsOnly = array();
+    $urlsWithIndices = $this->extractURLsWithIndices($tweet);
+
+    foreach ($urlsWithIndices as $urlWithIndex) {
+      $urlsOnly[] = $urlWithIndex['url'];
+    }
+    return $urlsOnly;
+  }
+
+  /**
+   * Extract all the usernames from the tweet.
+   *
+   * A mention is an occurrence of a username anywhere in a tweet.
+   *
+   * @param  string  $tweet  The tweet to extract.
+   * @return  array  The usernames elements in the tweet.
+   */
+  public function extractMentionedScreennames($tweet = null) {
+    $usernamesOnly = array();
+    $mentionsWithIndices = $this->extractMentionsOrListsWithIndices($tweet);
+
+    foreach ($mentionsWithIndices as $mentionWithIndex) {
+      if (empty($mentionWithIndex['screen_name'])) {
+        continue;
+      }
+      $usernamesOnly[] = $mentionWithIndex['screen_name'];
+    }
+    return $usernamesOnly;
   }
 
   /**
@@ -109,19 +172,10 @@ class Twitter_Extractor extends Twitter_Regex {
    * A mention is an occurrence of a username anywhere in a tweet.
    *
    * @return  array  The usernames elements in the tweet.
+   * @deprecated since version 1.1.0
    */
   public function extractMentionedUsernames() {
-    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches);
-    list($all, $before, $at, $username, $after, $outer) = array_pad($matches, 6, '');
-    $usernames = array();
-    for ($i = 0; $i < count($username); $i ++) {
-      # Check username ending in
-      if (preg_match(self::$patterns['end_mention_match'], $outer[$i])) continue;
-      # If $after is not empty, there is an invalid character.
-      if (!empty($after[$i])) continue;
-      array_push($usernames, $username[$i]);
-    }
-    return $usernames;
+    return $this->extractMentionedScreennames();
   }
 
   /**
@@ -129,60 +183,283 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * A reply is an occurrence of a username at the beginning of a tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The usernames replied to in a tweet.
    */
+  public function extractReplyScreenname($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+    $matched = preg_match(self::$patterns['valid_reply'], $tweet, $matches);
+    # Check username ending in
+    if ($matched && preg_match(self::$patterns['end_mention_match'], $matches[2])) {
+      $matched = false;
+    }
+    return $matched ? $matches[1] : null;
+  }
+  
+  /**
+   * Extract all the usernames replied to from the tweet.
+   *
+   * A reply is an occurrence of a username at the beginning of a tweet.
+   *
+   * @return  array  The usernames replied to in a tweet.
+   * @deprecated since version 1.1.0
+   */
   public function extractRepliedUsernames() {
-    preg_match(self::$patterns['valid_reply'], $this->tweet, $matches);
-    return isset($matches[1]) ? $matches[1] : '';
+    return $this->extractReplyScreenname();
   }
 
   /**
    * Extracts all the hashtags and the indices they occur at from the tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
+   * @param boolean $checkUrlOverlap if true, check if extracted hashtags overlap URLs and remove overlapping ones
    * @return  array  The hashtag elements in the tweet.
    */
-  public function extractHashtagsWithIndices() {
-    preg_match_all(self::$patterns['valid_hashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[3];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('hashtag'), 1);
-    return $results;
+  public function extractHashtagsWithIndices($tweet = null, $checkUrlOverlap = true) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+
+    if (!preg_match('/[#＃]/iu', $tweet)) {
+      return array();
+    }
+
+    preg_match_all(self::$patterns['valid_hashtag'], $tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+    $tags = array();
+
+    foreach ($matches as $match) {
+      list($all, $before, $hash, $hashtag, $outer) = array_pad($match, 3, array('', 0));
+      $start_position = $hash[1] > 0 ? mb_strlen(substr($tweet, 0, $hash[1])) : $hash[1];
+      $end_position = $start_position + mb_strlen($hash[0] . $hashtag[0]);
+
+      if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+        continue;
+      }
+
+      $tags[] = array(
+          'hashtag' => $hashtag[0],
+          'indices' => array($start_position, $end_position)
+      );
+    }
+
+    if (!$checkUrlOverlap) {
+      return $tags;
+    }
+
+    # check url overlap
+    $urls = $this->extractURLsWithIndices($tweet);
+    $entities = $this->removeOverlappingEntities(array_merge($tags, $urls));
+
+    $validTags = array();
+    foreach ($entities as $entity) {
+      if (empty($entity['hashtag'])) {
+        continue;
+      }
+      $validTags[] = $entity;
+    }
+
+    return $validTags;
   }
 
   /**
    * Extracts all the cashtags and the indices they occur at from the tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The cashtag elements in the tweet.
    */
-  public function extractCashtagsWithIndices() {
-    preg_match_all(self::$patterns['valid_cashtag'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[3];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('cashtag'), 1);
-    return $results;
+  public function extractCashtagsWithIndices($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+
+    if (!preg_match('/\$/iu', $tweet)) {
+      return array();
+    }
+
+    preg_match_all(self::$patterns['valid_cashtag'], $tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+    $tags = array();
+
+    foreach ($matches as $match) {
+      list($all, $before, $dollar, $cash_text, $outer) = array_pad($match, 3, array('', 0));
+      $start_position = $dollar[1] > 0 ? mb_strlen(substr($tweet, 0, $dollar[1])) : $dollar[1];
+      $end_position = $start_position + mb_strlen($dollar[0] . $cash_text[0]);
+
+      if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+        continue;
+      }
+
+      $tags[] = array(
+          'cashtag' => $cash_text[0],
+          'indices' => array($start_position, $end_position)
+      );
+    }
+
+    return $tags;
   }
 
   /**
    * Extracts all the URLs and the indices they occur at from the tweet.
    *
+   * @param  string  $tweet  The tweet to extract.
    * @return  array  The URLs elements in the tweet.
    */
-  public function extractURLsWithIndices() {
-    preg_match_all(self::$patterns['valid_url'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[2];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('url'), 0);
-    # FIXME: Handle extraction of protocol-less domains.
-    # https://github.com/twitter/twitter-text-rb/commit/adb6e693b6d003819d615d19219c22d07f114a63
-    return $results;
+  public function extractURLsWithIndices($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+
+    $needle = $this->extractURLWithoutProtocol() ? '.' : ':';
+    if (strpos($tweet, $needle) === false) {
+      return array();
+    }
+
+    $urls = array();
+    preg_match_all(self::$patterns['valid_url'], $tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+
+    foreach ($matches as $match) {
+      list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($match, 8, array(''));
+      $start_position = $url[1] > 0 ? mb_strlen(substr($tweet, 0, $url[1])) : $url[1];
+      $end_position = $start_position + mb_strlen($url[0]);
+
+      $all = $all[0];
+      $before = $before[0];
+      $url = $url[0];
+      $protocol = $protocol[0];
+      $domain = $domain[0];
+      $port = $port[0];
+      $path = $path[0];
+      $query = $query[0];
+
+      // If protocol is missing and domain contains non-ASCII characters,
+      // extract ASCII-only domains.
+      if (empty($protocol)) {
+        if (!$this->extractURLWithoutProtocol
+          || preg_match(self::$patterns['invalid_url_without_protocol_match_begin'], $before)) {
+          continue;
+        }
+
+        $last_url = null;
+        $last_url_invalid_match = false;
+        $ascii_end_position = 0;
+        if (preg_match(self::$patterns['invalid_url_without_protocol_match_begin'], $before)) {
+          continue;
+        }
+
+        if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
+          $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
+          $ascii_start_position = mb_strpos($domain, $asciiDomain[0], $ascii_end_position);
+          $ascii_end_position = $ascii_start_position + mb_strlen($asciiDomain[0]);
+          $last_url = array(
+              'url' => $asciiDomain[0],
+              'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
+          );
+          $last_url_invalid_match = preg_match(self::$patterns['invalid_short_domain'], $asciiDomain[0]);
+          if (!$last_url_invalid_match) {
+            $urls[] = $last_url;
+          }
+        }
+
+        // no ASCII-only domain found. Skip the entire URL
+        if (empty($last_url)) {
+          continue;
+        }
+
+        // $last_url only contains domain. Need to add path and query if they exist.
+        if (!empty($path) && $last_url_invalid_match) {
+          // last_url was not added. Add it to urls here.
+          $last_url['url'] = preg_replace('/' . preg_quote($domain, '/') . '/u', $last_url['url'], $url);
+          $last_url['indices'][1] = $end_position;
+          $urls[] = $last_url;
+        }
+      } else {
+        // In the case of t.co URLs, don't allow additional path characters
+        if (preg_match(self::$patterns['valid_tco_url'], $url, $tcoUrlMatches)) {
+          $url = $tcoUrlMatches[0];
+          $end_position = $start_position + mb_strlen($url);
+        }
+        $urls[] = array(
+            'url' => $url,
+            'indices' => array($start_position, $end_position),
+        );
+      }
+    }
+
+    return $urls;
+  }
+
+  /**
+   * Extracts all the usernames and the indices they occur at from the tweet.
+   *
+   * @param  string  $tweet  The tweet to extract.
+   * @return  array  The username elements in the tweet.
+   */
+  public function extractMentionedScreennamesWithIndices($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+
+    $usernamesOnly = array();
+    $mentions = $this->extractMentionsOrListsWithIndices($tweet);
+    foreach ($mentions as $mention) {
+      if (isset($mention['list_slug'])) {
+        unset($mention['list_slug']);
+      }
+      $usernamesOnly[] = $mention;
+    }
+    return $usernamesOnly;
   }
 
   /**
    * Extracts all the usernames and the indices they occur at from the tweet.
    *
    * @return  array  The username elements in the tweet.
+   * @deprecated since version 1.1.0
    */
   public function extractMentionedUsernamesWithIndices() {
-    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = &$matches[3];
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('screen_name'), 1);
+    return $this->extractMentionedScreennamesWithIndices();
+  }
+
+  /**
+   * Extracts all the usernames and the indices they occur at from the tweet.
+   *
+   * @param  string  $tweet  The tweet to extract.
+   * @return  array  The username elements in the tweet.
+   */
+  public function extractMentionsOrListsWithIndices($tweet = null) {
+    if (is_null($tweet)) {
+      $tweet = $this->tweet;
+    }
+
+    if (!preg_match('/[@＠]/iu', $tweet)) {
+      return array();
+    }
+
+    preg_match_all(self::$patterns['valid_mentions_or_lists'], $tweet, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+    $results = array();
+
+    foreach ($matches as $match) {
+      list($all, $before, $at, $username, $list_slug, $outer) = array_pad($match, 6, array('', 0));
+      $start_position = $at[1] > 0 ? mb_strlen(substr($tweet, 0, $at[1])) : $at[1];
+      $end_position = $start_position + mb_strlen($at[0]) + mb_strlen($username[0]);
+      $entity = array(
+          'screen_name' => $username[0],
+          'list_slug' => $list_slug[0],
+          'indices' => array($start_position, $end_position),
+      );
+
+      if (preg_match(self::$patterns['end_mention_match'], $outer[0])) {
+        continue;
+      }
+
+      if (!empty($list_slug[0])) {
+        $entity['indices'][1] = $end_position + mb_strlen($list_slug[0]);
+      }
+
+      $results[] = $entity;
+    }
+
     return $results;
   }
 
@@ -190,44 +467,61 @@ class Twitter_Extractor extends Twitter_Regex {
    * Extracts all the usernames and the indices they occur at from the tweet.
    *
    * @return  array  The username elements in the tweet.
+   * @deprecated since version 1.1.0
    */
   public function extractMentionedUsernamesOrListsWithIndices() {
-    preg_match_all(self::$patterns['valid_mentions_or_lists'], $this->tweet, $matches, PREG_OFFSET_CAPTURE);
-    $results = array();
-    for ($i = 0; $i < count($matches[3]); $i++) {
-      $results[] = array($matches[3][$i][0], $matches[4][$i][0], $matches[3][$i][1]);
-    }
-    self::fixMultiByteIndices($this->tweet, $matches, $results, array('screen_name', 'list_slug'), 1);
-    return $results;
+    return $this->extractMentionsOrListsWithIndices();
   }
 
   /**
-   * Processes an array of matches and fixes up the offsets to support
-   * multibyte strings.  This needs to be done due to the state of unicode
-   * support in PHP.
+   * setter/getter for extractURLWithoutProtocol
    *
-   * @param  string  $tweet    The tweet being matched.
-   * @param  array   $matches  The matches from the regular expression match.
-   * @param  array   $results  The extracted results from the matches.
-   * @param  array   $keys     The list of array keys to be added.
-   * @param  int     $tweak    An amount to adjust the end index by.
+   * @param boolean $flag
+   * @return \Twitter_Extractor
    */
-  protected static function fixMultiByteIndices(&$tweet, &$matches, &$results, $keys, $tweak = 1) {
-    for ($i = 0; $i < count($results); $i++) {
-      # Add the array keys:
-      $results[$i] = array_combine(array_merge($keys, array('indices')), $results[$i]);
-      # Fix for PREG_OFFSET_CAPTURE returning byte offsets:
-      $start = mb_strlen(substr($tweet, 0, $matches[1][$i][1]));
-      $start += mb_strlen($matches[1][$i][0]);
-      # Determine the multibyte length of the matched string:
-      $length = array_sum(array_map(function ($key) use (&$results, $i) {
-        return mb_strlen($results[$i][$key]);
-      }, $keys));
-      # Ensure that the indices array contains the start and end index:
-      $results[$i]['indices'] = array($start, $start + $length + $tweak);
+  public function extractURLWithoutProtocol($flag = null) {
+    if (is_null($flag)) {
+      return $this->extractURLWithoutProtocol;
     }
+    $this->extractURLWithoutProtocol = (bool)$flag;
+    return $this;
   }
 
+  /**
+   * Remove overlapping entities.
+   * This returns a new array with no overlapping entities.
+   *
+   * @param array $entities
+   * @return array
+   */
+  public function removeOverlappingEntities($entities) {
+    $result = array();
+    usort($entities, array($this, 'sortEntites'));
+
+    $prev = null;
+    foreach ($entities as $entity) {
+      if (isset($prev) && $entity['indices'][0] < $prev['indices'][1]) {
+        continue;
+      }
+      $prev = $entity;
+      $result[] = $entity;
+    }
+    return $result;
+  }
+
+  /**
+   * sort by entity start index
+   *
+   * @param array $a
+   * @param array $b
+   * @return int
+   */
+  protected function sortEntites($a, $b) {
+    if ($a['indices'][0] == $b['indices'][0]) {
+      return 0;
+    }
+     return ($a['indices'][0] < $b['indices'][0]) ? -1 : 1;
+  }
 }
 
 ################################################################################

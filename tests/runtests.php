@@ -11,6 +11,7 @@
  */
 
 require_once dirname(__FILE__).'/bootstrap.php';
+use Symfony\Component\Yaml\Yaml;
 
 $browser = (PHP_SAPI != 'cli');
 
@@ -132,23 +133,27 @@ output_h1('Twitter Text (PHP Edition) Library » Conformance');
 
 output_h2('Extraction Conformance');
 
+# timer
+$timerStart = microtime(true);
+
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/extract.yml');
+$data = Yaml::parse($DATA.'/extract.yml');
 
 # Define the functions to be tested.
 $functions = array(
   'hashtags' => 'extractHashtags',
   'cashtags' => 'extractCashtags',
   'urls'     => 'extractURLs',
-  'mentions' => 'extractMentionedUsernames',
-  'replies'  => 'extractRepliedUsernames',
+  'mentions' => 'extractMentionedScreennames',
+  'replies'  => 'extractReplyScreenname',
   'hashtags_with_indices' => 'extractHashtagsWithIndices',
   'cashtags_with_indices' => 'extractCashtagsWithIndices',
   'urls_with_indices'     => 'extractURLsWithIndices',
-  'mentions_with_indices' => 'extractMentionedUsernamesWithIndices',
-  'mentions_or_lists_with_indices' => 'extractMentionedUsernamesOrListsWithIndices',
+  'mentions_with_indices' => 'extractMentionedScreennamesWithIndices',
+  'mentions_or_lists_with_indices' => 'extractMentionsOrListsWithIndices',
 );
 
+$extractor = Twitter_Extractor::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -165,7 +170,7 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $extracted = Twitter_Extractor::create($test['text'])->$function();
+    $extracted = $extractor->$function($test['text']);
     if ($test['expected'] == $extracted) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
@@ -201,18 +206,20 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Autolink Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/autolink.yml');
+$data = Yaml::parse($DATA.'/autolink.yml');
 
 # Define the functions to be tested.
 $functions = array(
-  'usernames' => 'addLinksToUsernamesAndLists',
-  'lists'     => 'addLinksToUsernamesAndLists',
-  'hashtags'  => 'addLinksToHashtags',
-  'cashtags'  => 'addLinksToCashtags',
-  'urls'      => 'addLinksToURLs',
-  'all'       => 'addLinks',
+  'usernames' => 'autoLinkUsernamesAndLists',
+  'lists'     => 'autoLinkUsernamesAndLists',
+  'hashtags'  => 'autoLinkHashtags',
+  'cashtags'  => 'autoLinkCashtags',
+  'urls'      => 'autoLinkURLs',
+  'json'      => 'autoLinkWithJson',
+  'all'       => 'autoLink',
 );
 
+$linker = Twitter_Autolink::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -229,25 +236,18 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $linked = Twitter_Autolink::create($test['text'], false)
-      ->setNoFollow(false)->setExternal(false)->setTarget('')
-      ->setUsernameClass('tweet-url username')
-      ->setListClass('tweet-url list-slug')
-      ->setHashtagClass('tweet-url hashtag')
-      ->setCashtagClass('tweet-url cashtag')
-      ->setURLClass('')
-      ->$function();
-    # XXX: Need to re-order for hashtag as it is written out differently...
-    #      We use the same wrapping function for adding links for all methods.
-    if ($group == 'hashtags') {
-      $linked = preg_replace(array(
-        '!<a class="([^"]*)" href="([^"]*)">([^<]*)</a>!',
-        '!title="＃([^"]+)"!'
-      ), array(
-        '<a href="$2" title="$3" class="$1">$3</a>',
-        'title="#$1"'
-      ), $linked);
+    $linker->setNoFollow(false)->setExternal(false)->setTarget('')
+              ->setUsernameClass('tweet-url username')
+              ->setListClass('tweet-url list-slug')
+              ->setHashtagClass('tweet-url hashtag')
+              ->setCashtagClass('tweet-url cashtag')
+              ->setURLClass('');
+    if ($group === 'json') {
+      $linked = $linker->$function($test['text'], json_decode($test['json']));
+    } else {
+      $linked = $linker->$function($test['text']);
     }
+
     if ($test['expected'] == $linked) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
@@ -283,14 +283,15 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Hit Highlighter Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/hit_highlighting.yml');
+$data = Yaml::parse($DATA.'/hit_highlighting.yml');
 
 # Define the functions to be tested.
 $functions = array(
-  'plain_text' => 'addHitHighlighting',
-  'with_links' => 'addHitHighlighting',
+  'plain_text' => 'highlight',
+  'with_links' => 'highlight',
 );
 
+$highlighter = Twitter_HitHighlighter::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -307,7 +308,7 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $highlighted = Twitter_HitHighlighter::create($test['text'])->$function($test['hits']);
+    $highlighted = $highlighter->$function($test['text'], $test['hits']);
     if ($test['expected'] == $highlighted) {
       $pass_group++;
       echo ($browser ? '<span class="pass">PASS</span>' : "\033[1;32mPASS\033[0m");
@@ -343,19 +344,20 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Validation Conformance');
 
 # Load the test data.
-$data = Spyc::YAMLLoad($DATA.'/validate.yml');
+$data = Yaml::parse($DATA.'/validate.yml');
 
 # Define the functions to be tested.
 $functions = array(
-  'tweets' => 'validateTweet',
-  'usernames' => 'validateUsername',
-  'lists' => 'validateList',
-  'hashtags' => 'validateHashtag',
-  'urls' => 'validateURL',
-  'urls_without_protocol' => 'validateURL',
-  'lengths' => 'getLength',
+  'tweets' => 'isValidTweetText',
+  'usernames' => 'isValidUsername',
+  'lists' => 'isValidList',
+  'hashtags' => 'isValidHashtag',
+  'urls' => 'isValidURL',
+  'urls_without_protocol' => 'isValidURL',
+  'lengths' => 'getTweetLength',
 );
 
+$validator = Twitter_Validation::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -372,11 +374,10 @@ foreach ($data['tests'] as $group => $tests) {
   foreach ($tests as $test) {
     echo ($browser ? '<li>' : ' - ');
     echo (isset($test['description']) ? $test['description'] : '???'), ' ... ';
-    $validator = Twitter_Validation::create($test['text']);
     if ($group === 'urls_without_protocol') {
-      $validated = $validator->$function(true, false);
+      $validated = $validator->$function($test['text'], true, false);
     } else {
-      $validated = $validator->$function();
+      $validated = $validator->$function($test['text']);
     }
     if ($test['expected'] == $validated) {
       $pass_group++;
@@ -412,6 +413,11 @@ foreach ($data['tests'] as $group => $tests) {
 
 echo ($browser ? '<p class="total">' : "   \033[1;36m");
 printf('Total Results: %d passes, %d failures', $pass_total, $fail_total);
+echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
+echo PHP_EOL;
+
+echo ($browser ? '<p class="total">' : "   \033[1;36m");
+printf('Time: %.2f sec Memory: %s kb ', microtime(true) - $timerStart, number_format(memory_get_peak_usage(true) / 1024));
 echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
 echo PHP_EOL;
 
