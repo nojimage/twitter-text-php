@@ -133,6 +133,9 @@ output_h1('Twitter Text (PHP Edition) Library » Conformance');
 
 output_h2('Extraction Conformance');
 
+# timer
+$timerStart = microtime(true);
+
 # Load the test data.
 $data = Yaml::parse($DATA.'/extract.yml');
 
@@ -402,6 +405,11 @@ foreach ($data['tests'] as $group => $tests) {
 
 echo ($browser ? '<p class="total">' : "   \033[1;36m");
 printf('Total Results: %d passes, %d failures', $pass_total, $fail_total);
+echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
+echo PHP_EOL;
+
+echo ($browser ? '<p class="total">' : "   \033[1;36m");
+printf('Time: %.2f sec Memory: %s kb ', microtime(true) - $timerStart, number_format(memory_get_peak_usage(true)) / 1024);
 echo ($browser ? '</p>' : "\033[0m".PHP_EOL);
 echo PHP_EOL;
 
