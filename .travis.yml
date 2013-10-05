@@ -7,6 +7,7 @@ php:
 
 before_script:
   - composer install --dev
+  - patch vendor/twitter/twitter-text-conformance/validate.yml < validate.yml.patch
 
 script:
   - phpunit
