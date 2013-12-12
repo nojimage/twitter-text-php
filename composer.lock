@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c9b8fa4ca5bc5c6aa65fb7a4a29d5cef",
+    "hash": "a3667e70ae75676146757e5f8ec96fd8",
     "packages": [
 
     ],
@@ -53,15 +53,15 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-07-11 10:36:36"
+            "time": "2013-07-11 01:36:36"
         },
         {
             "name": "twitter/twitter-text-conformance",
-            "version": "v1.6.1",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twitter/twitter-text-conformance.git",
-                "reference": "v1.6.1"
+                "reference": "v1.7.0"
             },
             "type": "library"
         }
