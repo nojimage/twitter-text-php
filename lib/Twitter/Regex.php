@@ -269,10 +269,21 @@ abstract class Twitter_Regex {
     $tmp['valid_port_number'] = '[0-9]+';
 
     $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@'.$tmp['latin_accents'].']';
-    # Allow URL paths to contain balanced parentheses:
+    # Allow URL paths to contain up to two nested levels of balanced parentheses:
     # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
     # 2. Used in IIS sessions, e.g. /S(dfd346)/
-    $tmp['valid_url_balanced_parens'] = '(?:\('.$tmp['valid_general_url_path_chars'].'+\))';
+    # 3. Used in Rdio URLs like /track/We_Up_(Album_Version_(Edited))/
+    $tmp['valid_url_balanced_parens'] = '(?:\('
+    . '(?:' . $tmp['valid_general_url_path_chars'] . '+'
+      . '|'
+      // allow one nested level of balanced parentheses
+      . '(?:'
+        . $tmp['valid_general_url_path_chars'] . '*'
+        . '\(' . $tmp['valid_general_url_path_chars'] . '+' . '\)'
+        . $tmp['valid_general_url_path_chars'] . '*'
+      . ')'
+    . ')'
+    . '\))';
     # Valid end-of-path characters (so /foo. does not gobble the period).
     # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
     $tmp['valid_url_path_ending_chars'] = '(?:[a-z0-9=_#\/\+\-'.$tmp['latin_accents'].']|(?:'.$tmp['valid_url_balanced_parens'].'))';
