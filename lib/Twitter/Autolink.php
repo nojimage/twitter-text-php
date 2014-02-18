@@ -690,10 +690,10 @@ class Twitter_Autolink extends Twitter_Regex {
 
     // loose mode
     $original = $this->tweet;
-    $this->tweet = $this->addLinksToURLs();
-    $this->tweet = $this->addLinksToHashtags();
-    $this->tweet = $this->addLinksToCashtags();
-    $this->tweet = $this->addLinksToUsernamesAndLists();
+    $this->tweet = $this->addLinksToURLs($loose);
+    $this->tweet = $this->addLinksToHashtags($loose);
+    $this->tweet = $this->addLinksToCashtags($loose);
+    $this->tweet = $this->addLinksToUsernamesAndLists($loose);
     $modified = $this->tweet;
     $this->tweet = $original;
     return $modified;
