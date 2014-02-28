@@ -303,6 +303,28 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
     return $this->providerHelper('json');
   }
 
+  /**
+   * Check the addLinks method pass to legacy methods on loose mode
+   *
+   * @covers Twitter_Autolink::addLinks
+   */
+  public function testAddLinksWithLooseOption() {
+    $this->linker = $this->getMock('Twitter_Autolink', array(
+        'autoLinkURLs',
+        'autoLinkHashtags',
+        'autoLinkCashtags',
+        'autoLinkUsernamesAndLists',
+    ), array(
+        'some tweet #hashtag http://example.com'
+    ));
+
+    $this->linker->expects($this->never())->method('autoLinkURLs');
+    $this->linker->expects($this->never())->method('autoLinkHashtags');
+    $this->linker->expects($this->never())->method('autoLinkCashtags');
+    $this->linker->expects($this->never())->method('autoLinkUsernamesAndLists');
+    $this->linker->addLinks(true);
+  }
+
 }
 
 ################################################################################
