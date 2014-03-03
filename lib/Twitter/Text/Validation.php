@@ -6,7 +6,10 @@
  * @package    Twitter
  */
 
-require_once 'Regex.php';
+namespace Twitter\Text;
+
+use Twitter\Text\Regex;
+use Twitter\Text\Extractor;
 
 /**
  * Twitter Validator Class
@@ -22,7 +25,7 @@ require_once 'Regex.php';
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class Twitter_Validation extends Twitter_Regex {
+class Validation extends Regex {
 
   /**
    * The maximum length of a tweet.
@@ -59,7 +62,7 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @see  __construct()
    *
-   * @return  Twitter_Validation
+   * @return  Validation
    */
   public static function create($tweet = null, $config = null) {
     return new self($tweet, $config);
@@ -75,7 +78,7 @@ class Twitter_Validation extends Twitter_Regex {
       if (!empty($config)) {
         $this->setConfiguration($config);
       }
-      $this->extractor = Twitter_Extractor::create();
+      $this->extractor = Extractor::create();
   }
 
 /**

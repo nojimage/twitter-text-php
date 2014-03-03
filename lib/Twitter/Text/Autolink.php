@@ -7,8 +7,10 @@
  * @package    Twitter
  */
 
-require_once 'Regex.php';
-require_once 'Extractor.php';
+namespace Twitter\Text;
+
+use Twitter\Text\Regex;
+use Twitter\Text\Extractor;
 
 /**
  * Twitter Autolink Class
@@ -26,7 +28,7 @@ require_once 'Extractor.php';
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class Twitter_Autolink extends Twitter_Regex {
+class Autolink extends Regex {
 
   /**
    * CSS class for auto-linked URLs.
@@ -142,7 +144,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @see  __construct()
    *
-   * @return  Twitter_Autolink
+   * @return  Autolink
    */
   public static function create($tweet = null, $full_encode = false) {
     return new self($tweet, $full_encode);
@@ -170,7 +172,7 @@ class Twitter_Autolink extends Twitter_Regex {
     } else {
       parent::__construct($tweet);
     }
-    $this->extractor = Twitter_Extractor::create();
+    $this->extractor = Extractor::create();
   }
 
   /**
@@ -187,7 +189,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string  $v  CSS class for URL links.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setURLClass($v) {
     $this->class_url = trim($v);
@@ -208,7 +210,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string  $v  CSS class for username links.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setUsernameClass($v) {
     $this->class_user = trim($v);
@@ -229,7 +231,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string  $v  CSS class for username/list links.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setListClass($v) {
     $this->class_list = trim($v);
@@ -250,7 +252,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string  $v  CSS class for hashtag links.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setHashtagClass($v) {
     $this->class_hash = trim($v);
@@ -271,7 +273,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string  $v  CSS class for cashtag links.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setCashtagClass($v) {
     $this->class_cash = trim($v);
@@ -292,7 +294,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  bool  $v  The value to add to the 'target' attribute.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setNoFollow($v) {
     $this->nofollow = $v;
@@ -323,7 +325,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  bool  $v  The value to add to the 'target' attribute.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setExternal($v) {
     $this->external = $v;
@@ -352,7 +354,7 @@ class Twitter_Autolink extends Twitter_Regex {
    *
    * @param  string  $v  The value to add to the 'target' attribute.
    *
-   * @return  Twitter_Autolink  Fluid method chaining.
+   * @return  Autolink  Fluid method chaining.
    */
   public function setTarget($v) {
     $this->target = trim($v);

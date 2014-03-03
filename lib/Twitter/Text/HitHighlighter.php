@@ -6,7 +6,9 @@
  * @package    Twitter
  */
 
-require_once 'Regex.php';
+namespace Twitter\Text;
+
+use Twitter\Text\Regex;
 
 /**
  * Twitter HitHighlighter Class
@@ -23,7 +25,7 @@ require_once 'Regex.php';
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class Twitter_HitHighlighter extends Twitter_Regex {
+class HitHighlighter extends Regex {
 
   /**
    * The tag to surround hits with.
@@ -40,7 +42,7 @@ class Twitter_HitHighlighter extends Twitter_Regex {
    *
    * @see  __construct()
    *
-   * @return  Twitter_HitHighlighter
+   * @return  HitHighlighter
    */
   public static function create($tweet = null, $full_encode = false) {
     return new self($tweet, $full_encode);
@@ -83,7 +85,7 @@ class Twitter_HitHighlighter extends Twitter_Regex {
    *
    * @param  string  $v  The tag name.
    *
-   * @return  Twitter_HitHighlighter  Fluid method chaining.
+   * @return  HitHighlighter  Fluid method chaining.
    */
   public function setTag($v) {
     $this->tag = $v;

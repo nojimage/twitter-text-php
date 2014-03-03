@@ -7,7 +7,9 @@
  * @package    Twitter
  */
 
-require_once 'Regex.php';
+namespace Twitter\Text;
+
+use Twitter\Text\Regex;
 
 /**
  * Twitter Extractor Class
@@ -25,7 +27,7 @@ require_once 'Regex.php';
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class Twitter_Extractor extends Twitter_Regex {
+class Extractor extends Regex {
 
   /**
    * @var boolean
@@ -39,7 +41,7 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * @see  __construct()
    *
-   * @return  Twitter_Extractor
+   * @return  Extractor
    */
   public static function create($tweet = null) {
     return new self($tweet);

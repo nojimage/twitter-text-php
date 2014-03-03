@@ -93,7 +93,7 @@ echo PHP_EOL;
 $code = <<<EOPHP
 <?php
 \$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
-\$data = Twitter_Extractor::create()
+\$data = \\Twitter\\Text\\Extractor::create()
   ->extract(\$tweet);
 print_r(\$data);
 EOPHP;
@@ -108,7 +108,7 @@ if ($browser) {
   echo PHP_EOL, PHP_EOL;
 }
 
-$data = Twitter_Extractor::create()
+$data = \Twitter\Text\Extractor::create()
   ->extract($tweet);
 
 if ($browser) {
@@ -131,7 +131,7 @@ echo PHP_EOL;
 $code = <<<EOPHP
 <?php
 \$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
-\$html = Twitter_Autolink::create()
+\$html = \\Twitter\\Text\\Autolink::create()
   ->setNoFollow(false)
   ->autoLink(\$tweet);
 echo \$html;
@@ -147,7 +147,7 @@ if ($browser) {
   echo PHP_EOL, PHP_EOL;
 }
 
-$html = Twitter_Autolink::create()
+$html = \Twitter\Text\Autolink::create()
   ->setNoFollow(false)
   ->autoLink($tweet);
 
@@ -183,7 +183,7 @@ $code = <<<EOPHP
 <?php
 \$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 \$hits  = array(array(70, 77), array(101, 108));
-\$html = Twitter_HitHighlighter::create()
+\$html = \\Twitter\\Text\\HitHighlighter::create()
   ->highlight(\$tweet, \$hits);
 echo \$html;
 EOPHP;
@@ -198,7 +198,7 @@ if ($browser) {
   echo PHP_EOL, PHP_EOL;
 }
 
-$html = Twitter_HitHighlighter::create()
+$html = \Twitter\Text\HitHighlighter::create()
   ->highlight($tweet, array(array(70, 77), array(101, 108)));
 
 if ($browser) {

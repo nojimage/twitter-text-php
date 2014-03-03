@@ -5,6 +5,9 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
+namespace Twitter\Text;
+
+use Twitter\Text\Validation;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -14,13 +17,13 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
- * @property   Twitter_Validation $validator
+ * @property   Validation $validator
  */
-class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
+class ValidationTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     parent::setUp();
-    $this->validator = new Twitter_Validation();
+    $this->validator = new Validation();
   }
 
   protected function tearDown() {
@@ -41,7 +44,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testConfiglationFromArray() {
-    $validator = Twitter_Validation::create('', array(
+    $validator = Validation::create('', array(
         'short_url_length' => 22,
         'short_url_length_https' => 23,
     ));
@@ -50,10 +53,10 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testConfiglationFromObject() {
-    $conf = new stdClass();
+    $conf = new \stdClass();
     $conf->short_url_length = 22;
     $conf->short_url_length_https = 23;
-    $validator = Twitter_Validation::create('', $conf);
+    $validator = Validation::create('', $conf);
     $this->assertSame(22, $validator->getShortUrlLength());
     $this->assertSame(23, $validator->getShortUrlLengthHttps());
   }
@@ -70,7 +73,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidTweetTextProvider
    */
   public function testValidateTweet($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->validateTweet();
+    $validated = Validation::create($text)->validateTweet();
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -93,7 +96,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidUsernameProvider
    */
   public function testValidateUsername($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->validateUsername();
+    $validated = Validation::create($text)->validateUsername();
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -116,7 +119,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidListProvider
    */
   public function testValidateList($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->validateList();
+    $validated = Validation::create($text)->validateList();
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -139,7 +142,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidHashtagProvider
    */
   public function testValidateHashtag($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->validateHashtag();
+    $validated = Validation::create($text)->validateHashtag();
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -162,7 +165,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  isValidURLProvider
    */
   public function testValidateURL($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->validateURL();
+    $validated = Validation::create($text)->validateURL();
     $this->assertSame($expected, $validated, $description);
   }
 
@@ -200,7 +203,7 @@ class Twitter_ValidationTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  getTweetLengthProvider
    */
   public function testGetLength($description, $text, $expected) {
-    $validated = Twitter_Validation::create($text)->getLength();
+    $validated = Validation::create($text)->getLength();
     $this->assertSame($expected, $validated, $description);
   }
 

@@ -5,6 +5,9 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
+namespace Twitter\Text;
+
+use Twitter\Text\Autolink;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -16,11 +19,11 @@ use Symfony\Component\Yaml\Yaml;
  * @package    Twitter
  * @property Twiiter_Autolink $linker
  */
-class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
+class AutolinkTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     parent::setUp();
-    $this->linker = new Twitter_Autolink();
+    $this->linker = new Autolink();
   }
 
   protected function tearDown() {
@@ -59,7 +62,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  autoLinkUsernamesProvider
    */
   public function testAddLinksToUsernames($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text)
+    $linked = Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -96,7 +99,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  autoLinkListsProvider
    */
   public function testAddLinksToLists($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text)
+    $linked = Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -133,7 +136,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  autoLinkHashtagsProvider
    */
   public function testAddLinksToHashtags($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text)
+    $linked = Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -170,7 +173,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  autoLinkCashtagsProvider
    */
   public function testAddLinksToCashtags($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text)
+    $linked = Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -207,7 +210,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  autoLinkURLsProvider
    */
   public function testAddLinksToURLs($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text)
+    $linked = Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -244,7 +247,7 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  autoLinkProvider
    */
   public function testAddLinks($description, $text, $expected) {
-    $linked = Twitter_Autolink::create($text)
+    $linked = Autolink::create($text)
       ->setNoFollow(false)->setExternal(false)->setTarget('')
       ->setUsernameClass('tweet-url username')
       ->setListClass('tweet-url list-slug')
@@ -306,10 +309,10 @@ class Twitter_AutolinkTest extends PHPUnit_Framework_TestCase {
   /**
    * Check the addLinks method pass to legacy methods on loose mode
    *
-   * @covers Twitter_Autolink::addLinks
+   * @covers Autolink::addLinks
    */
   public function testAddLinksWithLooseOption() {
-    $this->linker = $this->getMock('Twitter_Autolink', array(
+    $this->linker = $this->getMock('Twitter\Text\Autolink', array(
         'autoLinkURLs',
         'autoLinkHashtags',
         'autoLinkCashtags',

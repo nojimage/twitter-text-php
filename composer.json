@@ -50,7 +50,7 @@
   },
   "autoload": {
     "psr-0": {
-      "Twitter_": "lib/"
+      "Twitter\\Text\\": "lib/"
     }
   }
 }

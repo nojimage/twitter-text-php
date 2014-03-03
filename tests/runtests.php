@@ -153,7 +153,7 @@ $functions = array(
   'mentions_or_lists_with_indices' => 'extractMentionsOrListsWithIndices',
 );
 
-$extractor = Twitter_Extractor::create();
+$extractor = \Twitter\Text\Extractor::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -219,7 +219,7 @@ $functions = array(
   'all'       => 'autoLink',
 );
 
-$linker = Twitter_Autolink::create();
+$linker = \Twitter\Text\Autolink::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -291,7 +291,7 @@ $functions = array(
   'with_links' => 'highlight',
 );
 
-$highlighter = Twitter_HitHighlighter::create();
+$highlighter = \Twitter\Text\HitHighlighter::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -357,7 +357,7 @@ $functions = array(
   'lengths' => 'getTweetLength',
 );
 
-$validator = Twitter_Validation::create();
+$validator = \Twitter\Text\Validation::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
