@@ -562,16 +562,16 @@ class Autolink extends Regex
             // Goal: If a user copies and pastes a tweet containing t.co'ed link, the resulting paste
             // should contain the full original URL (expanded_url), not the display URL.
             //
-      // Method: Whenever possible, we actually emit HTML that contains expanded_url, and use
+            // Method: Whenever possible, we actually emit HTML that contains expanded_url, and use
             // font-size:0 to hide those parts that should not be displayed (because they are not part of display_url).
             // Elements with font-size:0 get copied even though they are not visible.
             // Note that display:none doesn't work here. Elements with display:none don't get copied.
             //
-      // Additionally, we want to *display* ellipses, but we don't want them copied.  To make this happen we
+            // Additionally, we want to *display* ellipses, but we don't want them copied.  To make this happen we
             // wrap the ellipses in a tco-ellipsis class and provide an onCopy handler that sets display:none on
             // everything with the tco-ellipsis class.
             //
-      // As an example: The user tweets "hi http://longdomainname.com/foo"
+            // As an example: The user tweets "hi http://longdomainname.com/foo"
             // This gets shortened to "hi http://t.co/xyzabc", with display_url = "…nname.com/foo"
             // This will get rendered as:
             // <span class='tco-ellipsis'> <!-- This stuff should get displayed but not copied -->
@@ -594,7 +594,7 @@ class Autolink extends Regex
             //   …
             // </span>
             //
-      // Exception: pic.twitter.com images, for which expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
+            // Exception: pic.twitter.com images, for which expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
             // For those URLs, display_url is not a substring of expanded_url, so we don't do anything special to render the elided parts.
             // For a pic.twitter.com URL, the only elided part will be the "https://", so this is fine.
             $displayURL = $entity['display_url'];
