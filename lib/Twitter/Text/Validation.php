@@ -4,7 +4,7 @@
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
+ * @package    Twitter.Text
  */
 
 namespace Twitter\Text;
@@ -24,7 +24,7 @@ use Twitter\Text\Extractor;
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
+ * @package    Twitter.Text
  */
 class Validation extends Regex
 {
@@ -52,7 +52,7 @@ class Validation extends Regex
 
     /**
      *
-     * @var Twitter_Extractor
+     * @var Extractor
      */
     protected $extractor = null;
 
@@ -89,7 +89,7 @@ class Validation extends Regex
      * Setup short URL length from Twitter API /help/configuration response
      *
      * @param mixed $config
-     * @return \Twitter_Validation
+     * @return Validation
      * @link https://dev.twitter.com/docs/api/1/get/help/configuration
      */
     public function setConfiguration($config)
@@ -119,7 +119,7 @@ class Validation extends Regex
      * Set the length of a short URL beginning with http:
      *
      * @param mixed $length
-     * @return \Twitter_Validation
+     * @return Validation
      */
     public function setShortUrlLength($length)
     {
@@ -141,7 +141,7 @@ class Validation extends Regex
      * Set the length of a short URL beginning with https:
      *
      * @param mixed $length
-     * @return \Twitter_Validation
+     * @return Validation
      */
     public function setShortUrlLengthHttps($length)
     {

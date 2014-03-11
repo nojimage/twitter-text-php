@@ -5,7 +5,7 @@
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
+ * @package    Twitter.Text
  */
 
 namespace Twitter\Text;
@@ -26,7 +26,7 @@ use Twitter\Text\Regex;
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
+ * @package    Twitter.Text
  */
 class Extractor extends Regex
 {
@@ -498,7 +498,7 @@ class Extractor extends Regex
      * setter/getter for extractURLWithoutProtocol
      *
      * @param boolean $flag
-     * @return \Twitter_Extractor
+     * @return Extractor
      */
     public function extractURLWithoutProtocol($flag = null)
     {

@@ -4,7 +4,7 @@
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
+ * @package    Twitter.Text
  */
 
 namespace Twitter\Text;
@@ -18,7 +18,7 @@ use Symfony\Component\Yaml\Yaml;
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
+ * @package    Twitter.Text
  * @property   HitHighlighter $highlighter
  */
 class HitHighlighterTest extends \PHPUnit_Framework_TestCase
