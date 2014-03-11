@@ -2,32 +2,34 @@
 
 /**
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
+ * @author     Takashi Nojima
+ * @copyright  Copyright 2014 Mike Cochrane, Nick Pope, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
 
 namespace Twitter\Text;
 
-use Twitter\Text\Autolink;
+use Twitter\Text\LooseAutolink;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Twitter Autolink Class Unit Tests
+ * Twitter LooseAutolink Class Unit Tests
  *
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
+ * @author     Takashi Nojima
+ * @copyright  Copyright 2014 Mike Cochrane, Nick Pope, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property Autolink $linker
+ * @property LooseAutolink $linker
  */
-class AutolinkTest extends \PHPUnit_Framework_TestCase
+class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
 {
 
     protected function setUp()
     {
         parent::setUp();
-        $this->linker = new Autolink();
+        $this->linker = new LooseAutolink();
     }
 
     protected function tearDown()
@@ -66,6 +68,22 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider  autoLinkUsernamesProvider
+     */
+    public function testAddLinksToUsernames($description, $text, $expected)
+    {
+        $linked = LooseAutolink::create($text)
+            ->setNoFollow(false)->setExternal(false)->setTarget('')
+            ->setUsernameClass('tweet-url username')
+            ->setListClass('tweet-url list-slug')
+            ->setHashtagClass('tweet-url hashtag')
+            ->setCashtagClass('tweet-url cashtag')
+            ->setURLClass('')
+            ->addLinksToUsernamesAndLists();
+        $this->assertSame($expected, $linked, $description);
+    }
+
+    /**
      *
      */
     public function autoLinkUsernamesProvider()
@@ -86,6 +104,22 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
             ->setCashtagClass('tweet-url cashtag')
             ->setURLClass('')
             ->autoLinkUsernamesAndLists($text);
+        $this->assertSame($expected, $linked, $description);
+    }
+
+    /**
+     * @dataProvider  autoLinkListsProvider
+     */
+    public function testAddLinksToLists($description, $text, $expected)
+    {
+        $linked = LooseAutolink::create($text)
+            ->setNoFollow(false)->setExternal(false)->setTarget('')
+            ->setUsernameClass('tweet-url username')
+            ->setListClass('tweet-url list-slug')
+            ->setHashtagClass('tweet-url hashtag')
+            ->setCashtagClass('tweet-url cashtag')
+            ->setURLClass('')
+            ->addLinksToUsernamesAndLists();
         $this->assertSame($expected, $linked, $description);
     }
 
@@ -114,6 +148,22 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider  autoLinkHashtagsProvider
+     */
+    public function testAddLinksToHashtags($description, $text, $expected)
+    {
+        $linked = LooseAutolink::create($text)
+            ->setNoFollow(false)->setExternal(false)->setTarget('')
+            ->setUsernameClass('tweet-url username')
+            ->setListClass('tweet-url list-slug')
+            ->setHashtagClass('tweet-url hashtag')
+            ->setCashtagClass('tweet-url cashtag')
+            ->setURLClass('')
+            ->addLinksToHashtags();
+        $this->assertSame($expected, $linked, $description);
+    }
+
+    /**
      *
      */
     public function autoLinkHashtagsProvider()
@@ -134,6 +184,22 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
             ->setCashtagClass('tweet-url cashtag')
             ->setURLClass('')
             ->autoLinkCashtags($text);
+        $this->assertSame($expected, $linked, $description);
+    }
+
+    /**
+     * @dataProvider  autoLinkCashtagsProvider
+     */
+    public function testAddLinksToCashtags($description, $text, $expected)
+    {
+        $linked = LooseAutolink::create($text)
+            ->setNoFollow(false)->setExternal(false)->setTarget('')
+            ->setUsernameClass('tweet-url username')
+            ->setListClass('tweet-url list-slug')
+            ->setHashtagClass('tweet-url hashtag')
+            ->setCashtagClass('tweet-url cashtag')
+            ->setURLClass('')
+            ->addLinksToCashtags();
         $this->assertSame($expected, $linked, $description);
     }
 
@@ -162,6 +228,22 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider  autoLinkURLsProvider
+     */
+    public function testAddLinksToURLs($description, $text, $expected)
+    {
+        $linked = LooseAutolink::create($text)
+            ->setNoFollow(false)->setExternal(false)->setTarget('')
+            ->setUsernameClass('tweet-url username')
+            ->setListClass('tweet-url list-slug')
+            ->setHashtagClass('tweet-url hashtag')
+            ->setCashtagClass('tweet-url cashtag')
+            ->setURLClass('')
+            ->addLinksToURLs();
+        $this->assertSame($expected, $linked, $description);
+    }
+
+    /**
      *
      */
     public function autoLinkURLsProvider()
@@ -182,6 +264,22 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
             ->setCashtagClass('tweet-url cashtag')
             ->setURLClass('')
             ->autoLink($text);
+        $this->assertSame($expected, $linked, $description);
+    }
+
+    /**
+     * @dataProvider  autoLinkProvider
+     */
+    public function testAddLinks($description, $text, $expected)
+    {
+        $linked = LooseAutolink::create($text)
+            ->setNoFollow(false)->setExternal(false)->setTarget('')
+            ->setUsernameClass('tweet-url username')
+            ->setListClass('tweet-url list-slug')
+            ->setHashtagClass('tweet-url hashtag')
+            ->setCashtagClass('tweet-url cashtag')
+            ->setURLClass('')
+            ->addLinks();
         $this->assertSame($expected, $linked, $description);
     }
 
@@ -236,5 +334,4 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     {
         return $this->providerHelper('json');
     }
-
 }
