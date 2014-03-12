@@ -70,7 +70,7 @@ abstract class Regex
 
         # Expression to match whitespace characters.
         #
-    #   0x0009-0x000D  Cc # <control-0009>..<control-000D>
+        #   0x0009-0x000D  Cc # <control-0009>..<control-000D>
         #   0x0020         Zs # SPACE
         #   0x0085         Cc # <control-0085>
         #   0x00A0         Zs # NO-BREAK SPACE
@@ -96,7 +96,7 @@ abstract class Regex
 
         # Expression to match latin accented characters.
         #
-    #   0x00C0-0x00D6
+        #   0x00C0-0x00D6
         #   0x00D8-0x00F6
         #   0x00F8-0x00FF
         #   0x0100-0x024f
@@ -114,7 +114,7 @@ abstract class Regex
         #   0x0300-0x036f
         #   0x1e00-0x1eff
         #
-    # Excludes 0x00D7 - multiplication sign (confusable with 'x').
+        # Excludes 0x00D7 - multiplication sign (confusable with 'x').
         # Excludes 0x00F7 - division sign.
         $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}';
         $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
@@ -122,7 +122,7 @@ abstract class Regex
 
         # Expression to match RTL characters.
         #
-    #   0x0600-0x06FF Arabic
+        #   0x0600-0x06FF Arabic
         #   0x0750-0x077F Arabic Supplement
         #   0x08A0-0x08FF Arabic Extended-A
         #   0x0590-0x05FF Hebrew
@@ -132,16 +132,16 @@ abstract class Regex
 
         # Expression to match non-latin characters.
         #
-    # Cyrillic (Russian, Ukranian, ...):
+        # Cyrillic (Russian, Ukranian, ...):
         #
-    #   0x0400-0x04FF Cyrillic
+        #   0x0400-0x04FF Cyrillic
         #   0x0500-0x0527 Cyrillic Supplement
         #   0x2DE0-0x2DFF Cyrillic Extended A
         #   0xA640-0xA69F Cyrillic Extended B
         $tmp['non_latin_hashtag_chars'] = '\x{0400}-\x{04ff}\x{0500}-\x{0527}\x{2de0}-\x{2dff}\x{a640}-\x{a69f}';
         # Hebrew:
         #
-    #   0x0591-0x05bf Hebrew
+        #   0x0591-0x05bf Hebrew
         #   0x05c1-0x05c2
         #   0x05c4-0x05c5
         #   0x05c7
@@ -158,7 +158,7 @@ abstract class Regex
         $tmp['non_latin_hashtag_chars'] .= '\x{fb12}-\x{fb28}\x{fb2a}-\x{fb36}\x{fb38}-\x{fb3c}\x{fb3e}\x{fb40}-\x{fb41}\x{fb43}-\x{fb44}\x{fb46}-\x{fb4f}';
         # Arabic:
         #
-    #   0x0610-0x061a Arabic
+        #   0x0610-0x061a Arabic
         #   0x0620-0x065f
         #   0x066e-0x06d3
         #   0x06d5-0x06dc
@@ -186,7 +186,7 @@ abstract class Regex
         $tmp['non_latin_hashtag_chars'] .= '\x{200c}\x{0e01}-\x{0e3a}';
         # Hangul (Korean):
         #
-    #   0x0e40-0x0e4e Hangul (Korean)
+        #   0x0e40-0x0e4e Hangul (Korean)
         #   0x1100-0x11FF Hangul Jamo
         #   0x3130-0x3185 Hangul Compatibility Jamo
         #   0xA960-0xA97F Hangul Jamo Extended A
@@ -197,7 +197,7 @@ abstract class Regex
 
         # Expression to match other characters.
         #
-    #   0x30A1-0x30FA   Katakana (Full-Width)
+        #   0x30A1-0x30FA   Katakana (Full-Width)
         #   0x30FC-0x30FE   Katakana (Full-Width)
         #   0xFF66-0xFF9F   Katakana (Half-Width)
         #   0xFF10-0xFF19   Latin (Full-Width)
@@ -246,23 +246,23 @@ abstract class Regex
         $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
 
         $tmp['valid_domain'] = '(?:'                                                // subdomains + domain + TLD
-            . $tmp['valid_subdomain'] . '+' . $tmp['valid_domain_name']                  // e.g. www.twitter.com, foo.co.jp, bar.co.uk
+            . $tmp['valid_subdomain'] . '+' . $tmp['valid_domain_name']             // e.g. www.twitter.com, foo.co.jp, bar.co.uk
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . '|' . $tmp['valid_punycode'] . '))'
-            . '|(?:'                                                                   // domain + gTLD
-            . $tmp['valid_domain_name']                                              // e.g. twitter.com
+            . '|(?:'                                                                // domain + gTLD
+            . $tmp['valid_domain_name']                                             // e.g. twitter.com
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_punycode'] . ')'
             . ')'
             . '|(?:(?:(?<=http:\/\/)|(?<=https:\/\/))'
             . '(?:'
-            . '(?:' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . ')'              // protocol + domain + ccTLD
-            . '|(?:'                                                               // protocol + unicode domain + TLD
+            . '(?:' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . ')'         // protocol + domain + ccTLD
+            . '|(?:'                                                                // protocol + unicode domain + TLD
             . $tmp['domain_valid_unicode_chars'] . '+\.'
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . ')'
             . ')'
             . ')'
             . ')'
-            . '|(?:'                                                                   // domain + ccTLD + '/'
-            . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . '(?=\/)'                  // e.g. t.co/
+            . '|(?:'                                                                // domain + ccTLD + '/'
+            . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . '(?=\/)'            // e.g. t.co/
             . ')';
         # Used by the extractor:
         $re['valid_ascii_domain'] = '/' . $tmp['valid_subdomain'] . '*' . $tmp['valid_domain_name'] . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . '|' . $tmp['valid_punycode'] . ')/iu';
@@ -305,10 +305,10 @@ abstract class Regex
         $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
         $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
 
-        $re['valid_url'] = '/(?:'                     # $1 Complete match (preg_match() already matches everything.)
+        $re['valid_url'] = '/(?:'                           # $1 Complete match (preg_match() already matches everything.)
             . '(' . $tmp['valid_url_preceding_chars'] . ')' # $2 Preceding characters
-            . '('                                       # $3 Complete URL
-            . '(https?:\/\/)?'                          # $4 Protocol (optional)
+            . '('                                           # $3 Complete URL
+            . '(https?:\/\/)?'                              # $4 Protocol (optional)
             . '(' . $tmp['valid_domain'] . ')'              # $5 Domain(s)
             . '(?::(' . $tmp['valid_port_number'] . '))?'   # $6 Port number (optional)
             . '(\/' . $tmp['valid_url_path'] . '*)?'        # $7 URL Path
