@@ -26,27 +26,12 @@
     "homepage":"http://php-tips.com"
   }
   ],
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "twitter/twitter-text-conformance",
-        "version": "v1.8.0",
-        "source": {
-          "url": "https://github.com/twitter/twitter-text-conformance.git",
-          "type": "git",
-          "reference": "v1.8.0"
-        }
-      }
-    }
-  ],
   "require": {
     "php": ">=5.2.8"
   },
   "require-dev": {
     "php": ">=5.3.3",
-    "symfony/yaml": "*",
-    "twitter/twitter-text-conformance": "1.8.0"
+    "symfony/yaml": "~2.4"
   },
   "autoload": {
     "psr-0": {
