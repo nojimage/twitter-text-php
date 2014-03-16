@@ -7,7 +7,6 @@ php:
 
 before_script:
   - composer install --dev
-  - git submodule update --init --recursive
 
 script:
   - phpunit
