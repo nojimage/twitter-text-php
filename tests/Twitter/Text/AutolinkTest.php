@@ -50,6 +50,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkUsernamesProvider
      */
     public function testAutolinkUsernames($description, $text, $expected)
@@ -74,6 +76,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkListsProvider
      */
     public function testAutoLinkLists($description, $text, $expected)
@@ -98,6 +102,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkHashtagsProvider
      */
     public function testAutoLinkHashtags($description, $text, $expected)
@@ -122,6 +128,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkCashtagsProvider
      */
     public function testAutoLinkCashtags($description, $text, $expected)
@@ -146,6 +154,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkURLsProvider
      */
     public function testAutoLinkURLs($description, $text, $expected)
@@ -170,6 +180,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkProvider
      */
     public function testAutoLinks($description, $text, $expected)
@@ -194,6 +206,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkWithJSONProvider
      */
     public function testAutoLinkWithJSONByObj($description, $text, $jsonText, $expected)
@@ -212,6 +226,8 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
      * @dataProvider  autoLinkWithJSONProvider
      */
     public function testAutoLinkWithJSONByArray($description, $text, $jsonText, $expected)

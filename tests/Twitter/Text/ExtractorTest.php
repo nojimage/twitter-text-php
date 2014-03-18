@@ -50,6 +50,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractMentionedScreennamesProvider
      */
     public function testExtractMentionedScreennames($description, $text, $expected)
@@ -59,6 +61,9 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
      * @dataProvider  extractMentionedScreennamesProvider
      */
     public function testExtractMentionedUsernames($description, $text, $expected)
@@ -76,6 +81,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractReplyScreennameProvider
      */
     public function testExtractReplyScreenname($description, $text, $expected)
@@ -85,6 +92,9 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
      * @dataProvider  extractReplyScreennameProvider
      */
     public function testExtractRepliedUsernames($description, $text, $expected)
@@ -102,6 +112,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractURLsProvider
      */
     public function testExtractURLs($description, $text, $expected)
@@ -119,6 +131,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractHashtagsProvider
      */
     public function testExtractHashtags($description, $text, $expected)
@@ -136,6 +150,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractHashtagsWithIndicesProvider
      */
     public function testExtractHashtagsWithIndices($description, $text, $expected)
@@ -153,6 +169,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractCashtagsProvider
      */
     public function testExtractCashtags($description, $text, $expected)
@@ -170,6 +188,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractCashtagsWithIndicesProvider
      */
     public function testExtractCashtagsWithIndices($description, $text, $expected)
@@ -187,6 +207,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractURLsWithIndicesProvider
      */
     public function testExtractURLsWithIndices($description, $text, $expected)
@@ -204,6 +226,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractMentionedScreennamesWithIndicesProvider
      */
     public function testExtractMentionedScreennamesWithIndices($description, $text, $expected)
@@ -213,6 +237,9 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
      * @dataProvider  extractMentionedScreennamesWithIndicesProvider
      */
     public function testExtractMentionedUsernamesWithIndices($description, $text, $expected)
@@ -230,6 +257,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractMentionsOrListsWithIndicesProvider
      */
     public function testExtractMentionsOrListsWithIndices($description, $text, $expected)
@@ -239,6 +268,9 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
      * @dataProvider  extractMentionsOrListsWithIndicesProvider
      */
     public function testExtractMentionedUsernamesOrListsWithIndices($description, $text, $expected)
@@ -255,12 +287,18 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         return $this->providerHelper('mentions_or_lists_with_indices');
     }
 
+    /**
+     * @group Extractor
+     */
     public function testExtractURLsWithoutProtocol()
     {
         $extracted = Extractor::create('text: example.com http://foobar.example.com')->extractUrlWithoutProtocol(false)->extractURLs();
         $this->assertSame(array('http://foobar.example.com'), $extracted, 'Unextract url without protocol');
     }
 
+    /**
+     * @group Extractor
+     */
     public function testExtractURLsWithIndicesWithoutProtocol()
     {
         $extracted = Extractor::create('text: example.com')->extractUrlWithoutProtocol(false)->extractURLsWithIndices();

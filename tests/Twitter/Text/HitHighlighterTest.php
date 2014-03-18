@@ -50,6 +50,8 @@ class HitHighlighterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group HitHighlighter
      * @dataProvider  highlightProvider
      */
     public function testHighlight($description, $text, $hits, $expected)
@@ -59,6 +61,9 @@ class HitHighlighterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group HitHighlighter
+     * @group deprecated
      * @dataProvider  highlightProvider
      */
     public function testAddHitHighlighting($description, $text, $hits, $expected)

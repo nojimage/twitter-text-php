@@ -49,6 +49,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
         return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 
+    /**
+     * @group Validation
+     */
     public function testConfiglationFromArray()
     {
         $validator = Validation::create('', array(
@@ -59,6 +62,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(23, $validator->getShortUrlLengthHttps());
     }
 
+    /**
+     * @group Validation
+     */
     public function testConfiglationFromObject()
     {
         $conf = new \stdClass();
@@ -70,6 +76,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  isValidTweetTextProvider
      */
     public function testIsValidTweetText($description, $text, $expected)
@@ -79,6 +87,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
      * @dataProvider  isValidTweetTextProvider
      */
     public function testValidateTweet($description, $text, $expected)
@@ -96,6 +107,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  isValidUsernameProvider
      */
     public function testIsValidUsername($description, $text, $expected)
@@ -105,6 +118,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
      * @dataProvider  isValidUsernameProvider
      */
     public function testValidateUsername($description, $text, $expected)
@@ -122,6 +138,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  isValidListProvider
      */
     public function testIsValidList($description, $text, $expected)
@@ -131,6 +149,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
      * @dataProvider  isValidListProvider
      */
     public function testValidateList($description, $text, $expected)
@@ -148,6 +169,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  isValidHashtagProvider
      */
     public function testIsValidHashtag($description, $text, $expected)
@@ -157,6 +180,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
      * @dataProvider  isValidHashtagProvider
      */
     public function testValidateHashtag($description, $text, $expected)
@@ -174,6 +200,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  isValidURLProvider
      */
     public function testIsValidURL($description, $text, $expected)
@@ -183,6 +211,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
      * @dataProvider  isValidURLProvider
      */
     public function testValidateURL($description, $text, $expected)
@@ -200,6 +231,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  isValidURLWithoutProtocolProvider
      */
     public function testIsValidURLWithoutProtocol($description, $text, $expected)
@@ -217,6 +250,8 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
      * @dataProvider  getTweetLengthProvider
      */
     public function testGetTweetLength($description, $text, $expected)
@@ -226,6 +261,9 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
      * @dataProvider  getTweetLengthProvider
      */
     public function testGetLength($description, $text, $expected)

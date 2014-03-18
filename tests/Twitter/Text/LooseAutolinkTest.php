@@ -52,6 +52,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkUsernamesProvider
      */
     public function testAutolinkUsernames($description, $text, $expected)
@@ -68,6 +71,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkUsernamesProvider
      */
     public function testAddLinksToUsernames($description, $text, $expected)
@@ -92,6 +98,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkListsProvider
      */
     public function testAutoLinkLists($description, $text, $expected)
@@ -108,6 +117,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkListsProvider
      */
     public function testAddLinksToLists($description, $text, $expected)
@@ -132,6 +144,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkHashtagsProvider
      */
     public function testAutoLinkHashtags($description, $text, $expected)
@@ -148,6 +163,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkHashtagsProvider
      */
     public function testAddLinksToHashtags($description, $text, $expected)
@@ -172,6 +190,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkCashtagsProvider
      */
     public function testAutoLinkCashtags($description, $text, $expected)
@@ -188,6 +209,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkCashtagsProvider
      */
     public function testAddLinksToCashtags($description, $text, $expected)
@@ -212,6 +236,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkURLsProvider
      */
     public function testAutoLinkURLs($description, $text, $expected)
@@ -228,6 +255,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkURLsProvider
      */
     public function testAddLinksToURLs($description, $text, $expected)
@@ -252,6 +282,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkProvider
      */
     public function testAutoLinks($description, $text, $expected)
@@ -268,6 +301,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkProvider
      */
     public function testAddLinks($description, $text, $expected)
@@ -292,6 +328,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkWithJSONProvider
      */
     public function testAutoLinkWithJSONByObj($description, $text, $jsonText, $expected)
@@ -310,6 +349,9 @@ class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group conformance
+     * @group Autolink
+     * @group deprecated
      * @dataProvider  autoLinkWithJSONProvider
      */
     public function testAutoLinkWithJSONByArray($description, $text, $jsonText, $expected)
