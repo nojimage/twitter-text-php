@@ -1,3 +1,5 @@
+vendor
+
 # Backup and Swap Files
 .*.sw?
 .swp
