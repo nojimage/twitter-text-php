@@ -5,6 +5,9 @@ lists, hashtags and URLs from tweets.  Originally created from twitter-text-rb
 and twitter-text-java projects by Matt Sanford and ported to PHP by Mike
 Cochrane, this library has been improved and made more complete by Nick Pope.
 
+[![Build Status](https://travis-ci.org/nojimage/twitter-text-php.png?branch=master)](https://travis-ci.org/nojimage/twitter-text-php)
+[![Coverage Status](https://coveralls.io/repos/nojimage/twitter-text-php/badge.png)](https://coveralls.io/r/nojimage/twitter-text-php)
+
 ## Features ##
 
 ### Autolink ##
