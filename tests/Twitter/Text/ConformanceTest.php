@@ -42,6 +42,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
             ->setURLClass('');
         $this->extractor = new Extractor();
         $this->highlighter = new HitHighlighter();
+        $this->validator = new Validator();
     }
 
     protected function tearDown()
@@ -478,5 +479,210 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
     public function highlightProvider()
     {
         return array_merge($this->providerHelper('hit_highlighting', 'plain_text'), $this->providerHelper('hit_highlighting', 'with_links'));
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  isValidTweetTextProvider
+     */
+    public function testIsValidTweetText($description, $text, $expected)
+    {
+        $validated = $this->validator->isValidTweetText($text);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
+     * @dataProvider  isValidTweetTextProvider
+     */
+    public function testValidateTweet($description, $text, $expected)
+    {
+        $validated = Validator::create($text)->validateTweet();
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function isValidTweetTextProvider()
+    {
+        return $this->providerHelper('validate', 'tweets');
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  isValidUsernameProvider
+     */
+    public function testIsValidUsername($description, $text, $expected)
+    {
+        $validated = $this->validator->isValidUsername($text);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
+     * @dataProvider  isValidUsernameProvider
+     */
+    public function testValidateUsername($description, $text, $expected)
+    {
+        $validated = Validator::create($text)->validateUsername();
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function isValidUsernameProvider()
+    {
+        return $this->providerHelper('validate', 'usernames');
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  isValidListProvider
+     */
+    public function testIsValidList($description, $text, $expected)
+    {
+        $validated = $this->validator->isValidList($text);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
+     * @dataProvider  isValidListProvider
+     */
+    public function testValidateList($description, $text, $expected)
+    {
+        $validated = Validator::create($text)->validateList();
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function isValidListProvider()
+    {
+        return $this->providerHelper('validate', 'lists');
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  isValidHashtagProvider
+     */
+    public function testIsValidHashtag($description, $text, $expected)
+    {
+        $validated = $this->validator->isValidHashtag($text);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
+     * @dataProvider  isValidHashtagProvider
+     */
+    public function testValidateHashtag($description, $text, $expected)
+    {
+        $validated = Validator::create($text)->validateHashtag();
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function isValidHashtagProvider()
+    {
+        return $this->providerHelper('validate', 'hashtags');
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  isValidURLProvider
+     */
+    public function testIsValidURL($description, $text, $expected)
+    {
+        $validated = $this->validator->isValidURL($text);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
+     * @dataProvider  isValidURLProvider
+     */
+    public function testValidateURL($description, $text, $expected)
+    {
+        $validated = Validator::create($text)->validateURL();
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function isValidURLProvider()
+    {
+        return $this->providerHelper('validate', 'urls');
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  isValidURLWithoutProtocolProvider
+     */
+    public function testIsValidURLWithoutProtocol($description, $text, $expected)
+    {
+        $validated = $this->validator->isValidURL($text, true, false);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function isValidURLWithoutProtocolProvider()
+    {
+        return $this->providerHelper('validate', 'urls_without_protocol');
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @dataProvider  getTweetLengthProvider
+     */
+    public function testGetTweetLength($description, $text, $expected)
+    {
+        $validated = $this->validator->getTweetLength($text);
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Validation
+     * @group deprecated
+     * @dataProvider  getTweetLengthProvider
+     */
+    public function testGetLength($description, $text, $expected)
+    {
+        $validated = Validator::create($text)->getLength();
+        $this->assertSame($expected, $validated, $description);
+    }
+
+    /**
+     *
+     */
+    public function getTweetLengthProvider()
+    {
+        return $this->providerHelper('validate', 'lengths');
     }
 }
