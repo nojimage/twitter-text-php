@@ -35,4 +35,10 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
         unset($this->linker);
         parent::tearDown();
     }
+
+    public function testCreate()
+    {
+        $linker = Autolink::create();
+        $this->assertInstanceOf('Twitter\\Text\\AutoLink', $linker);
+    }
 }

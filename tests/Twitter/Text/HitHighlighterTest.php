@@ -49,4 +49,9 @@ class HitHighlighterTest extends \PHPUnit_Framework_TestCase
         return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 
+    public function testCreate()
+    {
+        $highlighter = HitHighlighter::create();
+        $this->assertInstanceOf('Twitter\\Text\\HitHighlighter', $highlighter);
+    }
 }
