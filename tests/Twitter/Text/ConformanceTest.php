@@ -41,6 +41,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
             ->setCashtagClass('tweet-url cashtag')
             ->setURLClass('');
         $this->extractor = new Extractor();
+        $this->highlighter = new HitHighlighter();
     }
 
     protected function tearDown()
@@ -446,5 +447,36 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
     public function extractCashtagsWithIndicesProvider()
     {
         return $this->providerHelper('extract', 'cashtags_with_indices');
+    }
+
+    /**
+     * @group conformance
+     * @group HitHighlighter
+     * @dataProvider  highlightProvider
+     */
+    public function testHighlight($description, $text, $hits, $expected)
+    {
+        $extracted = $this->highlighter->highlight($text, $hits);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group HitHighlighter
+     * @group deprecated
+     * @dataProvider  highlightProvider
+     */
+    public function testAddHitHighlighting($description, $text, $hits, $expected)
+    {
+        $extracted = HitHighlighter::create($text)->addHitHighlighting($hits);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function highlightProvider()
+    {
+        return array_merge($this->providerHelper('hit_highlighting', 'plain_text'), $this->providerHelper('hit_highlighting', 'with_links'));
     }
 }

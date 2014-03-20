@@ -49,34 +49,4 @@ class HitHighlighterTest extends \PHPUnit_Framework_TestCase
         return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 
-    /**
-     * @group conformance
-     * @group HitHighlighter
-     * @dataProvider  highlightProvider
-     */
-    public function testHighlight($description, $text, $hits, $expected)
-    {
-        $extracted = $this->highlighter->highlight($text, $hits);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
-     * @group conformance
-     * @group HitHighlighter
-     * @group deprecated
-     * @dataProvider  highlightProvider
-     */
-    public function testAddHitHighlighting($description, $text, $hits, $expected)
-    {
-        $extracted = HitHighlighter::create($text)->addHitHighlighting($hits);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
-     *
-     */
-    public function highlightProvider()
-    {
-        return array_merge($this->providerHelper('plain_text'), $this->providerHelper('with_links'));
-    }
 }
