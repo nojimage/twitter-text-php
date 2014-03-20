@@ -9,25 +9,25 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Validation;
+use Twitter\Text\Validator;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Twitter Validation Class Unit Tests
+ * Twitter Validator Class Unit Tests
  *
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property   Validation $validator
+ * @property   Validator $validator
  */
-class ValidationTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
 
     protected function setUp()
     {
         parent::setUp();
-        $this->validator = new Validation();
+        $this->validator = new Validator();
     }
 
     protected function tearDown()
@@ -54,7 +54,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testConfiglationFromArray()
     {
-        $validator = Validation::create('', array(
+        $validator = Validator::create('', array(
                 'short_url_length' => 22,
                 'short_url_length_https' => 23,
         ));
@@ -70,7 +70,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
         $conf = new \stdClass();
         $conf->short_url_length = 22;
         $conf->short_url_length_https = 23;
-        $validator = Validation::create('', $conf);
+        $validator = Validator::create('', $conf);
         $this->assertSame(22, $validator->getShortUrlLength());
         $this->assertSame(23, $validator->getShortUrlLengthHttps());
     }
@@ -94,7 +94,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateTweet($description, $text, $expected)
     {
-        $validated = Validation::create($text)->validateTweet();
+        $validated = Validator::create($text)->validateTweet();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -125,7 +125,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateUsername($description, $text, $expected)
     {
-        $validated = Validation::create($text)->validateUsername();
+        $validated = Validator::create($text)->validateUsername();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -156,7 +156,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateList($description, $text, $expected)
     {
-        $validated = Validation::create($text)->validateList();
+        $validated = Validator::create($text)->validateList();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -187,7 +187,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateHashtag($description, $text, $expected)
     {
-        $validated = Validation::create($text)->validateHashtag();
+        $validated = Validator::create($text)->validateHashtag();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -218,7 +218,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateURL($description, $text, $expected)
     {
-        $validated = Validation::create($text)->validateURL();
+        $validated = Validator::create($text)->validateURL();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -268,7 +268,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetLength($description, $text, $expected)
     {
-        $validated = Validation::create($text)->getLength();
+        $validated = Validator::create($text)->getLength();
         $this->assertSame($expected, $validated, $description);
     }
 

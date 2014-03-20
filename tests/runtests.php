@@ -270,7 +270,7 @@ $functions = array(
     'lengths' => 'getTweetLength',
 );
 
-$validator = \Twitter\Text\Validation::create();
+$validator = \Twitter\Text\Validator::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
