@@ -40,6 +40,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
             ->setHashtagClass('tweet-url hashtag')
             ->setCashtagClass('tweet-url cashtag')
             ->setURLClass('');
+        $this->extractor = new Extractor();
     }
 
     protected function tearDown()
@@ -207,5 +208,243 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
     public function autoLinkWithJSONProvider()
     {
         return $this->providerHelper('autolink', 'json');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractMentionedScreennamesProvider
+     */
+    public function testExtractMentionedScreennames($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractMentionedScreennames($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
+     * @dataProvider  extractMentionedScreennamesProvider
+     */
+    public function testExtractMentionedUsernames($description, $text, $expected)
+    {
+        $extracted = Extractor::create($text)->extractMentionedUsernames();
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractMentionedScreennamesProvider()
+    {
+        return $this->providerHelper('extract', 'mentions');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractMentionsWithIndicesProvider
+     */
+    public function testExtractMentionedScreennamesWithIndices($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractMentionedScreennamesWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
+     * @dataProvider  extractMentionsWithIndicesProvider
+     */
+    public function testExtractMentionedUsernamesWithIndices($description, $text, $expected)
+    {
+        $extracted = Extractor::create($text)->extractMentionedUsernamesWithIndices();
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractMentionsWithIndicesProvider()
+    {
+        return $this->providerHelper('extract', 'mentions_with_indices');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractMentionsOrListsWithIndicesProvider
+     */
+    public function testExtractMentionsOrListsWithIndices($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractMentionsOrListsWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
+     * @dataProvider  extractMentionsOrListsWithIndicesProvider
+     */
+    public function testExtractMentionedUsernamesOrListsWithIndices($description, $text, $expected)
+    {
+        $extracted = Extractor::create($text)->extractMentionedUsernamesOrListsWithIndices();
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractMentionsOrListsWithIndicesProvider()
+    {
+        return $this->providerHelper('extract', 'mentions_or_lists_with_indices');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractReplyScreennameProvider
+     */
+    public function testExtractReplyScreenname($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractReplyScreenname($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @group deprecated
+     * @dataProvider  extractReplyScreennameProvider
+     */
+    public function testExtractRepliedUsernames($description, $text, $expected)
+    {
+        $extracted = Extractor::create($text)->extractRepliedUsernames();
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractReplyScreennameProvider()
+    {
+        return $this->providerHelper('extract', 'replies');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractURLsProvider
+     */
+    public function testExtractURLs($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractURLs($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractURLsProvider()
+    {
+        return $this->providerHelper('extract', 'urls');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractURLsWithIndicesProvider
+     */
+    public function testExtractURLsWithIndices($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractURLsWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractURLsWithIndicesProvider()
+    {
+        return $this->providerHelper('extract', 'urls_with_indices');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractHashtagsProvider
+     */
+    public function testExtractHashtags($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractHashtags($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractHashtagsProvider()
+    {
+        return $this->providerHelper('extract', 'hashtags');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractHashtagsWithIndicesProvider
+     */
+    public function testExtractHashtagsWithIndices($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractHashtagsWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractHashtagsWithIndicesProvider()
+    {
+        return $this->providerHelper('extract', 'hashtags_with_indices');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractCashtagsProvider
+     */
+    public function testExtractCashtags($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractCashtags($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractCashtagsProvider()
+    {
+        return $this->providerHelper('extract', 'cashtags');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractCashtagsWithIndicesProvider
+     */
+    public function testExtractCashtagsWithIndices($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractCashtagsWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractCashtagsWithIndicesProvider()
+    {
+        return $this->providerHelper('extract', 'cashtags_with_indices');
     }
 }
