@@ -37,35 +37,35 @@ class Autolink extends Regex
      *
      * @var  string
      */
-    protected $class_url = 'url';
+    protected $class_url = '';
 
     /**
      * CSS class for auto-linked username URLs.
      *
      * @var  string
      */
-    protected $class_user = 'username';
+    protected $class_user = 'tweet-url username';
 
     /**
      * CSS class for auto-linked list URLs.
      *
      * @var  string
      */
-    protected $class_list = 'list';
+    protected $class_list = 'tweet-url list-slug';
 
     /**
      * CSS class for auto-linked hashtag URLs.
      *
      * @var  string
      */
-    protected $class_hash = 'hashtag';
+    protected $class_hash = 'tweet-url hashtag';
 
     /**
      * CSS class for auto-linked cashtag URLs.
      *
      * @var  string
      */
-    protected $class_cash = 'cashtag';
+    protected $class_cash = 'tweet-url cashtag';
 
     /**
      * URL base for username links (the username without the @ will be appended).

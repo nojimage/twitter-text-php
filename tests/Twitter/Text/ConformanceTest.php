@@ -34,12 +34,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->linker = new Autolink();
-        $this->linker->setNoFollow(false)->setExternal(false)->setTarget('')
-            ->setUsernameClass('tweet-url username')
-            ->setListClass('tweet-url list-slug')
-            ->setHashtagClass('tweet-url hashtag')
-            ->setCashtagClass('tweet-url cashtag')
-            ->setURLClass('');
+        $this->linker->setNoFollow(false)->setExternal(false)->setTarget('');
         $this->extractor = new Extractor();
         $this->highlighter = new HitHighlighter();
         $this->validator = new Validator();
