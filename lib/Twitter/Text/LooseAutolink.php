@@ -30,6 +30,7 @@ use Twitter\Text\Autolink;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  * @since      1.8.0
+ * @deprecated since version 1.9.0
  */
 class LooseAutolink extends Autolink
 {
@@ -39,6 +40,7 @@ class LooseAutolink extends Autolink
      *
      * @param  string The tweet to be converted
      * @return string that auto-link HTML added
+     * @deprecated since version 1.9.0
      */
     public function autoLink($tweet = null)
     {
@@ -110,6 +112,7 @@ class LooseAutolink extends Autolink
      * Adds links to all elements in the tweet.
      *
      * @return  string  The modified tweet.
+     * @deprecated since version 1.9.0
      */
     public function addLinks()
     {
