@@ -10,6 +10,7 @@
 namespace Twitter\Text;
 
 use Twitter\Text\Regex;
+use Twitter\Text\String;
 
 /**
  * Twitter HitHighlighter Class
@@ -124,10 +125,10 @@ class HitHighlighter extends Regex
             $ti = 0; // tag increment (for added tags)
             $highlightTweet = $tweet;
             foreach ($hits as $hit) {
-                $highlightTweet = self::mbSubstrReplace($highlightTweet, $tags[0], $hit[0] + $ti, 0);
-                $ti += mb_strlen($tags[0]);
-                $highlightTweet = self::mbSubstrReplace($highlightTweet, $tags[1], $hit[1] + $ti, 0);
-                $ti += mb_strlen($tags[1]);
+                $highlightTweet = String::substrReplace($highlightTweet, $tags[0], $hit[0] + $ti, 0);
+                $ti += String::strlen($tags[0]);
+                $highlightTweet = String::substrReplace($highlightTweet, $tags[1], $hit[1] + $ti, 0);
+                $ti += String::strlen($tags[1]);
             }
         } else {
             $chunks = preg_split('/[<>]/iu', $tweet);
@@ -146,8 +147,8 @@ class HitHighlighter extends Regex
                 $hit = $hits_flat[$index];
                 $tag = $tags[$index % 2];
                 $placed = false;
-                while ($chunk !== null && $hit >= ($i = $offset + mb_strlen($chunk))) {
-                    $highlightTweet .= mb_substr($chunk, $chunk_cursor);
+                while ($chunk !== null && $hit >= ($i = $offset + String::strlen($chunk))) {
+                    $highlightTweet .= String::substr($chunk, $chunk_cursor);
                     if ($start_in_chunk && $hit === $i) {
                         $highlightTweet .= $tag;
                         $placed = true;
@@ -155,7 +156,7 @@ class HitHighlighter extends Regex
                     if (isset($chunks[$chunk_index + 1])) {
                         $highlightTweet .= '<' . $chunks[$chunk_index + 1] . '>';
                     }
-                    $offset += mb_strlen($chunk);
+                    $offset += String::strlen($chunk);
                     $chunk_cursor = 0;
                     $chunk_index += 2;
                     $chunk = (isset($chunks[$chunk_index]) ? $chunks[$chunk_index] : null);
@@ -163,7 +164,7 @@ class HitHighlighter extends Regex
                 }
                 if (!$placed && $chunk !== null) {
                     $hit_spot = $hit - $offset;
-                    $highlightTweet .= mb_substr($chunk, $chunk_cursor, $hit_spot - $chunk_cursor) . $tag;
+                    $highlightTweet .= String::substr($chunk, $chunk_cursor, $hit_spot - $chunk_cursor) . $tag;
                     $chunk_cursor = $hit_spot;
                     $start_in_chunk = ($index % 2 === 0);
                     $placed = true;
@@ -174,8 +175,8 @@ class HitHighlighter extends Regex
                 }
             }
             if ($chunk !== null) {
-                if ($chunk_cursor < mb_strlen($chunk)) {
-                    $highlightTweet .= mb_substr($chunk, $chunk_cursor);
+                if ($chunk_cursor < String::strlen($chunk)) {
+                    $highlightTweet .= String::substr($chunk, $chunk_cursor);
                 }
                 for ($index = $chunk_index + 1; $index < count($chunks); $index++) {
                     $highlightTweet .= ($index % 2 === 0 ? $chunks[$index] : '<' . $chunks[$index] . '>');
@@ -197,46 +198,5 @@ class HitHighlighter extends Regex
     public function addHitHighlighting(array $hits)
     {
         return $this->highlight($this->tweet, $hits);
-    }
-
-    /**
-     * A multibyte-aware substring replacement function.
-     *
-     * @param  string  $string       The string to modify.
-     * @param  string  $replacement  The replacement string.
-     * @param  int     $start        The start of the replacement.
-     * @param  int     $length       The number of characters to replace.
-     * @param  string  $encoding     The encoding of the string.
-     *
-     * @return  string  The modified string.
-     *
-     * @see http://www.php.net/manual/en/function.substr-replace.php#90146
-     */
-    protected static function mbSubstrReplace($string, $replacement, $start, $length = null, $encoding = null)
-    {
-        if (extension_loaded('mbstring') === true) {
-            $string_length = (is_null($encoding) === true) ? mb_strlen($string) : mb_strlen($string, $encoding);
-            if ($start < 0) {
-                $start = max(0, $string_length + $start);
-            } elseif ($start > $string_length) {
-                $start = $string_length;
-            }
-            if ($length < 0) {
-                $length = max(0, $string_length - $start + $length);
-            } elseif ((is_null($length) === true) || ($length > $string_length)) {
-                $length = $string_length;
-            }
-            if (($start + $length) > $string_length) {
-                $length = $string_length - $start;
-            }
-
-            $suffixOffset = $start + $length;
-            $suffixLength = $string_length - $start - $length;
-            if (is_null($encoding) === true) {
-                return mb_substr($string, 0, $start) . $replacement . mb_substr($string, $suffixOffset, $suffixLength);
-            }
-            return mb_substr($string, 0, $start, $encoding) . $replacement . mb_substr($string, $suffixOffset, $suffixLength, $encoding);
-        }
-        return (is_null($length) === true) ? substr_replace($string, $replacement, $start) : substr_replace($string, $replacement, $start, $length);
     }
 }

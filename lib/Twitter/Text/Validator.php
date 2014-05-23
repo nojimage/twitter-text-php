@@ -11,6 +11,7 @@ namespace Twitter\Text;
 
 use Twitter\Text\Regex;
 use Twitter\Text\Extractor;
+use Twitter\Text\String;
 
 /**
  * Twitter Validator Class
@@ -170,7 +171,7 @@ class Validator extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = mb_strlen($tweet);
+        $length = String::strlen($tweet);
         if (!$tweet || !$length) {
             return false;
         }
@@ -205,7 +206,7 @@ class Validator extends Regex
         if (is_null($username)) {
             $username = $this->tweet;
         }
-        $length = mb_strlen($username);
+        $length = String::strlen($username);
         if (empty($username) || !$length) {
             return false;
         }
@@ -235,7 +236,7 @@ class Validator extends Regex
         if (is_null($list)) {
             $list = $this->tweet;
         }
-        $length = mb_strlen($list);
+        $length = String::strlen($list);
         if (empty($list) || !$length) {
             return false;
         }
@@ -266,7 +267,7 @@ class Validator extends Regex
         if (is_null($hashtag)) {
             $hashtag = $this->tweet;
         }
-        $length = mb_strlen($hashtag);
+        $length = String::strlen($hashtag);
         if (empty($hashtag) || !$length) {
             return false;
         }
@@ -299,7 +300,7 @@ class Validator extends Regex
         if (is_null($url)) {
             $url = $this->tweet;
         }
-        $length = mb_strlen($url);
+        $length = String::strlen($url);
         if (empty($url) || !$length) {
             return false;
         }
@@ -346,7 +347,7 @@ class Validator extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = mb_strlen($tweet);
+        $length = String::strlen($tweet);
         $urls_with_indices = $this->extractor->extractURLsWithIndices($tweet);
         foreach ($urls_with_indices as $x) {
             $length += $x['indices'][0] - $x['indices'][1];
