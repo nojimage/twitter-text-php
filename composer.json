@@ -27,7 +27,7 @@
   }
   ],
   "require": {
-    "php": ">=5.2.8"
+    "php": ">=5.3.3"
   },
   "require-dev": {
     "php": ">=5.3.3",
@@ -36,7 +36,8 @@
   },
   "autoload": {
     "psr-0": {
-      "Twitter\\Text\\": "lib/"
+      "Twitter\\Text\\": "lib/",
+      "Twitter_": "compat/"
     }
   }
 }
