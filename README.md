@@ -52,17 +52,15 @@ repository:
 
     https://github.com/symfony/Yaml
 
-Both requirements already included in composer.json, so you should just need to run:
+Both requirements already included in `composer.json` and `git submodule`, so you should just need to run:
 
     curl -s https://getcomposer.org/installer | php
     php composer.phar install --dev
+    git submodule update --init
 
 There are a couple of options for testing conformance:
 
-1. Run `phpunit` in from the root folder of the project.
-2. Run `tests/runtests.php` from the command line.
-3. Make `tests/runtests.php` accessible on a web server and view it in your
-   browser.
+- Run `phpunit` in from the root folder of the project.
 
 ## Thanks & Contributions ##
 
