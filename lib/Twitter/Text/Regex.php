@@ -245,16 +245,17 @@ abstract class Regex
         $ccTLD = "ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bl|bm|bn|bo|bq|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cu|cv|cw|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mf|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw";
         $gTLD_IDN = "测试|परीक्षा|佛山|集团|在线|موقع|公益|公司|移动|我爱你|москва|испытание|онлайн|сайт|테스트|орг|삼성|商标|商城|дети|טעסט|中文网|中信|測試|آزمایشی|பரிட்சை|संगठन|网络|δοκιμή|إختبار|بازار|شبكة|机构|组织机构|みんな|世界|网址|游戏|广东|テスト|政务";
         $ccTLD_IDN = "한국|ভারত|বাংলা|қаз|срб|சிங்கப்பூர்|мкд|中国|中國|భారత్|ලංකා|ભારત|भारत|укр|香港|台湾|台灣|мон|الجزائر|عمان|ایران|امارات|پاکستان|الاردن|بھارت|المغرب|السعودية|سودان|مليسيا|გე|ไทย|سورية|рф|تونس|ਭਾਰਤ|مصر|قطر|இலங்கை|இந்தியா|新加坡|فلسطين";
-        $tmp['valid_gTLD'] = '(?:(?:' . $gTLD . '|' . $gTLD_IDN . ')(?=[^0-9a-zA-Z@]|$))';
+        $tmp['valid_gTLD'] = '(?:(?:' . $gTLD . '|' . $gTLD_IDN . ')(?=[^0-9a-z@]|$))';
         $tmp['valid_ccTLD'] = '(?:(?:' . $ccTLD . '|' . $ccTLD_IDN . ')(?=[^0-9a-z@]|$))';
+        $tmp['valid_special_ccTLD'] = '(?:(?:' . 'co|tv' . ')(?=[^0-9a-z@]|$))';
         $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
 
         $tmp['valid_domain'] = '(?:'                                                // subdomains + domain + TLD
             . $tmp['valid_subdomain'] . '+' . $tmp['valid_domain_name']             // e.g. www.twitter.com, foo.co.jp, bar.co.uk
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . '|' . $tmp['valid_punycode'] . '))'
-            . '|(?:'                                                                // domain + gTLD
+            . '|(?:'                                                                // domain + gTLD | some ccTLD
             . $tmp['valid_domain_name']                                             // e.g. twitter.com
-            . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_punycode'] . ')'
+            . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_punycode'] . '|' . $tmp['valid_special_ccTLD'] . ')'
             . ')'
             . '|(?:(?:(?<=http:\/\/)|(?<=https:\/\/))'
             . '(?:'
@@ -276,7 +277,8 @@ abstract class Regex
 
         # Used by the extractor to filter out unwanted URLs:
         $re['invalid_short_domain'] = '/\A' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . '\Z/iu';
-        $re['invalid_url_without_protocol_match_begin'] = '/[-_.\/]/iu';
+        $re['valid_special_short_domain'] = '/\A' . $tmp['valid_domain_name'] . $tmp['valid_special_ccTLD'] . '\Z/iu';
+        $re['invalid_url_without_protocol_preceding_chars'] = '/[-_.\/]\z/iu';
 
         $tmp['valid_port_number'] = '[0-9]+';
 

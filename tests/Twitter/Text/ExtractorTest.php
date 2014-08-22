@@ -66,4 +66,17 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $extracted = Extractor::create('text: example.com')->extractUrlWithoutProtocol(false)->extractURLsWithIndices();
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
+
+    public function testUrlWithSpecialCCTLDWithoutProtocol()
+    {
+        $text = 'MLB.tv vine.co';
+        $this->assertSame(array('MLB.tv', 'vine.co'), $this->extractor->extractURLs($text), 'Extract Some ccTLD(co|tv) URLs without protocol');
+
+        $extracted = $this->extractor->extractURLsWithIndices($text);
+        $this->assertSame(array(0, 6), $extracted[0]['indices']);
+        $this->assertSame(array(7, 14), $extracted[1]['indices']);
+
+        $extracted = $this->extractor->extractUrlWithoutProtocol(false)->extractURLsWithIndices($text);
+        $this->assertSame(array(), $extracted, 'Unextract url without protocol');
+    }
 }

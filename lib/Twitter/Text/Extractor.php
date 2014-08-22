@@ -354,16 +354,12 @@ class Extractor extends Regex
             // If protocol is missing and domain contains non-ASCII characters,
             // extract ASCII-only domains.
             if (empty($protocol)) {
-                if (!$this->extractURLWithoutProtocol || preg_match(self::$patterns['invalid_url_without_protocol_match_begin'], $before)) {
+                if (!$this->extractURLWithoutProtocol || preg_match(self::$patterns['invalid_url_without_protocol_preceding_chars'], $before)) {
                     continue;
                 }
 
                 $last_url = null;
-                $last_url_invalid_match = false;
                 $ascii_end_position = 0;
-                if (preg_match(self::$patterns['invalid_url_without_protocol_match_begin'], $before)) {
-                    continue;
-                }
 
                 if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
                     $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
@@ -373,8 +369,9 @@ class Extractor extends Regex
                         'url' => $asciiDomain[0],
                         'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
                     );
-                    $last_url_invalid_match = preg_match(self::$patterns['invalid_short_domain'], $asciiDomain[0]);
-                    if (!$last_url_invalid_match) {
+                    if (!empty($path)
+                        || preg_match(self::$patterns['valid_special_short_domain'], $asciiDomain[0])
+                        || !preg_match(self::$patterns['invalid_short_domain'], $asciiDomain[0])) {
                         $urls[] = $last_url;
                     }
                 }
@@ -385,11 +382,10 @@ class Extractor extends Regex
                 }
 
                 // $last_url only contains domain. Need to add path and query if they exist.
-                if (!empty($path) && $last_url_invalid_match) {
+                if (!empty($path)) {
                     // last_url was not added. Add it to urls here.
                     $last_url['url'] = preg_replace('/' . preg_quote($domain, '/') . '/u', $last_url['url'], $url);
                     $last_url['indices'][1] = $end_position;
-                    $urls[] = $last_url;
                 }
             } else {
                 // In the case of t.co URLs, don't allow additional path characters
