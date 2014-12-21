@@ -1,11 +1,6 @@
 <?php
-/**
- * @author     Mike Cochrane <mikec@mikenz.geek.nz>
- * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
- * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
- */
+
+namespace Nojimage\Twitter;
 
 /**
  * Twitter Regex Abstract Class
@@ -22,7 +17,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-abstract class Twitter_Regex {
+abstract class Regex {
 
   /**
    * Contains all generated regular expressions.
@@ -390,7 +385,7 @@ abstract class Twitter_Regex {
 }
 
 # Cause regular expressions to be initialized as soon as this file is loaded:
-Twitter_Regex::__static();
+Regex::__static();
 
 ################################################################################
 # vim:et:ft=php:nowrap:sts=2:sw=2:ts=2

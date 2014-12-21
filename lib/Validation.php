@@ -1,12 +1,6 @@
 <?php
-/**
- * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright © 2010, Nick Pope
- * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
- */
 
-require_once 'Regex.php';
+namespace Nojimage\Twitter;
 
 /**
  * Twitter Validator Class
@@ -22,7 +16,7 @@ require_once 'Regex.php';
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class Twitter_Validation extends Twitter_Regex {
+class Validation extends Regex {
 
   /**
    * The maximum length of a tweet.
@@ -47,7 +41,7 @@ class Twitter_Validation extends Twitter_Regex {
 
   /**
    *
-   * @var Twitter_Extractor
+   * @var Extractor
    */
   protected $extractor = null;
 
@@ -59,7 +53,7 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @see  __construct()
    *
-   * @return  Twitter_Validation
+   * @return  Validation
    */
   public static function create($tweet = null, $config = null) {
     return new self($tweet, $config);
@@ -75,14 +69,14 @@ class Twitter_Validation extends Twitter_Regex {
       if (!empty($config)) {
         $this->setConfiguration($config);
       }
-      $this->extractor = Twitter_Extractor::create();
+      $this->extractor = Extractor::create();
   }
 
 /**
  * Setup short URL length from Twitter API /help/configuration response
  *
  * @param mixed $config
- * @return \Twitter_Validation
+ * @return \Validation
  * @link https://dev.twitter.com/docs/api/1/get/help/configuration
  */
   public function setConfiguration($config) {
@@ -111,7 +105,7 @@ class Twitter_Validation extends Twitter_Regex {
    * Set the length of a short URL beginning with http:
    *
    * @param mixed $length
-   * @return \Twitter_Validation
+   * @return \Validation
    */
   public function setShortUrlLength($length) {
     $this->short_url_length = intval($length);
@@ -131,7 +125,7 @@ class Twitter_Validation extends Twitter_Regex {
    * Set the length of a short URL beginning with https:
    *
    * @param mixed $length
-   * @return \Twitter_Validation
+   * @return \Validation
    */
   public function setShortUrlLengthHttps($length) {
     $this->short_url_length_https = intval($length);

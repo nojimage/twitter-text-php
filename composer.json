@@ -49,8 +49,6 @@
     "twitter/twitter-text-conformance": "1.8.0"
   },
   "autoload": {
-    "psr-0": {
-      "Twitter_": "lib/"
-    }
+    "psr-4": {"Nojimage\\Twitter\\": "lib/"}
   }
 }

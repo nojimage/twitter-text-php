@@ -1,11 +1,9 @@
 <?php
-/**
- * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright © 2010, Nick Pope
- * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
- */
+
+namespace Nojimage\Twitter;
+
 use Symfony\Component\Yaml\Yaml;
+use Nojimage\Twitter\HitHighLighter;
 
 /**
  * Twitter HitHighlighter Class Unit Tests
@@ -14,13 +12,13 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
- * @property   Twitter_HitHighlighter $highlighter
+ * @property   HitHighlighter $highlighter
  */
-class Twitter_HitHighlighterTest extends PHPUnit_Framework_TestCase {
+class HitHighlighterTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     parent::setUp();
-    $this->highlighter = new Twitter_HitHighlighter();
+    $this->highlighter = new HitHighlighter();
   }
 
   protected function tearDown() {
@@ -52,7 +50,7 @@ class Twitter_HitHighlighterTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  highlightProvider
    */
   public function testAddHitHighlighting($description, $text, $hits, $expected) {
-    $extracted = Twitter_HitHighlighter::create($text)->addHitHighlighting($hits);
+    $extracted = HitHighlighter::create($text)->addHitHighlighting($hits);
     $this->assertSame($expected, $extracted, $description);
   }
 
