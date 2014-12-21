@@ -1,13 +1,6 @@
 <?php
-/**
- * @author     Mike Cochrane <mikec@mikenz.geek.nz>
- * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
- * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
- * @package    Twitter
- */
 
-require_once 'Regex.php';
+namespace Nojimage\Twitter;
 
 /**
  * Twitter Extractor Class
@@ -25,7 +18,7 @@ require_once 'Regex.php';
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class Twitter_Extractor extends Twitter_Regex {
+class Extractor extends Regex {
 
   /**
    * @var boolean
@@ -39,7 +32,7 @@ class Twitter_Extractor extends Twitter_Regex {
    *
    * @see  __construct()
    *
-   * @return  Twitter_Extractor
+   * @return  Extractor
    */
   public static function create($tweet = null) {
     return new self($tweet);
@@ -197,7 +190,7 @@ class Twitter_Extractor extends Twitter_Regex {
     }
     return $matched ? $matches[1] : null;
   }
-  
+
   /**
    * Extract all the usernames replied to from the tweet.
    *
@@ -477,7 +470,7 @@ class Twitter_Extractor extends Twitter_Regex {
    * setter/getter for extractURLWithoutProtocol
    *
    * @param boolean $flag
-   * @return \Twitter_Extractor
+   * @return Extractor
    */
   public function extractURLWithoutProtocol($flag = null) {
     if (is_null($flag)) {

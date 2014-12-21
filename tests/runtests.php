@@ -11,7 +11,12 @@
  */
 
 require_once dirname(__FILE__).'/bootstrap.php';
+
 use Symfony\Component\Yaml\Yaml;
+use Nojimage\Twitter\Autolink;
+use Nojimage\Twitter\Extractor;
+use Nojimage\Twitter\HitHighlighter;
+use Nojimage\Twitter\Validation;
 
 $browser = (PHP_SAPI != 'cli');
 
@@ -137,7 +142,7 @@ output_h2('Extraction Conformance');
 $timerStart = microtime(true);
 
 # Load the test data.
-$data = Yaml::parse($DATA.'/extract.yml');
+$data = Yaml::parse(DATA.'/extract.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -153,7 +158,7 @@ $functions = array(
   'mentions_or_lists_with_indices' => 'extractMentionsOrListsWithIndices',
 );
 
-$extractor = Twitter_Extractor::create();
+$extractor = Extractor::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -206,7 +211,7 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Autolink Conformance');
 
 # Load the test data.
-$data = Yaml::parse($DATA.'/autolink.yml');
+$data = Yaml::parse(DATA.'/autolink.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -219,7 +224,7 @@ $functions = array(
   'all'       => 'autoLink',
 );
 
-$linker = Twitter_Autolink::create();
+$linker = Autolink::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -283,7 +288,7 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Hit Highlighter Conformance');
 
 # Load the test data.
-$data = Yaml::parse($DATA.'/hit_highlighting.yml');
+$data = Yaml::parse(DATA.'/hit_highlighting.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -291,7 +296,7 @@ $functions = array(
   'with_links' => 'highlight',
 );
 
-$highlighter = Twitter_HitHighlighter::create();
+$highlighter = HitHighlighter::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 
@@ -344,7 +349,7 @@ foreach ($data['tests'] as $group => $tests) {
 output_h2('Validation Conformance');
 
 # Load the test data.
-$data = Yaml::parse($DATA.'/validate.yml');
+$data = Yaml::parse(DATA.'/validate.yml');
 
 # Define the functions to be tested.
 $functions = array(
@@ -357,7 +362,7 @@ $functions = array(
   'lengths' => 'getTweetLength',
 );
 
-$validator = Twitter_Validation::create();
+$validator = Validation::create();
 # Perform testing.
 foreach ($data['tests'] as $group => $tests) {
 

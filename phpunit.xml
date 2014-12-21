@@ -8,15 +8,15 @@
 
 <testsuites>
   <testsuite name="twitter">
-    <directory suffix=".php">tests/Twitter</directory>
+    <directory suffix=".php">tests</directory>
   </testsuite>
 </testsuites>
 
-<filter>
+<!-- <filter>
   <whitelist addUncoveredFilesFromWhitelist="true">
-    <directory suffix=".php">lib/Twitter</directory>
+    <directory suffix=".php">lib</directory>
   </whitelist>
-</filter>
+</filter> -->
 
 <logging>
   <log type="coverage-html" target="build/coverage"
