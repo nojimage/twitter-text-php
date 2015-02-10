@@ -231,6 +231,11 @@ class Twitter_ExtractorTest extends PHPUnit_Framework_TestCase {
     $extracted = Twitter_Extractor::create('text: example.com')->extractUrlWithoutProtocol(false)->extractURLsWithIndices();
     $this->assertSame(array(), $extracted, 'Unextract url without protocol');
   }
+
+  public function testExtractURLsPrecededByEllipsis() {
+    $extracted = Twitter_Extractor::create('text: ...http://www.example.com')->extractURLs();
+    $this->assertSame(array('http://www.example.com'), $extracted, 'Unextract url preceded by ellipsis');
+  }
 }
 
 ################################################################################

@@ -226,7 +226,7 @@ abstract class Twitter_Regex {
 
     # URL related hash regex collection
 
-    $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_'.$tmp['at_signs'].'\$'.$tmp['hash_signs'].'\.'.$tmp['invalid_characters'].']|^)';
+    $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_'.$tmp['at_signs'].'\$'.$tmp['hash_signs'].$tmp['invalid_characters'].']|^)';
 
     $tmp['domain_valid_chars'] = '[0-9a-z'.$tmp['latin_accents'].']';
     $tmp['valid_subdomain'] = '(?:(?:'.$tmp['domain_valid_chars'].'(?:[_-]|'.$tmp['domain_valid_chars'].')*)?'.$tmp['domain_valid_chars'].'\.)';
