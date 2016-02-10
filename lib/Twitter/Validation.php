@@ -36,7 +36,7 @@ class Twitter_Validation extends Twitter_Regex {
    *
    * @var  int
    */
-  protected $short_url_length = 22;
+  protected $short_url_length = 23;
 
   /**
    * The length of a short URL beginning with http:
@@ -157,7 +157,7 @@ class Twitter_Validation extends Twitter_Regex {
     if (is_null($tweet)) {
       $tweet = $this->tweet;
     }
-    $length = mb_strlen($tweet);
+    $length = $this->getTweetLength($tweet);
     if (!$tweet || !$length) return false;
     if ($length > self::MAX_LENGTH) return false;
     if (preg_match(self::$patterns['invalid_characters'], $tweet)) return false;
