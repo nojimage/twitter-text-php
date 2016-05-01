@@ -17,7 +17,7 @@ namespace Twitter\Text;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter
  */
-class String
+class StringUtils
 {
 
     /**
