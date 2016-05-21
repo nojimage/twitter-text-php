@@ -10,7 +10,7 @@
 namespace Twitter\Text;
 
 use Twitter\Text\Regex;
-use Twitter\Text\String;
+use Twitter\Text\StringUtils;
 
 /**
  * Twitter HitHighlighter Class
@@ -125,10 +125,10 @@ class HitHighlighter extends Regex
             $ti = 0; // tag increment (for added tags)
             $highlightTweet = $tweet;
             foreach ($hits as $hit) {
-                $highlightTweet = String::substrReplace($highlightTweet, $tags[0], $hit[0] + $ti, 0);
-                $ti += String::strlen($tags[0]);
-                $highlightTweet = String::substrReplace($highlightTweet, $tags[1], $hit[1] + $ti, 0);
-                $ti += String::strlen($tags[1]);
+                $highlightTweet = StringUtils::substrReplace($highlightTweet, $tags[0], $hit[0] + $ti, 0);
+                $ti += StringUtils::strlen($tags[0]);
+                $highlightTweet = StringUtils::substrReplace($highlightTweet, $tags[1], $hit[1] + $ti, 0);
+                $ti += StringUtils::strlen($tags[1]);
             }
         } else {
             $chunks = preg_split('/[<>]/iu', $tweet);
@@ -147,8 +147,8 @@ class HitHighlighter extends Regex
                 $hit = $hits_flat[$index];
                 $tag = $tags[$index % 2];
                 $placed = false;
-                while ($chunk !== null && $hit >= ($i = $offset + String::strlen($chunk))) {
-                    $highlightTweet .= String::substr($chunk, $chunk_cursor);
+                while ($chunk !== null && $hit >= ($i = $offset + StringUtils::strlen($chunk))) {
+                    $highlightTweet .= StringUtils::substr($chunk, $chunk_cursor);
                     if ($start_in_chunk && $hit === $i) {
                         $highlightTweet .= $tag;
                         $placed = true;
@@ -156,7 +156,7 @@ class HitHighlighter extends Regex
                     if (isset($chunks[$chunk_index + 1])) {
                         $highlightTweet .= '<' . $chunks[$chunk_index + 1] . '>';
                     }
-                    $offset += String::strlen($chunk);
+                    $offset += StringUtils::strlen($chunk);
                     $chunk_cursor = 0;
                     $chunk_index += 2;
                     $chunk = (isset($chunks[$chunk_index]) ? $chunks[$chunk_index] : null);
@@ -164,7 +164,7 @@ class HitHighlighter extends Regex
                 }
                 if (!$placed && $chunk !== null) {
                     $hit_spot = $hit - $offset;
-                    $highlightTweet .= String::substr($chunk, $chunk_cursor, $hit_spot - $chunk_cursor) . $tag;
+                    $highlightTweet .= StringUtils::substr($chunk, $chunk_cursor, $hit_spot - $chunk_cursor) . $tag;
                     $chunk_cursor = $hit_spot;
                     $start_in_chunk = ($index % 2 === 0);
                     $placed = true;
@@ -175,8 +175,8 @@ class HitHighlighter extends Regex
                 }
             }
             if ($chunk !== null) {
-                if ($chunk_cursor < String::strlen($chunk)) {
-                    $highlightTweet .= String::substr($chunk, $chunk_cursor);
+                if ($chunk_cursor < StringUtils::strlen($chunk)) {
+                    $highlightTweet .= StringUtils::substr($chunk, $chunk_cursor);
                 }
                 for ($index = $chunk_index + 1; $index < count($chunks); $index++) {
                     $highlightTweet .= ($index % 2 === 0 ? $chunks[$index] : '<' . $chunks[$index] . '>');

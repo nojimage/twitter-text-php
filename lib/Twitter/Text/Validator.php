@@ -11,7 +11,7 @@ namespace Twitter\Text;
 
 use Twitter\Text\Regex;
 use Twitter\Text\Extractor;
-use Twitter\Text\String;
+use Twitter\Text\StringUtils;
 
 /**
  * Twitter Validator Class
@@ -171,7 +171,7 @@ class Validator extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = String::strlen($tweet);
+        $length = StringUtils::strlen($tweet);
         if (!$tweet || !$length) {
             return false;
         }
@@ -206,7 +206,7 @@ class Validator extends Regex
         if (is_null($username)) {
             $username = $this->tweet;
         }
-        $length = String::strlen($username);
+        $length = StringUtils::strlen($username);
         if (empty($username) || !$length) {
             return false;
         }
@@ -236,7 +236,7 @@ class Validator extends Regex
         if (is_null($list)) {
             $list = $this->tweet;
         }
-        $length = String::strlen($list);
+        $length = StringUtils::strlen($list);
         if (empty($list) || !$length) {
             return false;
         }
@@ -267,7 +267,7 @@ class Validator extends Regex
         if (is_null($hashtag)) {
             $hashtag = $this->tweet;
         }
-        $length = String::strlen($hashtag);
+        $length = StringUtils::strlen($hashtag);
         if (empty($hashtag) || !$length) {
             return false;
         }
@@ -300,7 +300,7 @@ class Validator extends Regex
         if (is_null($url)) {
             $url = $this->tweet;
         }
-        $length = String::strlen($url);
+        $length = StringUtils::strlen($url);
         if (empty($url) || !$length) {
             return false;
         }
@@ -347,7 +347,7 @@ class Validator extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = String::strlen($tweet);
+        $length = StringUtils::strlen($tweet);
         $urls_with_indices = $this->extractor->extractURLsWithIndices($tweet);
         foreach ($urls_with_indices as $x) {
             $length += $x['indices'][0] - $x['indices'][1];

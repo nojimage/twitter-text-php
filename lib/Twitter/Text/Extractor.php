@@ -11,7 +11,7 @@
 namespace Twitter\Text;
 
 use Twitter\Text\Regex;
-use Twitter\Text\String;
+use Twitter\Text\StringUtils;
 
 /**
  * Twitter Extractor Class
@@ -248,8 +248,8 @@ class Extractor extends Regex
 
         foreach ($matches as $match) {
             list($all, $before, $hash, $hashtag, $outer) = array_pad($match, 3, array('', 0));
-            $start_position = $hash[1] > 0 ? String::strlen(substr($tweet, 0, $hash[1])) : $hash[1];
-            $end_position = $start_position + String::strlen($hash[0] . $hashtag[0]);
+            $start_position = $hash[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $hash[1])) : $hash[1];
+            $end_position = $start_position + StringUtils::strlen($hash[0] . $hashtag[0]);
 
             if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
                 continue;
@@ -301,8 +301,8 @@ class Extractor extends Regex
 
         foreach ($matches as $match) {
             list($all, $before, $dollar, $cash_text, $outer) = array_pad($match, 3, array('', 0));
-            $start_position = $dollar[1] > 0 ? String::strlen(substr($tweet, 0, $dollar[1])) : $dollar[1];
-            $end_position = $start_position + String::strlen($dollar[0] . $cash_text[0]);
+            $start_position = $dollar[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $dollar[1])) : $dollar[1];
+            $end_position = $start_position + StringUtils::strlen($dollar[0] . $cash_text[0]);
 
             if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
                 continue;
@@ -339,8 +339,8 @@ class Extractor extends Regex
 
         foreach ($matches as $match) {
             list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($match, 8, array(''));
-            $start_position = $url[1] > 0 ? String::strlen(substr($tweet, 0, $url[1])) : $url[1];
-            $end_position = $start_position + String::strlen($url[0]);
+            $start_position = $url[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $url[1])) : $url[1];
+            $end_position = $start_position + StringUtils::strlen($url[0]);
 
             $all = $all[0];
             $before = $before[0];
@@ -363,8 +363,8 @@ class Extractor extends Regex
 
                 if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
                     $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
-                    $ascii_start_position = String::strpos($domain, $asciiDomain[0], $ascii_end_position);
-                    $ascii_end_position = $ascii_start_position + String::strlen($asciiDomain[0]);
+                    $ascii_start_position = StringUtils::strpos($domain, $asciiDomain[0], $ascii_end_position);
+                    $ascii_end_position = $ascii_start_position + StringUtils::strlen($asciiDomain[0]);
                     $last_url = array(
                         'url' => $asciiDomain[0],
                         'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
@@ -391,7 +391,7 @@ class Extractor extends Regex
                 // In the case of t.co URLs, don't allow additional path characters
                 if (preg_match(self::$patterns['valid_tco_url'], $url, $tcoUrlMatches)) {
                     $url = $tcoUrlMatches[0];
-                    $end_position = $start_position + String::strlen($url);
+                    $end_position = $start_position + StringUtils::strlen($url);
                 }
                 $urls[] = array(
                     'url' => $url,
@@ -458,8 +458,8 @@ class Extractor extends Regex
 
         foreach ($matches as $match) {
             list($all, $before, $at, $username, $list_slug, $outer) = array_pad($match, 6, array('', 0));
-            $start_position = $at[1] > 0 ? String::strlen(substr($tweet, 0, $at[1])) : $at[1];
-            $end_position = $start_position + String::strlen($at[0]) + String::strlen($username[0]);
+            $start_position = $at[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $at[1])) : $at[1];
+            $end_position = $start_position + StringUtils::strlen($at[0]) + StringUtils::strlen($username[0]);
             $entity = array(
                 'screen_name' => $username[0],
                 'list_slug' => $list_slug[0],
@@ -471,7 +471,7 @@ class Extractor extends Regex
             }
 
             if (!empty($list_slug[0])) {
-                $entity['indices'][1] = $end_position + String::strlen($list_slug[0]);
+                $entity['indices'][1] = $end_position + StringUtils::strlen($list_slug[0]);
             }
 
             $results[] = $entity;

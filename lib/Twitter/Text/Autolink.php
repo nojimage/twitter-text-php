@@ -12,7 +12,7 @@ namespace Twitter\Text;
 
 use Twitter\Text\Regex;
 use Twitter\Text\Extractor;
-use Twitter\Text\String;
+use Twitter\Text\StringUtils;
 
 /**
  * Twitter Autolink Class
@@ -400,9 +400,9 @@ class Autolink extends Regex
         $beginIndex = 0;
         foreach ($entities as $entity) {
             if (isset($entity['screen_name'])) {
-                $text .= String::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex + 1);
+                $text .= StringUtils::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex + 1);
             } else {
-                $text .= String::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
+                $text .= StringUtils::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
             }
 
             if (isset($entity['url'])) {
@@ -416,7 +416,7 @@ class Autolink extends Regex
             }
             $beginIndex = $entity['indices'][1];
         }
-        $text .= String::substr($tweet, $beginIndex, String::strlen($tweet));
+        $text .= StringUtils::substr($tweet, $beginIndex, StringUtils::strlen($tweet));
         return $text;
     }
 
@@ -642,7 +642,7 @@ class Autolink extends Regex
 
         $attributes = array();
         $class = array();
-        $hash = String::substr($tweet, $entity['indices'][0], 1);
+        $hash = StringUtils::substr($tweet, $entity['indices'][0], 1);
         $linkText = $hash . $entity['hashtag'];
 
         $attributes['href'] = $this->url_base_hash . $entity['hashtag'];
@@ -702,7 +702,7 @@ class Autolink extends Regex
             $tweet = $this->tweet;
         }
         $attributes = array();
-        $doller = String::substr($tweet, $entity['indices'][0], 1);
+        $doller = StringUtils::substr($tweet, $entity['indices'][0], 1);
         $linkText = $doller . $entity['cashtag'];
         $attributes['href'] = $this->url_base_cash . $entity['cashtag'];
         $attributes['title'] = $linkText;
