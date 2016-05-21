@@ -32,7 +32,8 @@
   "require-dev": {
     "php": ">=5.3.3",
     "symfony/yaml": "~2.4.0",
-    "satooshi/php-coveralls": "dev-master"
+    "satooshi/php-coveralls": "dev-master",
+    "phpunit/phpunit": "4.8.*"
   },
   "autoload": {
     "psr-0": {
