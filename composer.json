@@ -6,25 +6,39 @@
   "type": "library",
   "license": "Apache-2.0",
   "authors": [
-  {
-    "name": "Matt Sanford",
-    "email": "matt@mzsanford.com",
-    "homepage":"http://mzsanford.com"
-  },
-  {
-    "name": "Mike Cochrane",
-    "email": "mikec@mikenz.geek.nz",
-    "homepage":"http://mikenz.geek.nz"
-  },
-  {
-    "name": "Nick Pope",
-    "email": "git@nickpope.me.uk",
-    "homepage":"http://www.nickpope.me.uk"
-  },
-  {
-    "name": "Takashi Nojima",
-    "homepage":"http://php-tips.com"
-  }
+    {
+      "name": "Matt Sanford",
+      "email": "matt@mzsanford.com",
+      "homepage": "http://mzsanford.com"
+    },
+    {
+      "name": "Mike Cochrane",
+      "email": "mikec@mikenz.geek.nz",
+      "homepage": "http://mikenz.geek.nz"
+    },
+    {
+      "name": "Nick Pope",
+      "email": "git@nickpope.me.uk",
+      "homepage": "http://www.nickpope.me.uk"
+    },
+    {
+      "name": "Takashi Nojima",
+      "homepage": "http://php-tips.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "twitter/twitter-text",
+        "version": "1.11.0",
+        "source": {
+          "url": "https://github.com/twitter/twitter-text.git",
+          "type": "git",
+          "reference": "v1.11.0"
+        }
+      }
+    }
   ],
   "require": {
     "php": ">=5.3.3"
@@ -32,7 +46,8 @@
   "require-dev": {
     "php": ">=5.3.3",
     "symfony/yaml": "~2.4.0",
-    "phpunit/phpunit": "4.8.*|5.7.*"
+    "phpunit/phpunit": "4.8.*|5.7.*",
+    "twitter/twitter-text": "^1.11.0"
   },
   "autoload": {
     "psr-0": {

@@ -10,7 +10,7 @@ date_default_timezone_set('Europe/London');
 mb_internal_encoding('UTF-8');
 
 # Set up path variables.
-$DATA = __DIR__ . '/twitter-text-conformance';
+$DATA = dirname(__DIR__) . '/vendor/twitter/twitter-text/conformance';
 if (!defined('DATA')) {
     define('DATA', $DATA);
 }
