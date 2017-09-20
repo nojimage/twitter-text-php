@@ -10,10 +10,10 @@ php:
 dist: trusty
 sudo: false
 
-#cache:
-#  directories:
-#    - vendor
-#    - $HOME/.composer/cache
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 env:
   global:
     - DEFAULT=1
