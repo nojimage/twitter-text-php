@@ -79,4 +79,12 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $extracted = $this->extractor->extractUrlWithoutProtocol(false)->extractURLsWithIndices($text);
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
+
+    public function testExtractURLsWithEmoji()
+    {
+        $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
+        $extracted = $this->extractor->extractURLsWithIndices($text);
+        $this->assertSame(array(14, 45), $extracted[0]['indices']);
+        $this->assertSame('https://i.imgur.com/I32CQ81.jpg', StringUtils::substr($text, $extracted[0]['indices'][0], $extracted[0]['indices'][1]));
+    }
 }

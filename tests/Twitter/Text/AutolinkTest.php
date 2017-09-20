@@ -41,4 +41,11 @@ class AutolinkTest extends \PHPUnit_Framework_TestCase
         $linker = Autolink::create();
         $this->assertInstanceOf('Twitter\\Text\\AutoLink', $linker);
     }
+
+    public function testAutolinkWithEmoji()
+    {
+        $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
+        $linkedText = $this->linker->autoLink($text);
+        $this->assertSame('@<a class="tweet-url username" href="https://twitter.com/ummjackson" rel="external nofollow" target="_blank">ummjackson</a> 🤡 <a href="https://i.imgur.com/I32CQ81.jpg" rel="external nofollow" target="_blank">https://i.imgur.com/I32CQ81.jpg</a>', $linkedText);
+    }
 }
