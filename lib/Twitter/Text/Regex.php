@@ -136,6 +136,7 @@ abstract class Regex
         #
         #   _      underscore
         #   0x200c ZERO WIDTH NON-JOINER (ZWNJ)
+        #   0x200d ZERO WIDTH JOINER (ZWJ)
         #   0xa67e CYRILLIC KAVYKA
         #   0x05be HEBREW PUNCTUATION MAQAF
         #   0x05f3 HEBREW PUNCTUATION GERESH
@@ -148,7 +149,7 @@ abstract class Regex
         #   0x0f0b TIBETAN MARK INTERSYLLABIC TSHEG
         #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
         #   0x0f0d TIBETAN MARK SHAD
-        $tmp['hashtag_special_chars'] = '_\x{200c}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{0f0d}';
+        $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{0f0d}';
         $tmp['hashtag_alphanumeric'] = '[' . $tmp['hashtag_alpha_chars'] .  $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
         $tmp['hashtag_alpha'] = '[' . $tmp['hashtag_alpha_chars'] . ']';
         $tmp['hashtag_boundary'] = '(?:\A|\z|[^&' . $tmp['hashtag_alpha_chars'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . '])';

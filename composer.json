@@ -31,11 +31,11 @@
       "type": "package",
       "package": {
         "name": "twitter/twitter-text",
-        "version": "1.11.0",
+        "version": "1.12.1",
         "source": {
           "url": "https://github.com/twitter/twitter-text.git",
           "type": "git",
-          "reference": "v1.11.0"
+          "reference": "v1.12.1"
         }
       }
     }
@@ -47,7 +47,7 @@
     "php": ">=5.3.3",
     "symfony/yaml": "~2.4.0",
     "phpunit/phpunit": "4.8.*|5.7.*",
-    "twitter/twitter-text": "^1.11.0"
+    "twitter/twitter-text": "^1.12.1"
   },
   "autoload": {
     "psr-0": {
