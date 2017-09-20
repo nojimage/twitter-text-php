@@ -130,7 +130,7 @@ abstract class Regex
         #   0xFE70-0xFEFF Arabic Presentation Forms-B
         $tmp['rtl_chars'] = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}';
 
-        $tmp['hashtag_alpha_chars'] = '\p{L}\p{M}';
+        $tmp['hashtag_letters'] = '\p{L}\p{M}';
         $tmp['hashtag_numerals'] = '\p{Nd}';
         # Hashtag special chars
         #
@@ -148,12 +148,12 @@ abstract class Regex
         #   0x3003 DITTO MARK
         #   0x0f0b TIBETAN MARK INTERSYLLABIC TSHEG
         #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
-        #   0x0f0d TIBETAN MARK SHAD
-        $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{0f0d}';
-        $tmp['hashtag_alphanumeric'] = '[' . $tmp['hashtag_alpha_chars'] .  $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
-        $tmp['hashtag_alpha'] = '[' . $tmp['hashtag_alpha_chars'] . ']';
-        $tmp['hashtag_boundary'] = '(?:\A|\z|[^&' . $tmp['hashtag_alpha_chars'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . '])';
-        $tmp['hashtag'] = '(' . $tmp['hashtag_boundary'] . ')(#|＃)(' . $tmp['hashtag_alphanumeric'] . '*' . $tmp['hashtag_alpha'] . $tmp['hashtag_alphanumeric'] . '*)';
+        #   0x00b7 MIDDLE DOT
+        $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
+        $tmp['hashtag_letters_numerals_set'] = '[' . $tmp['hashtag_letters'] .  $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
+        $tmp['hashtag_letters_set'] = '[' . $tmp['hashtag_letters'] . ']';
+        $tmp['hashtag_boundary'] = '(?:\A|\z|[^&' . $tmp['hashtag_letters'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . '])';
+        $tmp['hashtag'] = '(' . $tmp['hashtag_boundary'] . ')(#|＃)(' . $tmp['hashtag_letters_numerals_set'] . '*' . $tmp['hashtag_letters_set'] . $tmp['hashtag_letters_numerals_set'] . '*)';
 
         $re['valid_hashtag'] = '/' . $tmp['hashtag'] . '(?=(.*|$))/iu';
         $re['end_hashtag_match'] = '/\A(?:[' . $tmp['hash_signs'] . ']|:\/\/)/u';
