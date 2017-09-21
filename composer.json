@@ -58,9 +58,10 @@
   "scripts": {
     "check": [
       "@cs",
-      "@test"
+      "@test",
+      "@tld-test"
     ],
-    "test": "phpunit --exclude-group deprecated,gtld",
+    "test": "phpunit --exclude-group deprecated,tld",
     "deprecated-test": "phpunit --group deprecated",
     "tld-test": "phpunit --group tld",
     "cs": "phpcs -psn --standard=PSR2 --extensions=php ./lib ./tests",
