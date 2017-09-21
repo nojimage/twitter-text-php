@@ -59,7 +59,8 @@
     "check": [
       "@test"
     ],
-    "test": "phpunit --exclude-group deprecated",
-    "deprecated-test": "phpunit --group deprecated"
+    "test": "phpunit --exclude-group deprecated,gtld",
+    "deprecated-test": "phpunit --group deprecated",
+    "tld-test": "phpunit --group tld"
   }
 }

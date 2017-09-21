@@ -31,8 +31,8 @@ before_script:
   - composer install
 
 script:
-  - if [ $DEFAULT = '1' ]; then vendor/bin/phpunit --exclude-group deprecated --stderr; fi
-  - if [ $CODECOVERAGE = '1' ]; then vendor/bin/phpunit --exclude-group deprecated --stderr --coverage-clover=coverage.xml; fi
+  - if [ $DEFAULT = '1' ]; then vendor/bin/phpunit --exclude-group deprecated,gtld --stderr; fi
+  - if [ $CODECOVERAGE = '1' ]; then vendor/bin/phpunit --exclude-group deprecated,tld --stderr --coverage-clover=coverage.xml; fi
 
 after_success:
   - if [[ $CODECOVERAGE = 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
