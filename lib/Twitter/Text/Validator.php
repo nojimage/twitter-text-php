@@ -171,7 +171,7 @@ class Validator extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = StringUtils::strlen($tweet);
+        $length = $this->getTweetLength($tweet);
         if (!$tweet || !$length) {
             return false;
         }
