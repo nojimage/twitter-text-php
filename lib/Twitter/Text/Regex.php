@@ -170,32 +170,30 @@ abstract class Regex
 
         # URL related hash regex collection
 
-        $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_' . $tmp['at_signs'] . '\$' . $tmp['hash_signs'] . '\.' . $tmp['invalid_characters'] . ']|^)';
+        $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_@＠\$#＃\.' . $tmp['invalid_characters'] . ']|^)';
 
-        $tmp['domain_valid_chars'] = '[0-9a-z' . $tmp['latin_accents'] . ']';
-        $tmp['valid_subdomain'] = '(?:(?:' . $tmp['domain_valid_chars'] . '(?:[_-]|' . $tmp['domain_valid_chars'] . ')*)?' . $tmp['domain_valid_chars'] . '\.)';
-        $tmp['valid_domain_name'] = '(?:(?:' . $tmp['domain_valid_chars'] . '(?:[-]|' . $tmp['domain_valid_chars'] . ')*)?' . $tmp['domain_valid_chars'] . '\.)';
-        $tmp['domain_valid_unicode_chars'] = '[^[:punct:][:space:][:blank:][:cntrl:]' . $tmp['invalid_characters'] . $tmp['spaces'] . ']';
+        $tmp['domain_valid_chars'] = '0-9a-z' . $tmp['latin_accents'];
+        $tmp['valid_subdomain'] = '(?>(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-_]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
+        $tmp['valid_domain_name'] = '(?:(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
+        $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . $tmp['invalid_characters'] . $tmp['spaces'] . ']';
 
-        $gTLD = 'academy|accountants|active|actor|aero|agency|airforce|archi|army|arpa|asia|associates|attorney|auction|audio|autos|axa|bar|bargains|bayern|beer|berlin|best|bid|bike|bio|biz|black|blackfriday|blue|bmw|bnpparibas|boutique|brussels|build|builders|buzz|bzh|cab|camera|camp|cancerresearch|capetown|capital|caravan|cards|care|career|careers|cash|cat|catering|center|ceo|cern|cheap|christmas|church|citic|city|claims|cleaning|click|clinic|clothing|club|codes|coffee|college|cologne|com|community|company|computer|condos|construction|consulting|contractors|cooking|cool|coop|country|credit|creditcard|cruises|cuisinella|cymru|dance|dating|deals|degree|democrat|dental|dentist|desi|diamonds|diet|digital|direct|directory|discount|dnp|domains|durban|edu|education|email|engineer|engineering|enterprises|equipment|estate|eus|events|exchange|expert|exposed|fail|farm|feedback|finance|financial|fish|fishing|fitness|flights|florist|foo|foundation|frogans|fund|furniture|futbol|gal|gallery|gent|gift|gifts|gives|glass|global|globo|gmo|gop|gov|graphics|gratis|green|gripe|guide|guitars|guru|hamburg|haus|healthcare|help|hiphop|hiv|holdings|holiday|homes|horse|host|hosting|house|how|immobilien|industries|info|ink|institute|insure|int|international|investments|jetzt|jobs|joburg|juegos|kaufen|kim|kitchen|kiwi|koeln|krd|kred|lacaixa|land|lawyer|lease|lgbt|life|lighting|limited|limo|link|loans|london|lotto|ltda|luxe|luxury|maison|management|mango|market|marketing|media|meet|melbourne|menu|miami|mil|mini|mobi|moda|moe|monash|mortgage|moscow|motorcycles|museum|nagoya|name|navy|net|neustar|ngo|nhk|ninja|nra|nrw|nyc|okinawa|onl|ooo|org|organic|ovh|paris|partners|parts|photo|photography|photos|physio|pics|pictures|pink|place|plumbing|post|praxi|press|pro|productions|properties|property|pub|qpon|quebec|realtor|recipes|red|rehab|reise|reisen|ren|rentals|repair|report|republican|rest|restaurant|reviews|rich|rio|rocks|rodeo|ruhr|ryukyu|saarland|sarl|sca|scb|schmidt|schule|scot|services|sexy|shiksha|shoes|singles|social|software|sohu|solar|solutions|soy|space|spiegel|supplies|supply|support|surf|surgery|suzuki|systems|tatar|tattoo|tax|technology|tel|tienda|tips|tirol|today|tokyo|tools|top|town|toys|trade|training|travel|university|uno|uol|vacations|vegas|ventures|versicherung|vet|viajes|villas|vision|vlaanderen|vodka|vote|voting|voto|voyage|wales|wang|watch|webcam|website|wed|whoswho|wien|wiki|williamhill|works|wtc|wtf|xxx|xyz|yachts|yandex|yokohama|zone';
-        $ccTLD = 'ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bl|bm|bn|bo|bq|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cu|cv|cw|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mf|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw';
-        $gTLD_IDN = '测试|परीक्षा|佛山|集团|在线|موقع|公益|公司|移动|我爱你|москва|испытание|онлайн|сайт|테스트|орг|삼성|商标|商城|дети|טעסט|中文网|中信|測試|آزمایشی|பரிட்சை|संगठन|网络|δοκιμή|إختبار|بازار|شبكة|机构|组织机构|みんな|世界|网址|游戏|广东|テスト|政务';
-        $ccTLD_IDN = '한국|ভারত|বাংলা|қаз|срб|சிங்கப்பூர்|мкд|中国|中國|భారత్|ලංකා|ભારત|भारत|укр|香港|台湾|台灣|мон|الجزائر|عمان|ایران|امارات|پاکستان|الاردن|بھارت|المغرب|السعودية|سودان|مليسيا|გე|ไทย|سورية|рф|تونس|ਭਾਰਤ|مصر|قطر|இலங்கை|இந்தியா|新加坡|فلسطين';
-        $tmp['valid_gTLD'] = '(?:(?:' . $gTLD . '|' . $gTLD_IDN . ')(?=[^0-9a-z@]|$))';
-        $tmp['valid_ccTLD'] = '(?:(?:' . $ccTLD . '|' . $ccTLD_IDN . ')(?=[^0-9a-z@]|$))';
+        $gTLD = 'abb|abbott|abogado|academy|accenture|accountant|accountants|aco|active|actor|ads|adult|aeg|aero|afl|agency|aig|airforce|airtel|allfinanz|alsace|amsterdam|android|apartments|app|aquarelle|archi|army|arpa|asia|associates|attorney|auction|audio|auto|autos|axa|azure|band|bank|bar|barcelona|barclaycard|barclays|bargains|bauhaus|bayern|bbc|bbva|bcn|beer|bentley|berlin|best|bet|bharti|bible|bid|bike|bing|bingo|bio|biz|black|blackfriday|bloomberg|blue|bmw|bnl|bnpparibas|boats|bond|boo|boots|boutique|bradesco|bridgestone|broker|brother|brussels|budapest|build|builders|business|buzz|bzh|cab|cafe|cal|camera|camp|cancerresearch|canon|capetown|capital|caravan|cards|care|career|careers|cars|cartier|casa|cash|casino|cat|catering|cba|cbn|ceb|center|ceo|cern|cfa|cfd|chanel|channel|chat|cheap|chloe|christmas|chrome|church|cisco|citic|city|claims|cleaning|click|clinic|clothing|cloud|club|coach|codes|coffee|college|cologne|com|commbank|community|company|computer|condos|construction|consulting|contractors|cooking|cool|coop|corsica|country|coupons|courses|credit|creditcard|cricket|crown|crs|cruises|cuisinella|cymru|cyou|dabur|dad|dance|date|dating|datsun|day|dclk|deals|degree|delivery|delta|democrat|dental|dentist|desi|design|dev|diamonds|diet|digital|direct|directory|discount|dnp|docs|dog|doha|domains|doosan|download|drive|durban|dvag|earth|eat|edu|education|email|emerck|energy|engineer|engineering|enterprises|epson|equipment|erni|esq|estate|eurovision|eus|events|everbank|exchange|expert|exposed|express|fage|fail|faith|family|fan|fans|farm|fashion|feedback|film|finance|financial|firmdale|fish|fishing|fit|fitness|flights|florist|flowers|flsmidth|fly|foo|football|forex|forsale|forum|foundation|frl|frogans|fund|furniture|futbol|fyi|gal|gallery|game|garden|gbiz|gdn|gent|genting|ggee|gift|gifts|gives|giving|glass|gle|global|globo|gmail|gmo|gmx|gold|goldpoint|golf|goo|goog|google|gop|gov|graphics|gratis|green|gripe|group|guge|guide|guitars|guru|hamburg|hangout|haus|healthcare|help|here|hermes|hiphop|hitachi|hiv|hockey|holdings|holiday|homedepot|homes|honda|horse|host|hosting|hoteles|hotmail|house|how|hsbc|ibm|icbc|ice|icu|ifm|iinet|immo|immobilien|industries|infiniti|info|ing|ink|institute|insure|int|international|investments|ipiranga|irish|ist|istanbul|itau|iwc|java|jcb|jetzt|jewelry|jlc|jll|jobs|joburg|jprs|juegos|kaufen|kddi|kim|kitchen|kiwi|koeln|komatsu|krd|kred|kyoto|lacaixa|lancaster|land|lasalle|lat|latrobe|law|lawyer|lds|lease|leclerc|legal|lexus|lgbt|liaison|lidl|life|lighting|limited|limo|link|live|lixil|loan|loans|lol|london|lotte|lotto|love|ltda|lupin|luxe|luxury|madrid|maif|maison|man|management|mango|market|marketing|markets|marriott|mba|media|meet|melbourne|meme|memorial|men|menu|miami|microsoft|mil|mini|mma|mobi|moda|moe|mom|monash|money|montblanc|mormon|mortgage|moscow|motorcycles|mov|movie|movistar|mtn|mtpc|museum|nadex|nagoya|name|navy|nec|net|netbank|network|neustar|new|news|nexus|ngo|nhk|nico|ninja|nissan|nokia|nra|nrw|ntt|nyc|office|okinawa|omega|one|ong|onl|online|ooo|oracle|orange|org|organic|osaka|otsuka|ovh|page|panerai|paris|partners|parts|party|pet|pharmacy|philips|photo|photography|photos|physio|piaget|pics|pictet|pictures|pink|pizza|place|play|plumbing|plus|pohl|poker|porn|post|praxi|press|pro|prod|productions|prof|properties|property|pub|qpon|quebec|racing|realtor|realty|recipes|red|redstone|rehab|reise|reisen|reit|ren|rent|rentals|repair|report|republican|rest|restaurant|review|reviews|rich|ricoh|rio|rip|rocks|rodeo|rsvp|ruhr|run|ryukyu|saarland|sakura|sale|samsung|sandvik|sandvikcoromant|sanofi|sap|sarl|saxo|sca|scb|schmidt|scholarships|school|schule|schwarz|science|scor|scot|seat|seek|sener|services|sew|sex|sexy|shiksha|shoes|show|shriram|singles|site|ski|sky|skype|sncf|soccer|social|software|sohu|solar|solutions|sony|soy|space|spiegel|spreadbetting|srl|starhub|statoil|studio|study|style|sucks|supplies|supply|support|surf|surgery|suzuki|swatch|swiss|sydney|systems|taipei|tatamotors|tatar|tattoo|tax|taxi|team|tech|technology|tel|telefonica|temasek|tennis|thd|theater|tickets|tienda|tips|tires|tirol|today|tokyo|tools|top|toray|toshiba|tours|town|toyota|toys|trade|trading|training|travel|trust|tui|ubs|university|uno|uol|vacations|vegas|ventures|vermögensberater|vermögensberatung|versicherung|vet|viajes|video|villas|vin|vision|vista|vistaprint|vlaanderen|vodka|vote|voting|voto|voyage|wales|walter|wang|watch|webcam|website|wed|wedding|weir|whoswho|wien|wiki|williamhill|win|windows|wine|wme|work|works|world|wtc|wtf|xbox|xerox|xin|xperia|xxx|xyz|yachts|yandex|yodobashi|yoga|yokohama|youtube|zip|zone|zuerich|дети|ком|москва|онлайн|орг|рус|сайт|קום|بازار|شبكة|كوم|موقع|कॉम|नेट|संगठन|คอม|みんな|グーグル|コム|世界|中信|中文网|企业|佛山|信息|健康|八卦|公司|公益|商城|商店|商标|在线|大拿|娱乐|工行|广东|慈善|我爱你|手机|政务|政府|新闻|时尚|机构|淡马锡|游戏|点看|移动|组织机构|网址|网店|网络|谷歌|集团|飞利浦|餐厅|닷넷|닷컴|삼성|onion';
+        $ccTLD = 'ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bl|bm|bn|bo|bq|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cu|cv|cw|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mf|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw|ελ|бел|мкд|мон|рф|срб|укр|қаз|հայ|الاردن|الجزائر|السعودية|المغرب|امارات|ایران|بھارت|تونس|سودان|سورية|عراق|عمان|فلسطين|قطر|مصر|مليسيا|پاکستان|भारत|বাংলা|ভারত|ਭਾਰਤ|ભારત|இந்தியா|இலங்கை|சிங்கப்பூர்|భారత్|ලංකා|ไทย|გე|中国|中國|台湾|台灣|新加坡|澳門|香港|한국';
+        $tmp['valid_gTLD'] = '(?:(?:' . $gTLD . ')(?=[^0-9a-z@]|$))';
+        $tmp['valid_ccTLD'] = '(?:(?:' . $ccTLD . ')(?=[^0-9a-z@]|$))';
         $tmp['valid_special_ccTLD'] = '(?:(?:' . 'co|tv' . ')(?=[^0-9a-z@]|$))';
         $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
 
-        $tmp['valid_domain'] = '(?:'                                                // subdomains + domain + TLD
-            . $tmp['valid_subdomain'] . '+' . $tmp['valid_domain_name']             // e.g. www.twitter.com, foo.co.jp, bar.co.uk
+        $tmp['valid_domain'] = '(?:'                                            // subdomains + domain + TLD
+            . $tmp['valid_subdomain'] . '+' . $tmp['valid_domain_name']         // e.g. www.twitter.com, foo.co.jp, bar.co.uk
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . '|' . $tmp['valid_punycode'] . '))'
             . '|(?:'                                                                // domain + gTLD | some ccTLD
-            . $tmp['valid_domain_name']                                             // e.g. twitter.com
+            . $tmp['valid_domain_name']                                         // e.g. twitter.com
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_punycode'] . '|' . $tmp['valid_special_ccTLD'] . ')'
             . ')'
             . '|(?:(?:(?<=http:\/\/)|(?<=https:\/\/))'
             . '(?:'
-            . '(?:' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . ')'         // protocol + domain + ccTLD
+            . '(?:' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . ')' // protocol + domain + ccTLD
             . '|(?:'                                                                // protocol + unicode domain + TLD
             . $tmp['domain_valid_unicode_chars'] . '+\.'
             . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . ')'
@@ -214,7 +212,7 @@ abstract class Regex
         # Used by the extractor to filter out unwanted URLs:
         $re['invalid_short_domain'] = '/\A' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . '\Z/iu';
         $re['valid_special_short_domain'] = '/\A' . $tmp['valid_domain_name'] . $tmp['valid_special_ccTLD'] . '\Z/iu';
-        $re['invalid_url_without_protocol_preceding_chars'] = '/[-_.\/]\z/iu';
+        $re['invalid_url_without_protocol_preceding_chars'] = '/[\-_.\/]\z/iu';
 
         $tmp['valid_port_number'] = '[0-9]+';
 
@@ -236,16 +234,16 @@ abstract class Regex
             . '\))';
         # Valid end-of-path characters (so /foo. does not gobble the period).
         # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
-        $tmp['valid_url_path_ending_chars'] = '(?:[a-z\p{Cyrillic}0-9=_#\/\+\-' . $tmp['latin_accents'] . ']|(?:' . $tmp['valid_url_balanced_parens'] . '))';
+        $tmp['valid_url_path_ending_chars'] = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . $tmp['latin_accents'] . ']|(?:' . $tmp['valid_url_balanced_parens'] . ')';
         $tmp['valid_url_path'] = '(?:(?:'
             . $tmp['valid_general_url_path_chars'] . '*(?:'
             . $tmp['valid_url_balanced_parens'] . ' '
             . $tmp['valid_general_url_path_chars'] . '*)*'
-            . $tmp['valid_url_path_ending_chars'] . ')|(?:'
+            . $tmp['valid_url_path_ending_chars'] . ')|(?:@'
             . $tmp['valid_general_url_path_chars'] . '+\/))';
 
         $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
-        $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/]';
+        $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/\-]';
 
         $re['valid_url'] = '/(?:'                           # $1 Complete match (preg_match() already matches everything.)
             . '(' . $tmp['valid_url_preceding_chars'] . ')' # $2 Preceding characters
@@ -264,7 +262,7 @@ abstract class Regex
         $re['end_cashtag_match'] = '/\A(?:[' . $tmp['cash_signs'] . ']|:\/\/)/u';
 
         # These URL validation pattern strings are based on the ABNF from RFC 3986
-        $tmp['validate_url_unreserved'] = '[a-z0-9\-._~]';
+        $tmp['validate_url_unreserved'] = '[a-z\p{Cyrillic}0-9\-._~]';
         $tmp['validate_url_pct_encoded'] = '(?:%[0-9a-f]{2})';
         $tmp['validate_url_sub_delims'] = '[!$&\'()*+,;=]';
         $tmp['validate_url_pchar'] = '(?:' . $tmp['validate_url_unreserved'] . '|' . $tmp['validate_url_pct_encoded'] . '|' . $tmp['validate_url_sub_delims'] . '|[:\|@])'; #/iox
@@ -307,9 +305,9 @@ abstract class Regex
             . '/ix';
 
         $re['validate_url_scheme'] = '/(?:[a-z][a-z0-9+\-.]*)/i';
-        $re['validate_url_path'] = '/(\/' . $tmp['validate_url_pchar'] . '*)*/i';
-        $re['validate_url_query'] = '/(' . $tmp['validate_url_pchar'] . '|\/|\?)*/i';
-        $re['validate_url_fragment'] = '/(' . $tmp['validate_url_pchar'] . '|\/|\?)*/i';
+        $re['validate_url_path'] = '/(\/' . $tmp['validate_url_pchar'] . '*)*/iu';
+        $re['validate_url_query'] = '/(' . $tmp['validate_url_pchar'] . '|\/|\?)*/iu';
+        $re['validate_url_fragment'] = '/(' . $tmp['validate_url_pchar'] . '|\/|\?)*/iu';
 
         # Modified version of RFC 3986 Appendix B
         $re['validate_url_unencoded'] = '/^' #  Full URL
