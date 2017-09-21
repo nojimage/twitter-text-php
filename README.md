@@ -5,8 +5,17 @@ lists, hashtags and URLs from tweets.  Originally created from twitter-text-rb
 and twitter-text-java projects by Matt Sanford and ported to PHP by Mike
 Cochrane, this library has been improved and made more complete by Nick Pope.
 
-[![Build Status](https://travis-ci.org/nojimage/twitter-text-php.png?branch=master)](https://travis-ci.org/nojimage/twitter-text-php)
-[![Coverage Status](https://coveralls.io/repos/nojimage/twitter-text-php/badge.png)](https://coveralls.io/r/nojimage/twitter-text-php)
+<p align="center">
+    <a href="https://travis-ci.org/nojimage/twitter-text-php" target="_blank">
+        <img alt="Build Status" src="https://img.shields.io/travis/nojimage/twitter-text-php/master.svg?style=flat-square">
+    </a>
+    <a href="https://codecov.io/gh/nojimage/twitter-text-php" target="_blank">
+        <img alt="Codecov" src="https://img.shields.io/codecov/c/github/nojimage/twitter-text-php.svg?style=flat-square">
+    </a>
+    <a href="https://packagist.org/packages/nojimage/twitter-text-php" target="_blank">
+        <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/nojimage/twitter-text-php.svg?style=flat-square">
+    </a>
+</p>
 
 ## Features ##
 
@@ -48,15 +57,14 @@ run from the command line.
 You'll need the test data which is in YAML format from the following
 repository:
 
-    https://github.com/twitter/twitter-text-conformance
+    https://github.com/twitter/twitter-text
 
     https://github.com/symfony/Yaml
 
-Both requirements already included in `composer.json` and `git submodule`, so you should just need to run:
+Both requirements already included in `composer.json`, so you should just need to run:
 
     curl -s https://getcomposer.org/installer | php
-    php composer.phar install --dev
-    git submodule update --init
+    php composer.phar install
 
 There are a couple of options for testing conformance:
 
