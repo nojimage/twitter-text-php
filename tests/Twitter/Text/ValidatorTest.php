@@ -9,8 +9,9 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Validator;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
+use Twitter\Text\Validator;
 
 /**
  * Twitter Validator Class Unit Tests
@@ -21,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package    Twitter.Text
  * @property   Validator $validator
  */
-class ValidatorTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends TestCase
 {
 
     protected function setUp()

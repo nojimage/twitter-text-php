@@ -9,8 +9,9 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Extractor;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
+use Twitter\Text\Extractor;
 
 /**
  * Twitter Extractor Class Unit Tests
@@ -21,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package    Twitter.Text
  * @param      Extractor $extractor
  */
-class ExtractorTest extends \PHPUnit_Framework_TestCase
+class ExtractorTest extends TestCase
 {
 
     protected function setUp()

@@ -17,3 +17,8 @@ if (!defined('DATA')) {
 
 # Include required classes.
 require dirname(__DIR__) . '/vendor/autoload.php';
+
+// for PHPUnit < 5.7
+if (!class_exists('\PHPUnit\Framework\TestCase')) {
+    class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
+}

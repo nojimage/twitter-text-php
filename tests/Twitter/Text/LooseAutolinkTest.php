@@ -10,8 +10,9 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\LooseAutolink;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
+use Twitter\Text\LooseAutolink;
 
 /**
  * Twitter LooseAutolink Class Unit Tests
@@ -23,7 +24,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package    Twitter.Text
  * @property LooseAutolink $linker
  */
-class LooseAutolinkTest extends \PHPUnit_Framework_TestCase
+class LooseAutolinkTest extends TestCase
 {
 
     protected function setUp()

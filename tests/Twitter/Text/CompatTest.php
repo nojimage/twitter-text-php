@@ -9,7 +9,12 @@
 
 namespace Twitter\Text;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
+use Twitter_Autolink;
+use Twitter_Extractor;
+use Twitter_HitHighlighter;
+use Twitter_Validator;
 
 /**
  * Twitter Conformance TestCase
@@ -18,22 +23,22 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright  Copyright 2014, Mike Cochrane, Nick Pope, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property Autolink $linker
- * @property Extractor $extractor
- * @property HitHighlighter $highlighter
- * @property Validator $validator
+ * @property Twitter_Autolink $linker
+ * @property Twitter_Extractor $extractor
+ * @property Twitter_HitHighlighter $highlighter
+ * @property Twitter_Validator $validator
  */
-class CompatTest extends \PHPUnit_Framework_TestCase
+class CompatTest extends TestCase
 {
 
     protected function setUp()
     {
         parent::setUp();
-        $this->linker = new \Twitter_Autolink();
+        $this->linker = new Twitter_Autolink();
         $this->linker->setNoFollow(false)->setExternal(false)->setTarget('');
-        $this->extractor = new \Twitter_Extractor();
-        $this->highlighter = new \Twitter_HitHighlighter();
-        $this->validator = new \Twitter_Validator();
+        $this->extractor = new Twitter_Extractor();
+        $this->highlighter = new Twitter_HitHighlighter();
+        $this->validator = new Twitter_Validator();
     }
 
     protected function tearDown()

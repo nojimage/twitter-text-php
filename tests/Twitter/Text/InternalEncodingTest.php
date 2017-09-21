@@ -9,11 +9,12 @@
 
 namespace Twitter\Text;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Autolink;
 use Twitter\Text\Extractor;
 use Twitter\Text\HitHighlighter;
 use Twitter\Text\Validator;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * A TestCase for the different internal encoding with UTF-8
@@ -28,7 +29,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property HitHighlighter $highlighter
  * @property Validator $validator
  */
-class InternalEncodingTest extends \PHPUnit_Framework_TestCase
+class InternalEncodingTest extends TestCase
 {
 
     protected function setUp()

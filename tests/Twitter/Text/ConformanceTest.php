@@ -9,11 +9,12 @@
 
 namespace Twitter\Text;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Autolink;
 use Twitter\Text\Extractor;
 use Twitter\Text\HitHighlighter;
 use Twitter\Text\Validator;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Twitter Conformance TestCase
@@ -27,7 +28,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property HitHighlighter $highlighter
  * @property Validator $validator
  */
-class ConformanceTest extends \PHPUnit_Framework_TestCase
+class ConformanceTest extends TestCase
 {
 
     protected function setUp()

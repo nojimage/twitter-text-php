@@ -9,8 +9,9 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\HitHighlighter;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
+use Twitter\Text\HitHighlighter;
 
 /**
  * Twitter HitHighlighter Class Unit Tests
@@ -21,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package    Twitter.Text
  * @property   HitHighlighter $highlighter
  */
-class HitHighlighterTest extends \PHPUnit_Framework_TestCase
+class HitHighlighterTest extends TestCase
 {
 
     protected function setUp()

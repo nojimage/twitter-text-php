@@ -9,8 +9,8 @@
 
 namespace Twitter\Text;
 
+use PHPUnit\Framework\TestCase;
 use Twitter\Text\Autolink;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Twitter Autolink Class Unit Tests
@@ -21,7 +21,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package    Twitter.Text
  * @property Autolink $linker
  */
-class AutolinkTest extends \PHPUnit_Framework_TestCase
+class AutolinkTest extends TestCase
 {
 
     protected function setUp()
