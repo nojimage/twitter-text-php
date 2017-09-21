@@ -45,7 +45,7 @@
   },
   "require-dev": {
     "php": ">=5.3.3",
-    "symfony/yaml": "~2.4.0",
+    "symfony/yaml": "~2.6.0",
     "phpunit/phpunit": "4.8.*|5.7.*",
     "twitter/twitter-text": "^1.14.7"
   },
