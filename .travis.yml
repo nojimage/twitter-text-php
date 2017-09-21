@@ -25,13 +25,19 @@ matrix:
   - php: 5.3
     dist: precise
   - php: 7.1
+    env: PHPCS=1 DEFAULT=0
+  - php: 7.1
     env: CODECOVERAGE=1 DEFAULT=0
 
+install:
+  - composer install --prefer-dist --no-interaction
+
 before_script:
-  - composer install
+  - if [ $PHPCS = '1' ]; then composer require squizlabs/php_codesniffer; fi
 
 script:
   - if [ $DEFAULT = '1' ]; then vendor/bin/phpunit --exclude-group deprecated,gtld --stderr; fi
+  - if [ $PHPCS = '1' ]; then vendor/bin/phpcs -psn --extensions=php --standard=PSR2 ./lib ./tests; fi
   - if [ $CODECOVERAGE = '1' ]; then vendor/bin/phpunit --exclude-group deprecated,tld --stderr --coverage-clover=coverage.xml; fi
 
 after_success:
