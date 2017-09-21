@@ -6,51 +6,64 @@
   "type": "library",
   "license": "Apache-2.0",
   "authors": [
-  {
-    "name": "Matt Sanford",
-    "email": "matt@mzsanford.com",
-    "homepage":"http://mzsanford.com"
-  },
-  {
-    "name": "Mike Cochrane",
-    "email": "mikec@mikenz.geek.nz",
-    "homepage":"http://mikenz.geek.nz"
-  },
-  {
-    "name": "Nick Pope",
-    "email": "git@nickpope.me.uk",
-    "homepage":"http://www.nickpope.me.uk"
-  },
-  {
-    "name": "Takashi Nojima",
-    "homepage":"http://php-tips.com"
-  }
+    {
+      "name": "Matt Sanford",
+      "email": "matt@mzsanford.com",
+      "homepage": "http://mzsanford.com"
+    },
+    {
+      "name": "Mike Cochrane",
+      "email": "mikec@mikenz.geek.nz",
+      "homepage": "http://mikenz.geek.nz"
+    },
+    {
+      "name": "Nick Pope",
+      "email": "git@nickpope.me.uk",
+      "homepage": "http://www.nickpope.me.uk"
+    },
+    {
+      "name": "Takashi Nojima",
+      "homepage": "http://php-tips.com"
+    }
   ],
   "repositories": [
     {
       "type": "package",
       "package": {
-        "name": "twitter/twitter-text-conformance",
-        "version": "v1.8.0",
+        "name": "twitter/twitter-text",
+        "version": "1.14.7",
         "source": {
-          "url": "https://github.com/twitter/twitter-text-conformance.git",
+          "url": "https://github.com/twitter/twitter-text.git",
           "type": "git",
-          "reference": "v1.8.0"
+          "reference": "v1.14.7"
         }
       }
     }
   ],
   "require": {
-    "php": ">=5.2.8"
+    "php": ">=5.3.3"
   },
   "require-dev": {
     "php": ">=5.3.3",
-    "symfony/yaml": "*",
-    "twitter/twitter-text-conformance": "1.8.0"
+    "symfony/yaml": "~2.6.0",
+    "phpunit/phpunit": "4.8.*|5.7.*",
+    "twitter/twitter-text": "^1.14.7"
   },
   "autoload": {
     "psr-0": {
-      "Twitter_": "lib/"
+      "Twitter\\Text\\": "lib/",
+      "Twitter_": "compat/"
     }
+  },
+  "scripts": {
+    "check": [
+      "@cs",
+      "@test"
+    ],
+    "test": "phpunit --exclude-group deprecated,gtld",
+    "deprecated-test": "phpunit --group deprecated",
+    "tld-test": "phpunit --group tld",
+    "cs": "phpcs -psn --standard=PSR2 --extensions=php ./lib ./tests",
+    "cs-fixer": "phpcbf --standard=PSR2 ./lib ./tests"
   }
 }
