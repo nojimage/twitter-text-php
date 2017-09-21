@@ -628,7 +628,7 @@ class Autolink extends Regex
     }
 
     /**
-     * 
+     *
      * @param array  $entity
      * @param string $tweet
      * @return string
@@ -661,7 +661,7 @@ class Autolink extends Regex
     }
 
     /**
-     * 
+     *
      * @param array  $entity
      * @return string
      * @since 1.1.0
@@ -690,7 +690,7 @@ class Autolink extends Regex
     }
 
     /**
-     * 
+     *
      * @param array  $entity
      * @param string $tweet
      * @return string
@@ -754,5 +754,4 @@ class Autolink extends Regex
     {
         return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
     }
-
 }

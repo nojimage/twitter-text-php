@@ -75,5 +75,4 @@ class ValidatorTest extends TestCase
         $this->assertSame(22, $validator->getShortUrlLength());
         $this->assertSame(23, $validator->getShortUrlLengthHttps());
     }
-
 }
