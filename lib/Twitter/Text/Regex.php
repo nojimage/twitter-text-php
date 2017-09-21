@@ -141,6 +141,8 @@ abstract class Regex
         #   0x05be HEBREW PUNCTUATION MAQAF
         #   0x05f3 HEBREW PUNCTUATION GERESH
         #   0x05f4 HEBREW PUNCTUATION GERSHAYIM
+        #   0xff5e FULLWIDTH TILDE
+        #   0x301c WAVE DASH
         #   0x309b KATAKANA-HIRAGANA VOICED SOUND MARK
         #   0x309c KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
         #   0x30a0 KATAKANA-HIRAGANA DOUBLE HYPHEN
@@ -149,11 +151,11 @@ abstract class Regex
         #   0x0f0b TIBETAN MARK INTERSYLLABIC TSHEG
         #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
         #   0x00b7 MIDDLE DOT
-        $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
+        $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{ff5e}\x{301c}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
         $tmp['hashtag_letters_numerals_set'] = '[' . $tmp['hashtag_letters'] .  $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
         $tmp['hashtag_letters_set'] = '[' . $tmp['hashtag_letters'] . ']';
         $tmp['hashtag_boundary'] = '(?:\A|\z|[^&' . $tmp['hashtag_letters'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . '])';
-        $tmp['hashtag'] = '(' . $tmp['hashtag_boundary'] . ')(#|＃)(' . $tmp['hashtag_letters_numerals_set'] . '*' . $tmp['hashtag_letters_set'] . $tmp['hashtag_letters_numerals_set'] . '*)';
+        $tmp['hashtag'] = '(' . $tmp['hashtag_boundary'] . ')(#|\x{ff03})(?!\x{fe0f}|\x{20e3})(' . $tmp['hashtag_letters_numerals_set'] . '*' . $tmp['hashtag_letters_set'] . $tmp['hashtag_letters_numerals_set'] . '*)';
 
         $re['valid_hashtag'] = '/' . $tmp['hashtag'] . '(?=(.*|$))/iu';
         $re['end_hashtag_match'] = '/\A(?:[' . $tmp['hash_signs'] . ']|:\/\/)/u';
@@ -161,7 +163,7 @@ abstract class Regex
         # XXX: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
         #      $after in the following regular expression.  Note that we only use a
         #      look-ahead capture here and don't append $after when we return.
-        $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|RT:?)';
+        $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
         $re['valid_mentions_or_lists'] = '/' . $tmp['valid_mention_preceding_chars'] . '([' . $tmp['at_signs'] . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
         $re['valid_reply'] = '/^(?:[' . $tmp['spaces'] . '])*[' . $tmp['at_signs'] . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
         $re['end_mention_match'] = '/\A(?:[' . $tmp['at_signs'] . ']|[' . $tmp['latin_accents'] . ']|:\/\/)/iu';
@@ -216,7 +218,7 @@ abstract class Regex
 
         $tmp['valid_port_number'] = '[0-9]+';
 
-        $tmp['valid_general_url_path_chars'] = '[a-z0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . $tmp['latin_accents'] . ']';
+        $tmp['valid_general_url_path_chars'] = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . $tmp['latin_accents'] . ']';
         # Allow URL paths to contain up to two nested levels of balanced parentheses:
         # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
         # 2. Used in IIS sessions, e.g. /S(dfd346)/
@@ -234,7 +236,7 @@ abstract class Regex
             . '\))';
         # Valid end-of-path characters (so /foo. does not gobble the period).
         # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
-        $tmp['valid_url_path_ending_chars'] = '(?:[a-z0-9=_#\/\+\-' . $tmp['latin_accents'] . ']|(?:' . $tmp['valid_url_balanced_parens'] . '))';
+        $tmp['valid_url_path_ending_chars'] = '(?:[a-z\p{Cyrillic}0-9=_#\/\+\-' . $tmp['latin_accents'] . ']|(?:' . $tmp['valid_url_balanced_parens'] . '))';
         $tmp['valid_url_path'] = '(?:(?:'
             . $tmp['valid_general_url_path_chars'] . '*(?:'
             . $tmp['valid_url_balanced_parens'] . ' '
