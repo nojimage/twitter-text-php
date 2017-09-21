@@ -88,4 +88,10 @@ class ExtractorTest extends TestCase
         $this->assertSame(array(14, 45), $extracted[0]['indices']);
         $this->assertSame('https://i.imgur.com/I32CQ81.jpg', StringUtils::substr($text, $extracted[0]['indices'][0], $extracted[0]['indices'][1]));
     }
+
+    public function testExtractURLsPrecededByEllipsis()
+    {
+        $extracted = $this->extractor->extractURLs('text: ...http://www.example.com');
+        $this->assertSame(array('http://www.example.com'), $extracted, 'Unextract url preceded by ellipsis');
+    }
 }
