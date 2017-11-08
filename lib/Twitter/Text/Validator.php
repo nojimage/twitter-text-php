@@ -35,7 +35,7 @@ class Validator extends Regex
      *
      * @var  int
      */
-    const MAX_LENGTH = 140;
+    const MAX_LENGTH = 280;
 
     /**
      * The length of a short URL beginning with http:
