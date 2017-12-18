@@ -35,4 +35,94 @@ class RegexTest extends \PHPUnit_Framework_TestCase
         $matcherCached = Regex::getRtlCharsMatcher();
         $this->assertSame($matcher, $matcherCached);
     }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlUnencodedMatcher
+     */
+    public function testGetValidateUrlUnencodedMatcher()
+    {
+        $matcher = Regex::getValidateUrlUnencodedMatcher();
+        $this->assertStringStartsWith('/\A(?:', $matcher);
+        $this->assertStringEndsWith(')?\z/iux', $matcher);
+
+        $matcherCached = Regex::getValidateUrlUnencodedMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlUnicodeAuthorityMatcher
+     */
+    public function testGetValidateUrlUnicodeAuthorityMatcher()
+    {
+        $matcher = Regex::getValidateUrlUnicodeAuthorityMatcher();
+        $this->assertStringStartsWith('/(?:', $matcher);
+        $this->assertStringEndsWith(')?/iux', $matcher);
+
+        $matcherCached = Regex::getValidateUrlUnicodeAuthorityMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlAuthorityMatcher
+     */
+    public function testGetValidateUrlAuthorityMatcher()
+    {
+        $matcher = Regex::getValidateUrlAuthorityMatcher();
+        $this->assertStringStartsWith('/(?:', $matcher);
+        $this->assertStringEndsWith(')?/ix', $matcher);
+
+        $matcherCached = Regex::getValidateUrlAuthorityMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlSchemeMatcher
+     */
+    public function testGetValidateUrlSchemeMatcher()
+    {
+        $matcher = Regex::getValidateUrlSchemeMatcher();
+        $this->assertSame('/(?:[a-z][a-z0-9+\-.]*)/i', $matcher);
+
+        $matcherCached = Regex::getValidateUrlSchemeMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlPathMatcher
+     */
+    public function testGetValidateUrlPathMatcher()
+    {
+        $matcher = Regex::getValidateUrlPathMatcher();
+        $this->assertStringStartsWith('/(', $matcher);
+        $this->assertStringEndsWith(')*/iu', $matcher);
+
+        $matcherCached = Regex::getValidateUrlPathMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlQueryMatcher
+     */
+    public function testGetValidateUrlQueryMatcher()
+    {
+        $matcher = Regex::getValidateUrlQueryMatcher();
+        $this->assertStringStartsWith('/(', $matcher);
+        $this->assertStringEndsWith(')*/iu', $matcher);
+
+        $matcherCached = Regex::getValidateUrlQueryMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidateUrlFragmentMatcher
+     */
+    public function testGetValidateUrlFragmentMatcher()
+    {
+        $matcher = Regex::getValidateUrlFragmentMatcher();
+        $this->assertStringStartsWith('/(', $matcher);
+        $this->assertStringEndsWith(')*/iu', $matcher);
+
+        $matcherCached = Regex::getValidateUrlFragmentMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
 }

@@ -68,6 +68,14 @@ class Regex
      */
     private static $rtlChars = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}';
 
+    # These URL validation pattern strings are based on the ABNF from RFC 3986
+    private static $validateUrlUnreserved = '[a-z\p{Cyrillic}0-9\-._~]';
+    private static $validateUrlPctEncoded = '(?:%[0-9a-f]{2})';
+    private static $validateUrlSubDelims = '[!$&\'()*+,;=]';
+    private static $validateUrlIpv4 = '(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3})';
+    private static $validateUrlIpv6 = '(?:\[[a-f0-9:\.]+\])';
+    private static $validateUrlPort = '[0-9]{1,5}';
+
     /**
      * This constructor is used to populate some variables.
      *
@@ -272,68 +280,6 @@ class Regex
         $re['valid_cashtag'] = '/(^|[' . $tmp['spaces'] . '])([' . $tmp['cash_signs'] . '])(' . $tmp['cashtag'] . ')(?=($|\s|[[:punct:]]))/iu';
         $re['end_cashtag_match'] = '/\A(?:[' . $tmp['cash_signs'] . ']|:\/\/)/u';
 
-        # These URL validation pattern strings are based on the ABNF from RFC 3986
-        $tmp['validate_url_unreserved'] = '[a-z\p{Cyrillic}0-9\-._~]';
-        $tmp['validate_url_pct_encoded'] = '(?:%[0-9a-f]{2})';
-        $tmp['validate_url_sub_delims'] = '[!$&\'()*+,;=]';
-        $tmp['validate_url_pchar'] = '(?:' . $tmp['validate_url_unreserved'] . '|' . $tmp['validate_url_pct_encoded'] . '|' . $tmp['validate_url_sub_delims'] . '|[:\|@])'; #/iox
-
-        $tmp['validate_url_userinfo'] = '(?:' . $tmp['validate_url_unreserved'] . '|' . $tmp['validate_url_pct_encoded'] . '|' . $tmp['validate_url_sub_delims'] . '|:)*'; #/iox
-
-        $tmp['validate_url_dec_octet'] = '(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'; #/i
-        $tmp['validate_url_ipv4'] = '(?:' . $tmp['validate_url_dec_octet'] . '(?:\.' . $tmp['validate_url_dec_octet'] . '){3})'; #/iox
-        # Punting on real IPv6 validation for now
-        $tmp['validate_url_ipv6'] = '(?:\[[a-f0-9:\.]+\])'; #/i
-        # Also punting on IPvFuture for now
-        $tmp['validate_url_ip'] = '(?:' . $tmp['validate_url_ipv4'] . '|' . $tmp['validate_url_ipv6'] . ')'; #/iox
-        # This is more strict than the rfc specifies
-        $tmp['validate_url_subdomain_segment'] = '(?:[a-z0-9](?:[a-z0-9_\-]*[a-z0-9])?)'; #/i
-        $tmp['validate_url_domain_segment'] = '(?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?)'; #/i
-        $tmp['validate_url_domain_tld'] = '(?:[a-z](?:[a-z0-9\-]*[a-z0-9])?)'; #/i
-        $tmp['validate_url_domain'] = '(?:(?:' . $tmp['validate_url_subdomain_segment'] . '\.)*(?:' . $tmp['validate_url_domain_segment'] . '\.)' . $tmp['validate_url_domain_tld'] . ')'; #/iox
-
-        $tmp['validate_url_host'] = '(?:' . $tmp['validate_url_ip'] . '|' . $tmp['validate_url_domain'] . ')'; #/iox
-        # Unencoded internationalized domains - this doesn't check for invalid UTF-8 sequences
-        $tmp['validate_url_unicode_subdomain_segment'] = '(?:(?:[a-z0-9]|[^\x00-\x7f])(?:(?:[a-z0-9_\-]|[^\x00-\x7f])*(?:[a-z0-9]|[^\x00-\x7f]))?)'; #/ix
-        $tmp['validate_url_unicode_domain_segment'] = '(?:(?:[a-z0-9]|[^\x00-\x7f])(?:(?:[a-z0-9\-]|[^\x00-\x7f])*(?:[a-z0-9]|[^\x00-\x7f]))?)'; #/ix
-        $tmp['validate_url_unicode_domain_tld'] = '(?:(?:[a-z]|[^\x00-\x7f])(?:(?:[a-z0-9\-]|[^\x00-\x7f])*(?:[a-z0-9]|[^\x00-\x7f]))?)'; #/ix
-        $tmp['validate_url_unicode_domain'] = '(?:(?:' . $tmp['validate_url_unicode_subdomain_segment'] . '\.)*(?:' . $tmp['validate_url_unicode_domain_segment'] . '\.)' . $tmp['validate_url_unicode_domain_tld'] . ')'; #/iox
-
-        $tmp['validate_url_unicode_host'] = '(?:' . $tmp['validate_url_ip'] . '|' . $tmp['validate_url_unicode_domain'] . ')'; #/iox
-
-        $tmp['validate_url_port'] = '[0-9]{1,5}';
-
-        $re['validate_url_unicode_authority'] = '/'
-            . '(?:(' . $tmp['validate_url_userinfo'] . ')@)?' #  $1 userinfo
-            . '(' . $tmp['validate_url_unicode_host'] . ')'   #  $2 host
-            . '(?::(' . $tmp['validate_url_port'] . '))?'     #  $3 port
-            . '/iux';
-
-        $re['validate_url_authority'] = '/'
-            . '(?:(' . $tmp['validate_url_userinfo'] . ')@)?' #  $1 userinfo
-            . '(' . $tmp['validate_url_host'] . ')'           #  $2 host
-            . '(?::(' . $tmp['validate_url_port'] . '))?'     #  $3 port
-            . '/ix';
-
-        $re['validate_url_scheme'] = '/(?:[a-z][a-z0-9+\-.]*)/i';
-        $re['validate_url_path'] = '/(\/' . $tmp['validate_url_pchar'] . '*)*/iu';
-        $re['validate_url_query'] = '/(' . $tmp['validate_url_pchar'] . '|\/|\?)*/iu';
-        $re['validate_url_fragment'] = '/(' . $tmp['validate_url_pchar'] . '|\/|\?)*/iu';
-
-        # Modified version of RFC 3986 Appendix B
-        $re['validate_url_unencoded'] = '/^' #  Full URL
-            . '(?:'
-            . '([^:\/?#]+):\/\/' #  $1 Scheme
-            . ')?'
-            . '([^\/?#]*)'       #  $2 Authority
-            . '([^?#]*)'         #  $3 Path
-            . '(?:'
-            . '\?([^#]*)'        #  $4 Query
-            . ')?'
-            . '(?:'
-            . '\#(.*)'           #  $5 Fragment
-            . ')?$/iux';
-
         # Flag that initialization is complete:
         $initialized = true;
     }
@@ -371,6 +317,234 @@ class Regex
 
         return $regexp;
     }
+
+    /**
+     * Get url matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlUnencodedMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            # Modified version of RFC 3986 Appendix B
+            $regexp = '/\A' #  Full URL
+                . '(?:'
+                . '([^:\/?#]+):\/\/' #  $1 Scheme
+                . ')?'
+                . '([^\/?#]*)'       #  $2 Authority
+                . '([^?#]*)'         #  $3 Path
+                . '(?:'
+                . '\?([^#]*)'        #  $4 Query
+                . ')?'
+                . '(?:'
+                . '\#(.*)'           #  $5 Fragment
+                . ')?\z/iux';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid url ip
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlIp()
+    {
+        return '(?:' . static::$validateUrlIpv4 . '|' . static::$validateUrlIpv6 . ')'; #/iox
+    }
+
+    /**
+     * Get valid url domain
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlDomain()
+    {
+        $subdomain = '(?:[a-z0-9](?:[a-z0-9_\-]*[a-z0-9])?)'; #/i
+        $domain = '(?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?)'; #/i
+        $tld = '(?:[a-z](?:[a-z0-9\-]*[a-z0-9])?)'; #/i
+
+        return '(?:(?:' . $subdomain . '\.)*(?:' . $domain . '\.)' . $tld . ')'; #/iox
+    }
+
+    /**
+     * Get valid url host
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlHost()
+    {
+        return '(?:' . static::getValidateUrlIp() . '|' . static::getValidateUrlDomain() . ')'; #/iox
+    }
+
+    /**
+     * Get valid url unicode domain
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlUnicodeDomain()
+    {
+        $subdomain = '(?:(?:[a-z0-9]|[^\x00-\x7f])(?:(?:[a-z0-9_\-]|[^\x00-\x7f])*(?:[a-z0-9]|[^\x00-\x7f]))?)'; #/ix
+        $domain = '(?:(?:[a-z0-9]|[^\x00-\x7f])(?:(?:[a-z0-9\-]|[^\x00-\x7f])*(?:[a-z0-9]|[^\x00-\x7f]))?)'; #/ix
+        $tld = '(?:(?:[a-z]|[^\x00-\x7f])(?:(?:[a-z0-9\-]|[^\x00-\x7f])*(?:[a-z0-9]|[^\x00-\x7f]))?)'; #/ix
+
+        return '(?:(?:' . $subdomain . '\.)*(?:' . $domain . '\.)' . $tld . ')'; #/iox
+    }
+
+    /**
+     * Get valid url unicode host
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlUnicodeHost()
+    {
+        return '(?:' . static::getValidateUrlIp() . '|' . static::getValidateUrlUnicodeDomain() . ')'; #/iox
+    }
+
+    /**
+     * Get valid url userinfo
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlUserinfo()
+    {
+        return '(?:' . static::$validateUrlUnreserved
+            . '|' . static::$validateUrlPctEncoded
+            . '|' . static::$validateUrlSubDelims
+            . '|:)*'; #/iox
+    }
+
+    /**
+     * Get url unicode authority matcher
+     *
+     * Unencoded internationalized domains - this doesn't check for invalid UTF-8 sequences
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlUnicodeAuthorityMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/'
+                    . '(?:(' . static::getValidateUrlUserinfo() . ')@)?' #  $1 userinfo
+                    . '(' . static::getValidateUrlUnicodeHost() . ')'    #  $2 host
+                    . '(?::(' . static::$validateUrlPort . '))?'         #  $3 port
+                    . '/iux';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get url authority matcher
+     *
+     * This is more strict than the rfc specifies
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlAuthorityMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/'
+                    . '(?:(' . static::getValidateUrlUserinfo() . ')@)?' #  $1 userinfo
+                    . '(' . static::getValidateUrlHost() . ')'           #  $2 host
+                    . '(?::(' . static::$validateUrlPort . '))?'         #  $3 port
+                    . '/ix';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get url scheme matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlSchemeMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/(?:[a-z][a-z0-9+\-.]*)/i';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid url charactors
+     *
+     * @return string matcher
+     */
+    private static function getValidateUrlPchar()
+    {
+        return '(?:' . static::$validateUrlUnreserved
+            . '|' . static::$validateUrlPctEncoded
+            . '|' . static::$validateUrlSubDelims
+            . '|[:\|@])'; #/iox
+    }
+
+    /**
+     * Get url path matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlPathMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/(\/' . static::getValidateUrlPchar() . '*)*/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get url query matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlQueryMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/(' . static::getValidateUrlPchar() . '|\/|\?)*/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get url flagment matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidateUrlFragmentMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/(' . static::getValidateUrlPchar() . '|\/|\?)*/iu';
+        }
+
+        return $regexp;
+    }
 }
+
 # Cause regular expressions to be initialized as soon as this file is loaded:
 Regex::__static();

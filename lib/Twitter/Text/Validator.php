@@ -300,26 +300,35 @@ class Validator extends Regex
         if (is_null($url)) {
             $url = $this->tweet;
         }
+
         $length = StringUtils::strlen($url);
         if (empty($url) || !$length) {
             return false;
         }
-        preg_match(self::$patterns['validate_url_unencoded'], $url, $matches);
+
+        preg_match(Regex::getValidateUrlUnencodedMatcher(), $url, $matches);
         $match = array_shift($matches);
         if (!$matches || $match !== $url) {
             return false;
         }
+
         list($scheme, $authority, $path, $query, $fragment) = array_pad($matches, 5, '');
+
         # Check scheme, path, query, fragment:
         if (($require_protocol && !(
-            self::isValidMatch($scheme, self::$patterns['validate_url_scheme']) && preg_match('/^https?$/i', $scheme))
-            ) || !self::isValidMatch($path, self::$patterns['validate_url_path']) || !self::isValidMatch($query, self::$patterns['validate_url_query'], true)
-            || !self::isValidMatch($fragment, self::$patterns['validate_url_fragment'], true)) {
+                self::isValidMatch($scheme, Regex::getValidateUrlSchemeMatcher())
+                && preg_match('/^https?$/i', $scheme)
+            ))
+            || !self::isValidMatch($path, Regex::getValidateUrlPathMatcher())
+            || !self::isValidMatch($query, Regex::getValidateUrlQueryMatcher(), true)
+            || !self::isValidMatch($fragment, Regex::getValidateUrlFragmentMatcher(), true)) {
             return false;
         }
+
         # Check authority:
-        $authority_pattern = $unicode_domains ? 'validate_url_unicode_authority' : 'validate_url_authority';
-        return self::isValidMatch($authority, self::$patterns[$authority_pattern]);
+        $authorityPattern = $unicode_domains ? Regex::getValidateUrlUnicodeAuthorityMatcher() : Regex::getValidateUrlAuthorityMatcher();
+
+        return self::isValidMatch($authority, $authorityPattern);
     }
 
     /**
