@@ -269,7 +269,7 @@ class LooseAutolink extends Autolink
         $element = $hash . $tag;
         $url = $this->url_base_hash . $tag;
         $class_hash = $this->class_hash;
-        if (preg_match(self::$patterns['rtl_chars'], $element)) {
+        if (preg_match(Regex::getRtlCharsMatcher(), $element)) {
             $class_hash .= ' rtl';
         }
         $replacement .= $this->wrapHash($url, $class_hash, $element);

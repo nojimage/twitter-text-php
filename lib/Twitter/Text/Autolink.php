@@ -650,7 +650,7 @@ class Autolink extends Regex
         if (!empty($this->class_hash)) {
             $class[] = $this->class_hash;
         }
-        if (preg_match(self::$patterns['rtl_chars'], $linkText)) {
+        if (preg_match(Regex::getRtlCharsMatcher(), $linkText)) {
             $class[] = 'rtl';
         }
         if (!empty($class)) {
