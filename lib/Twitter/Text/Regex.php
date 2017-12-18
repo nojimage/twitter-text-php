@@ -46,6 +46,15 @@ class Regex
     protected $tweet = '';
 
     /**
+     * Invalid Characters
+     *
+     * 0xFFFE,0xFEFF # BOM
+     * 0xFFFF        # Special
+     * 0x202A-0x202E # Directional change
+     */
+    private static $invalidCharacters = '\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}';
+
+    /**
      * Expression to match RTL characters.
      *
      * 0x0600-0x06FF Arabic
@@ -100,12 +109,6 @@ class Regex
         #   0x3000         Zs # IDEOGRAPHIC SPACE
         $tmp['spaces'] = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
 
-        # Invalid Characters:
-        #   0xFFFE,0xFEFF # BOM
-        #   0xFFFF        # Special
-        #   0x202A-0x202E # Directional change
-        $tmp['invalid_characters'] = '\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}';
-
         # Expression to match at and hash sign characters:
         $tmp['at_signs'] = '@＠';
         $tmp['hash_signs'] = '#＃';
@@ -158,7 +161,7 @@ class Regex
         #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
         #   0x00b7 MIDDLE DOT
         $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{ff5e}\x{301c}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
-        $tmp['hashtag_letters_numerals_set'] = '[' . $tmp['hashtag_letters'] .  $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
+        $tmp['hashtag_letters_numerals_set'] = '[' . $tmp['hashtag_letters'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
         $tmp['hashtag_letters_set'] = '[' . $tmp['hashtag_letters'] . ']';
         $tmp['hashtag_boundary'] = '(?:\A|\x{fe0e}|\x{fe0f}|[^&' . $tmp['hashtag_letters'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . '])';
         $tmp['hashtag'] = '(' . $tmp['hashtag_boundary'] . ')(#|\x{ff03})(?!\x{fe0f}|\x{20e3})(' . $tmp['hashtag_letters_numerals_set'] . '*' . $tmp['hashtag_letters_set'] . $tmp['hashtag_letters_numerals_set'] . '*)';
@@ -176,12 +179,12 @@ class Regex
 
         # URL related hash regex collection
 
-        $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_@＠\$#＃' . $tmp['invalid_characters'] . ']|^)';
+        $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
 
         $tmp['domain_valid_chars'] = '0-9a-z' . $tmp['latin_accents'];
         $tmp['valid_subdomain'] = '(?>(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-_]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
         $tmp['valid_domain_name'] = '(?:(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
-        $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . $tmp['invalid_characters'] . $tmp['spaces'] . ']';
+        $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . $tmp['spaces'] . ']';
 
         $tmp['valid_gTLD'] = TldLists::getValidGTLD();
         $tmp['valid_ccTLD'] = TldLists::getValidCcTLD();
@@ -331,14 +334,29 @@ class Regex
             . '\#(.*)'           #  $5 Fragment
             . ')?$/iux';
 
-        $re['invalid_characters'] = '/[' . $tmp['invalid_characters'] . ']/u';
-
         # Flag that initialization is complete:
         $initialized = true;
     }
 
     /**
-     * Regexp to match RTL characters.
+     * Get invalid characters matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getInvalidCharactersMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/[' . static::$invalidCharacters . ']/u';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get RTL characters matcher
      *
      * @staticvar string $regexp
      * @return string

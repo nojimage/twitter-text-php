@@ -11,6 +11,19 @@ class RegexTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * @covers Twitter\Text\Regex::getInvalidCharactersMatcher
+     */
+    public function testGetInvalidCharactersMatcher()
+    {
+        $matcher = Regex::getInvalidCharactersMatcher();
+        $this->assertStringStartsWith('/[', $matcher);
+        $this->assertStringEndsWith(']/u', $matcher);
+
+        $matcherCached = Regex::getInvalidCharactersMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
      * @covers Twitter\Text\Regex::getRtlCharsMatcher
      */
     public function testGetRtlCharsMatcher()

@@ -178,7 +178,7 @@ class Validator extends Regex
         if ($length > self::MAX_LENGTH) {
             return false;
         }
-        if (preg_match(self::$patterns['invalid_characters'], $tweet)) {
+        if (preg_match(Regex::getInvalidCharactersMatcher(), $tweet)) {
             return false;
         }
         return true;
