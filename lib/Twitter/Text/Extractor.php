@@ -296,7 +296,7 @@ class Extractor extends Regex
             return array();
         }
 
-        preg_match_all(self::$patterns['valid_cashtag'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidCashtagMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
         $tags = array();
 
         foreach ($matches as $match) {

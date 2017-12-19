@@ -46,6 +46,27 @@ class Regex
     protected $tweet = '';
 
     /**
+     * Expression to match whitespace characters.
+     *
+     * 0x0009-0x000D  Cc # <control-0009>..<control-000D>
+     * 0x0020         Zs # SPACE
+     * 0x0085         Cc # <control-0085>
+     * 0x00A0         Zs # NO-BREAK SPACE
+     * 0x1680         Zs # OGHAM SPACE MARK
+     * 0x180E         Zs # MONGOLIAN VOWEL SEPARATOR
+     * 0x2000-0x200A  Zs # EN QUAD..HAIR SPACE
+     * 0x2028         Zl # LINE SEPARATOR
+     * 0x2029         Zp # PARAGRAPH SEPARATOR
+     * 0x202F         Zs # NARROW NO-BREAK SPACE
+     * 0x205F         Zs # MEDIUM MATHEMATICAL SPACE
+     * 0x3000         Zs # IDEOGRAPHIC SPACE
+     *
+     * @var string
+     */
+    #
+    private static $spaces = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
+
+    /**
      * Invalid Characters
      *
      * 0xFFFE,0xFEFF # BOM
@@ -67,6 +88,10 @@ class Regex
      * @var string
      */
     private static $rtlChars = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}';
+
+    # cash tags
+    private static $cashSigns = '\$';
+    private static $cashtag = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
 
     # These URL validation pattern strings are based on the ABNF from RFC 3986
     private static $validateUrlUnreserved = '[a-z\p{Cyrillic}0-9\-._~]';
@@ -100,22 +125,6 @@ class Regex
         $re = & self::$patterns;
         # Initialise local storage arrays:
         $tmp = array();
-
-        # Expression to match whitespace characters.
-        #
-        #   0x0009-0x000D  Cc # <control-0009>..<control-000D>
-        #   0x0020         Zs # SPACE
-        #   0x0085         Cc # <control-0085>
-        #   0x00A0         Zs # NO-BREAK SPACE
-        #   0x1680         Zs # OGHAM SPACE MARK
-        #   0x180E         Zs # MONGOLIAN VOWEL SEPARATOR
-        #   0x2000-0x200A  Zs # EN QUAD..HAIR SPACE
-        #   0x2028         Zl # LINE SEPARATOR
-        #   0x2029         Zp # PARAGRAPH SEPARATOR
-        #   0x202F         Zs # NARROW NO-BREAK SPACE
-        #   0x205F         Zs # MEDIUM MATHEMATICAL SPACE
-        #   0x3000         Zs # IDEOGRAPHIC SPACE
-        $tmp['spaces'] = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
 
         # Expression to match at and hash sign characters:
         $tmp['at_signs'] = '@＠';
@@ -182,7 +191,7 @@ class Regex
         #      look-ahead capture here and don't append $after when we return.
         $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
         $re['valid_mentions_or_lists'] = '/' . $tmp['valid_mention_preceding_chars'] . '([' . $tmp['at_signs'] . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
-        $re['valid_reply'] = '/^(?:[' . $tmp['spaces'] . '])*[' . $tmp['at_signs'] . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
+        $re['valid_reply'] = '/^(?:[' . static::$spaces . '])*[' . $tmp['at_signs'] . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
         $re['end_mention_match'] = '/\A(?:[' . $tmp['at_signs'] . ']|[' . $tmp['latin_accents'] . ']|:\/\/)/iu';
 
         # URL related hash regex collection
@@ -192,7 +201,7 @@ class Regex
         $tmp['domain_valid_chars'] = '0-9a-z' . $tmp['latin_accents'];
         $tmp['valid_subdomain'] = '(?>(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-_]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
         $tmp['valid_domain_name'] = '(?:(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
-        $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . $tmp['spaces'] . ']';
+        $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . static::$spaces . ']';
 
         $tmp['valid_gTLD'] = TldLists::getValidGTLD();
         $tmp['valid_ccTLD'] = TldLists::getValidCcTLD();
@@ -275,11 +284,6 @@ class Regex
             . ')'
             . ')/iux';
 
-        $tmp['cash_signs'] = '\$';
-        $tmp['cashtag'] = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
-        $re['valid_cashtag'] = '/(^|[' . $tmp['spaces'] . '])([' . $tmp['cash_signs'] . '])(' . $tmp['cashtag'] . ')(?=($|\s|[[:punct:]]))/iu';
-        $re['end_cashtag_match'] = '/\A(?:[' . $tmp['cash_signs'] . ']|:\/\/)/u';
-
         # Flag that initialization is complete:
         $initialized = true;
     }
@@ -313,6 +317,40 @@ class Regex
 
         if ($regexp === null) {
             $regexp = '/[' . static::$rtlChars . ']/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid cachtag matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidCashtagMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/(^|[' . static::$spaces . '])([' . static::$cashSigns . '])(' . static::$cashtag . ')(?=($|\s|[[:punct:]]))/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get end of cachtag matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getEndCashtagMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/\A(?:[' . static::$cashSigns . ']|:\/\/)/u';
         }
 
         return $regexp;
@@ -432,10 +470,10 @@ class Regex
 
         if ($regexp === null) {
             $regexp = '/'
-                    . '(?:(' . static::getValidateUrlUserinfo() . ')@)?' #  $1 userinfo
-                    . '(' . static::getValidateUrlUnicodeHost() . ')'    #  $2 host
-                    . '(?::(' . static::$validateUrlPort . '))?'         #  $3 port
-                    . '/iux';
+                . '(?:(' . static::getValidateUrlUserinfo() . ')@)?' #  $1 userinfo
+                . '(' . static::getValidateUrlUnicodeHost() . ')'    #  $2 host
+                . '(?::(' . static::$validateUrlPort . '))?'         #  $3 port
+                . '/iux';
         }
 
         return $regexp;
@@ -455,10 +493,10 @@ class Regex
 
         if ($regexp === null) {
             $regexp = '/'
-                    . '(?:(' . static::getValidateUrlUserinfo() . ')@)?' #  $1 userinfo
-                    . '(' . static::getValidateUrlHost() . ')'           #  $2 host
-                    . '(?::(' . static::$validateUrlPort . '))?'         #  $3 port
-                    . '/ix';
+                . '(?:(' . static::getValidateUrlUserinfo() . ')@)?' #  $1 userinfo
+                . '(' . static::getValidateUrlHost() . ')'           #  $2 host
+                . '(?::(' . static::$validateUrlPort . '))?'         #  $3 port
+                . '/ix';
         }
 
         return $regexp;

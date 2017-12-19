@@ -37,6 +37,32 @@ class RegexTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Twitter\Text\Regex::getValidCashtagMatcher
+     */
+    public function testGetValidCashtagMatcher()
+    {
+        $matcher = Regex::getValidCashtagMatcher();
+        $this->assertStringStartsWith('/(^|[', $matcher);
+        $this->assertStringEndsWith(']))/iu', $matcher);
+
+        $matcherCached = Regex::getValidCashtagMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getEndCashtagMatcher
+     */
+    public function testGetEndCashtagMatcher()
+    {
+        $matcher = Regex::getEndCashtagMatcher();
+        $this->assertStringStartsWith('/\A(?:', $matcher);
+        $this->assertStringEndsWith(')/u', $matcher);
+
+        $matcherCached = Regex::getEndCashtagMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
      * @covers Twitter\Text\Regex::getValidateUrlUnencodedMatcher
      */
     public function testGetValidateUrlUnencodedMatcher()

@@ -148,7 +148,7 @@ class LooseAutolink extends Autolink
     public function addLinksToCashtags()
     {
         return preg_replace_callback(
-            self::$patterns['valid_cashtag'],
+            Regex::getValidCashtagMatcher(),
             array($this, '_addLinksToCashtags'),
             $this->tweet
         );
@@ -286,7 +286,7 @@ class LooseAutolink extends Autolink
     protected function _addLinksToCashtags($matches)
     {
         list($all, $before, $cash, $tag, $after) = array_pad($matches, 5, '');
-        if (preg_match(self::$patterns['end_cashtag_match'], $after)
+        if (preg_match(Regex::getEndCashtagMatcher(), $after)
             || (!preg_match('!\A["\']!', $before) && preg_match('!\A["\']!', $after)) || preg_match('!\A</!', $after)) {
             return $all;
         }
