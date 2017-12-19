@@ -37,6 +37,32 @@ class RegexTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Twitter\Text\Regex::getValidHashtagMatcher
+     */
+    public function testGetValidHashtagMatcher()
+    {
+        $matcher = Regex::getValidHashtagMatcher();
+        $this->assertStringStartsWith('/((?:', $matcher);
+        $this->assertStringEndsWith('))/iu', $matcher);
+
+        $matcherCached = Regex::getValidHashtagMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getEndHashtagMatcher
+     */
+    public function testGetEndHashtagMatcher()
+    {
+        $matcher = Regex::getEndHashtagMatcher();
+        $this->assertStringStartsWith('/\A(?:', $matcher);
+        $this->assertStringEndsWith(')/u', $matcher);
+
+        $matcherCached = Regex::getEndHashtagMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
      * @covers Twitter\Text\Regex::getValidCashtagMatcher
      */
     public function testGetValidCashtagMatcher()

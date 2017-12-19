@@ -134,7 +134,7 @@ class LooseAutolink extends Autolink
     public function addLinksToHashtags()
     {
         return preg_replace_callback(
-            self::$patterns['valid_hashtag'],
+            Regex::getValidHashtagMatcher(),
             array($this, '_addLinksToHashtags'),
             $this->tweet
         );
@@ -261,7 +261,7 @@ class LooseAutolink extends Autolink
     protected function _addLinksToHashtags($matches)
     {
         list($all, $before, $hash, $tag, $after) = array_pad($matches, 5, '');
-        if (preg_match(self::$patterns['end_hashtag_match'], $after)
+        if (preg_match(Regex::getEndHashtagMatcher(), $after)
             || (!preg_match('!\A["\']!', $before) && preg_match('!\A["\']!', $after)) || preg_match('!\A</!', $after)) {
             return $all;
         }

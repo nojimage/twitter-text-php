@@ -243,7 +243,7 @@ class Extractor extends Regex
             return array();
         }
 
-        preg_match_all(self::$patterns['valid_hashtag'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidHashtagMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
         $tags = array();
 
         foreach ($matches as $match) {
@@ -251,7 +251,7 @@ class Extractor extends Regex
             $start_position = $hash[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $hash[1])) : $hash[1];
             $end_position = $start_position + StringUtils::strlen($hash[0] . $hashtag[0]);
 
-            if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+            if (preg_match(Regex::getEndHashtagMatcher(), $outer[0])) {
                 continue;
             }
 
@@ -304,7 +304,7 @@ class Extractor extends Regex
             $start_position = $dollar[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $dollar[1])) : $dollar[1];
             $end_position = $start_position + StringUtils::strlen($dollar[0] . $cash_text[0]);
 
-            if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+            if (preg_match(Regex::getEndHashtagMatcher(), $outer[0])) {
                 continue;
             }
 

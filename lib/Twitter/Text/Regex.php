@@ -89,6 +89,10 @@ class Regex
      */
     private static $rtlChars = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}';
 
+    # Expression to match at and hash sign characters:
+    private static $atSigns = '@＠';
+    private static $hashSigns = '#＃';
+
     # cash tags
     private static $cashSigns = '\$';
     private static $cashtag = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
@@ -126,10 +130,6 @@ class Regex
         # Initialise local storage arrays:
         $tmp = array();
 
-        # Expression to match at and hash sign characters:
-        $tmp['at_signs'] = '@＠';
-        $tmp['hash_signs'] = '#＃';
-
         # Expression to match latin accented characters.
         #
         #   0x00C0-0x00D6
@@ -156,43 +156,13 @@ class Regex
         $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
         $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}';
 
-        $tmp['hashtag_letters'] = '\p{L}\p{M}';
-        $tmp['hashtag_numerals'] = '\p{Nd}';
-        # Hashtag special chars
-        #
-        #   _      underscore
-        #   0x200c ZERO WIDTH NON-JOINER (ZWNJ)
-        #   0x200d ZERO WIDTH JOINER (ZWJ)
-        #   0xa67e CYRILLIC KAVYKA
-        #   0x05be HEBREW PUNCTUATION MAQAF
-        #   0x05f3 HEBREW PUNCTUATION GERESH
-        #   0x05f4 HEBREW PUNCTUATION GERSHAYIM
-        #   0xff5e FULLWIDTH TILDE
-        #   0x301c WAVE DASH
-        #   0x309b KATAKANA-HIRAGANA VOICED SOUND MARK
-        #   0x309c KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
-        #   0x30a0 KATAKANA-HIRAGANA DOUBLE HYPHEN
-        #   0x30fb KATAKANA MIDDLE DOT
-        #   0x3003 DITTO MARK
-        #   0x0f0b TIBETAN MARK INTERSYLLABIC TSHEG
-        #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
-        #   0x00b7 MIDDLE DOT
-        $tmp['hashtag_special_chars'] = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{ff5e}\x{301c}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
-        $tmp['hashtag_letters_numerals_set'] = '[' . $tmp['hashtag_letters'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . ']';
-        $tmp['hashtag_letters_set'] = '[' . $tmp['hashtag_letters'] . ']';
-        $tmp['hashtag_boundary'] = '(?:\A|\x{fe0e}|\x{fe0f}|[^&' . $tmp['hashtag_letters'] . $tmp['hashtag_numerals'] . $tmp['hashtag_special_chars'] . '])';
-        $tmp['hashtag'] = '(' . $tmp['hashtag_boundary'] . ')(#|\x{ff03})(?!\x{fe0f}|\x{20e3})(' . $tmp['hashtag_letters_numerals_set'] . '*' . $tmp['hashtag_letters_set'] . $tmp['hashtag_letters_numerals_set'] . '*)';
-
-        $re['valid_hashtag'] = '/' . $tmp['hashtag'] . '(?=(.*|$))/iu';
-        $re['end_hashtag_match'] = '/\A(?:[' . $tmp['hash_signs'] . ']|:\/\/)/u';
-
         # XXX: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
         #      $after in the following regular expression.  Note that we only use a
         #      look-ahead capture here and don't append $after when we return.
         $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
-        $re['valid_mentions_or_lists'] = '/' . $tmp['valid_mention_preceding_chars'] . '([' . $tmp['at_signs'] . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
-        $re['valid_reply'] = '/^(?:[' . static::$spaces . '])*[' . $tmp['at_signs'] . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
-        $re['end_mention_match'] = '/\A(?:[' . $tmp['at_signs'] . ']|[' . $tmp['latin_accents'] . ']|:\/\/)/iu';
+        $re['valid_mentions_or_lists'] = '/' . $tmp['valid_mention_preceding_chars'] . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
+        $re['valid_reply'] = '/^(?:[' . static::$spaces . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
+        $re['end_mention_match'] = '/\A(?:[' . static::$atSigns . ']|[' . $tmp['latin_accents'] . ']|:\/\/)/iu';
 
         # URL related hash regex collection
 
@@ -322,6 +292,80 @@ class Regex
         return $regexp;
     }
 
+    // =================================================================================================================
+
+    /**
+     * Get hashtag matcher
+     *
+     * @return string matcher
+     */
+    private static function getHashtagPattern()
+    {
+        $hashtag_letters = '\p{L}\p{M}';
+        $hashtag_numerals = '\p{Nd}';
+        # Hashtag special chars
+        #
+        #   _      underscore
+        #   0x200c ZERO WIDTH NON-JOINER (ZWNJ)
+        #   0x200d ZERO WIDTH JOINER (ZWJ)
+        #   0xa67e CYRILLIC KAVYKA
+        #   0x05be HEBREW PUNCTUATION MAQAF
+        #   0x05f3 HEBREW PUNCTUATION GERESH
+        #   0x05f4 HEBREW PUNCTUATION GERSHAYIM
+        #   0xff5e FULLWIDTH TILDE
+        #   0x301c WAVE DASH
+        #   0x309b KATAKANA-HIRAGANA VOICED SOUND MARK
+        #   0x309c KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
+        #   0x30a0 KATAKANA-HIRAGANA DOUBLE HYPHEN
+        #   0x30fb KATAKANA MIDDLE DOT
+        #   0x3003 DITTO MARK
+        #   0x0f0b TIBETAN MARK INTERSYLLABIC TSHEG
+        #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
+        #   0x00b7 MIDDLE DOT
+        $hashtag_special_chars = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{ff5e}\x{301c}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
+        $hashtag_letters_numerals_set = '[' . $hashtag_letters . $hashtag_numerals . $hashtag_special_chars . ']';
+        $hashtag_letters_set = '[' . $hashtag_letters . ']';
+        $hashtag_boundary = '(?:\A|\x{fe0e}|\x{fe0f}|[^&' . $hashtag_letters . $hashtag_numerals . $hashtag_special_chars . '])';
+
+        return '(' . $hashtag_boundary . ')(#|\x{ff03})(?!\x{fe0f}|\x{20e3})(' . $hashtag_letters_numerals_set . '*' . $hashtag_letters_set . $hashtag_letters_numerals_set . '*)';
+    }
+
+    /**
+     * Get valid hashtag matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidHashtagMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/' . static::getHashtagPattern() . '(?=(.*|$))/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get end of hashtag matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getEndHashtagMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/\A(?:[' . static::$hashSigns . ']|:\/\/)/u';
+        }
+
+        return $regexp;
+    }
+
+    // =================================================================================================================
+
     /**
      * Get valid cachtag matcher
      *
@@ -355,6 +399,8 @@ class Regex
 
         return $regexp;
     }
+
+    // =================================================================================================================
 
     /**
      * Get url matcher
