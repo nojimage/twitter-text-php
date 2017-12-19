@@ -172,7 +172,7 @@ class LooseAutolink extends Autolink
     public function addLinksToUsernamesAndLists()
     {
         return preg_replace_callback(
-            self::$patterns['valid_mentions_or_lists'],
+            Regex::getValidMentionsOrListsMatcher(),
             array($this, '_addLinksToUsernamesAndLists'),
             $this->tweet
         );
@@ -331,7 +331,7 @@ class LooseAutolink extends Autolink
             $class = $this->class_list;
             $url = $this->url_base_list . $element;
         } else {
-            if (preg_match(self::$patterns['end_mention_match'], $after)) {
+            if (preg_match(Regex::getEndMentionMatcher(), $after)) {
                 return $all;
             }
             # Replace the username

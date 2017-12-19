@@ -205,9 +205,9 @@ class Extractor extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $matched = preg_match(self::$patterns['valid_reply'], $tweet, $matches);
+        $matched = preg_match(Regex::getValidReplyMatcher(), $tweet, $matches);
         # Check username ending in
-        if ($matched && preg_match(self::$patterns['end_mention_match'], $matches[2])) {
+        if ($matched && preg_match(Regex::getEndMentionMatcher(), $matches[2])) {
             $matched = false;
         }
         return $matched ? $matches[1] : null;
@@ -453,7 +453,7 @@ class Extractor extends Regex
             return array();
         }
 
-        preg_match_all(self::$patterns['valid_mentions_or_lists'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidMentionsOrListsMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
         $results = array();
 
         foreach ($matches as $match) {
@@ -466,7 +466,7 @@ class Extractor extends Regex
                 'indices' => array($start_position, $end_position),
             );
 
-            if (preg_match(self::$patterns['end_mention_match'], $outer[0])) {
+            if (preg_match(Regex::getEndMentionMatcher(), $outer[0])) {
                 continue;
             }
 

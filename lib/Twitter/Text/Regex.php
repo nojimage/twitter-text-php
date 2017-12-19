@@ -67,6 +67,34 @@ class Regex
     private static $spaces = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
 
     /**
+     * Expression to match latin accented characters.
+     *
+     * 0x00C0-0x00D6
+     * 0x00D8-0x00F6
+     * 0x00F8-0x00FF
+     * 0x0100-0x024f
+     * 0x0253-0x0254
+     * 0x0256-0x0257
+     * 0x0259
+     * 0x025b
+     * 0x0263
+     * 0x0268
+     * 0x026f
+     * 0x0272
+     * 0x0289
+     * 0x028b
+     * 0x02bb
+     * 0x0300-0x036f
+     * 0x1e00-0x1eff
+     *
+     * Excludes 0x00D7 - multiplication sign (confusable with 'x').
+     * Excludes 0x00F7 - division sign.
+     *
+     * @var string
+     */
+    private static $latinAccents = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}';
+
+    /**
      * Invalid Characters
      *
      * 0xFFFE,0xFEFF # BOM
@@ -130,45 +158,11 @@ class Regex
         # Initialise local storage arrays:
         $tmp = array();
 
-        # Expression to match latin accented characters.
-        #
-        #   0x00C0-0x00D6
-        #   0x00D8-0x00F6
-        #   0x00F8-0x00FF
-        #   0x0100-0x024f
-        #   0x0253-0x0254
-        #   0x0256-0x0257
-        #   0x0259
-        #   0x025b
-        #   0x0263
-        #   0x0268
-        #   0x026f
-        #   0x0272
-        #   0x0289
-        #   0x028b
-        #   0x02bb
-        #   0x0300-0x036f
-        #   0x1e00-0x1eff
-        #
-        # Excludes 0x00D7 - multiplication sign (confusable with 'x').
-        # Excludes 0x00F7 - division sign.
-        $tmp['latin_accents'] = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}';
-        $tmp['latin_accents'] .= '\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}';
-        $tmp['latin_accents'] .= '\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}';
-
-        # XXX: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
-        #      $after in the following regular expression.  Note that we only use a
-        #      look-ahead capture here and don't append $after when we return.
-        $tmp['valid_mention_preceding_chars'] = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
-        $re['valid_mentions_or_lists'] = '/' . $tmp['valid_mention_preceding_chars'] . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
-        $re['valid_reply'] = '/^(?:[' . static::$spaces . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
-        $re['end_mention_match'] = '/\A(?:[' . static::$atSigns . ']|[' . $tmp['latin_accents'] . ']|:\/\/)/iu';
-
         # URL related hash regex collection
 
         $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
 
-        $tmp['domain_valid_chars'] = '0-9a-z' . $tmp['latin_accents'];
+        $tmp['domain_valid_chars'] = '0-9a-z' . static::$latinAccents;
         $tmp['valid_subdomain'] = '(?>(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-_]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
         $tmp['valid_domain_name'] = '(?:(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
         $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . static::$spaces . ']';
@@ -214,7 +208,7 @@ class Regex
 
         $tmp['valid_port_number'] = '[0-9]+';
 
-        $tmp['valid_general_url_path_chars'] = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . $tmp['latin_accents'] . ']';
+        $tmp['valid_general_url_path_chars'] = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . static::$latinAccents . ']';
         # Allow URL paths to contain up to two nested levels of balanced parentheses:
         # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
         # 2. Used in IIS sessions, e.g. /S(dfd346)/
@@ -232,7 +226,7 @@ class Regex
             . '\))';
         # Valid end-of-path characters (so /foo. does not gobble the period).
         # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
-        $tmp['valid_url_path_ending_chars'] = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . $tmp['latin_accents'] . ']|(?:' . $tmp['valid_url_balanced_parens'] . ')';
+        $tmp['valid_url_path_ending_chars'] = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . static::$latinAccents . ']|(?:' . $tmp['valid_url_balanced_parens'] . ')';
         $tmp['valid_url_path'] = '(?:(?:'
             . $tmp['valid_general_url_path_chars'] . '*(?:'
             . $tmp['valid_url_balanced_parens'] . ' '
@@ -287,6 +281,64 @@ class Regex
 
         if ($regexp === null) {
             $regexp = '/[' . static::$rtlChars . ']/iu';
+        }
+
+        return $regexp;
+    }
+
+    // =================================================================================================================
+
+    # NOTE: PHP doesn't have Ruby's $' (dollar apostrophe) so we have to capture
+    #      $after in the following regular expression.  Note that we only use a
+    #      look-ahead capture here and don't append $after when we return.
+
+    /**
+     * Get valid mentions or lists matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidMentionsOrListsMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $mention_preceding_chars = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
+            $regexp = '/' . $mention_preceding_chars . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid hashtag matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidReplyMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/^(?:[' . static::$spaces . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get end of hashtag matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getEndMentionMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/\A(?:[' . static::$atSigns . ']|[' . static::$latinAccents . ']|:\/\/)/iu';
         }
 
         return $regexp;

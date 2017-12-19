@@ -37,6 +37,45 @@ class RegexTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Twitter\Text\Regex::getValidMentionsOrListsMatcher
+     */
+    public function testGetValidMentionsOrListsMatcher()
+    {
+        $matcher = Regex::getValidMentionsOrListsMatcher();
+        $this->assertStringStartsWith('/([', $matcher);
+        $this->assertStringEndsWith('(?=(.*|$))/iu', $matcher);
+
+        $matcherCached = Regex::getValidMentionsOrListsMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getValidReplyMatcher
+     */
+    public function testGetValidReplyMatcher()
+    {
+        $matcher = Regex::getValidReplyMatcher();
+        $this->assertStringStartsWith('/^(?:[', $matcher);
+        $this->assertStringEndsWith('(?=(.*|$))/iu', $matcher);
+
+        $matcherCached = Regex::getValidReplyMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
+     * @covers Twitter\Text\Regex::getEndMentionMatcher
+     */
+    public function testGetEndMentionMatcher()
+    {
+        $matcher = Regex::getEndMentionMatcher();
+        $this->assertStringStartsWith('/\A(?:', $matcher);
+        $this->assertStringEndsWith(')/iu', $matcher);
+
+        $matcherCached = Regex::getEndMentionMatcher();
+        $this->assertSame($matcher, $matcherCached);
+    }
+
+    /**
      * @covers Twitter\Text\Regex::getValidHashtagMatcher
      */
     public function testGetValidHashtagMatcher()
