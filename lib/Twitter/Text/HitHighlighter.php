@@ -192,18 +192,4 @@ class HitHighlighter
         }
         return $highlightTweet;
     }
-
-    /**
-     * Hit highlights the tweet.
-     *
-     * @param  array  $hits  An array containing the start and end index pairs
-     *                       for the highlighting.
-     *
-     * @return  string  The hit highlighted tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function addHitHighlighting(array $hits)
-    {
-        return $this->highlight($this->tweet, $hits);
-    }
 }

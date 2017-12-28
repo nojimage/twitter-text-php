@@ -187,19 +187,6 @@ class Extractor
     }
 
     /**
-     * Extract all the usernames from the tweet.
-     *
-     * A mention is an occurrence of a username anywhere in a tweet.
-     *
-     * @return  array  The usernames elements in the tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractMentionedUsernames()
-    {
-        return $this->extractMentionedScreennames();
-    }
-
-    /**
      * Extract all the usernames replied to from the tweet.
      *
      * A reply is an occurrence of a username at the beginning of a tweet.
@@ -218,19 +205,6 @@ class Extractor
             $matched = false;
         }
         return $matched ? $matches[1] : null;
-    }
-
-    /**
-     * Extract all the usernames replied to from the tweet.
-     *
-     * A reply is an occurrence of a username at the beginning of a tweet.
-     *
-     * @return  array  The usernames replied to in a tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractRepliedUsernames()
-    {
-        return $this->extractReplyScreenname();
     }
 
     /**
@@ -436,17 +410,6 @@ class Extractor
     /**
      * Extracts all the usernames and the indices they occur at from the tweet.
      *
-     * @return  array  The username elements in the tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractMentionedUsernamesWithIndices()
-    {
-        return $this->extractMentionedScreennamesWithIndices();
-    }
-
-    /**
-     * Extracts all the usernames and the indices they occur at from the tweet.
-     *
      * @param  string  $tweet  The tweet to extract.
      * @return  array  The username elements in the tweet.
      */
@@ -485,17 +448,6 @@ class Extractor
         }
 
         return $results;
-    }
-
-    /**
-     * Extracts all the usernames and the indices they occur at from the tweet.
-     *
-     * @return  array  The username elements in the tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractMentionedUsernamesOrListsWithIndices()
-    {
-        return $this->extractMentionsOrListsWithIndices();
     }
 
     /**

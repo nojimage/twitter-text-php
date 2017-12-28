@@ -51,8 +51,7 @@
   },
   "autoload": {
     "psr-0": {
-      "Twitter\\Text\\": "lib/",
-      "Twitter_": "compat/"
+      "Twitter\\Text\\": "lib/"
     }
   },
   "scripts": {

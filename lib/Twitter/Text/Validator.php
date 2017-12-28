@@ -192,17 +192,6 @@ class Validator
     }
 
     /**
-     * Check whether a tweet is valid.
-     *
-     * @return  boolean  Whether the tweet is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateTweet()
-    {
-        return $this->isValidTweetText();
-    }
-
-    /**
      * Check whether a username is valid.
      *
      * @param string $username The username to validate.
@@ -219,17 +208,6 @@ class Validator
         }
         $extracted = $this->extractor->extractMentionedScreennames($username);
         return count($extracted) === 1 && $extracted[0] === substr($username, 1);
-    }
-
-    /**
-     * Check whether a username is valid.
-     *
-     * @return  boolean  Whether the username is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateUsername()
-    {
-        return $this->isValidUsername();
     }
 
     /**
@@ -253,17 +231,6 @@ class Validator
     }
 
     /**
-     * Check whether a list is valid.
-     *
-     * @return  boolean  Whether the list is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateList()
-    {
-        return $this->isValidList();
-    }
-
-    /**
      * Check whether a hashtag is valid.
      *
      * @param string $hashtag The hashtag to validate.
@@ -280,17 +247,6 @@ class Validator
         }
         $extracted = $this->extractor->extractHashtags($hashtag);
         return count($extracted) === 1 && $extracted[0] === substr($hashtag, 1);
-    }
-
-    /**
-     * Check whether a hashtag is valid.
-     *
-     * @return  boolean  Whether the hashtag is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateHashtag()
-    {
-        return $this->isValidHashtag();
     }
 
     /**
@@ -339,20 +295,6 @@ class Validator
     }
 
     /**
-     * Check whether a URL is valid.
-     *
-     * @param  boolean  $unicode_domains   Consider the domain to be unicode.
-     * @param  boolean  $require_protocol  Require a protocol for valid domain?
-     *
-     * @return  boolean  Whether the URL is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateURL($unicode_domains = true, $require_protocol = true)
-    {
-        return $this->isValidURL(null, $unicode_domains, $require_protocol);
-    }
-
-    /**
      * Determines the length of a tweet.  Takes shortening of URLs into account.
      *
      * @param string $tweet The tweet to validate.
@@ -370,17 +312,6 @@ class Validator
             $length += stripos($x['url'], 'https://') === 0 ? $this->short_url_length_https : $this->short_url_length;
         }
         return $length;
-    }
-
-    /**
-     * Determines the length of a tweet.  Takes shortening of URLs into account.
-     *
-     * @return  int  the length of a tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function getLength()
-    {
-        return $this->getTweetLength();
     }
 
     /**
