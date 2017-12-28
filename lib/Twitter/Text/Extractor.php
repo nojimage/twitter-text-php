@@ -33,8 +33,22 @@ class Extractor
 {
 
     /**
+     * The maximum url length that the Twitter backend supports.
+     */
+    const MAX_URL_LENGTH = 4096;
+
+    /**
+     * The backend adds http:// for normal links and https to *.twitter.com URLs (it also rewrites http to https for
+     * URLs matching *.twitter.com). We're better off adding https:// all the time.
+     * By making the assumption that URL_GROUP_PROTOCOL_LENGTH is https, the trade off is we'll disallow a http URL
+     * that is 4096 characters.
+     */
+    const URL_GROUP_PROTOCOL_LENGTH = 4104; // https:// + MAX_URL_LENGTH
+
+    /**
      * @var boolean
      */
+
     protected $extractURLWithoutProtocol = true;
 
     /**
@@ -374,14 +388,53 @@ class Extractor
                     $url = $tcoUrlMatches[0];
                     $end_position = $start_position + StringUtils::strlen($url);
                 }
-                $urls[] = array(
-                    'url' => $url,
-                    'indices' => array($start_position, $end_position),
-                );
+                if ($this->isValidHostAndLength(StringUtils::strlen($url), $protocol, $domain)) {
+                    $urls[] = array(
+                        'url' => $url,
+                        'indices' => array($start_position, $end_position),
+                    );
+                }
             }
         }
 
         return $urls;
+    }
+
+    /**
+     * Verifies that the host name adheres to RFC 3490 and 1035
+     * Also, verifies that the entire url (including protocol) doesn't exceed MAX_URL_LENGTH
+     *
+     * @param int $originalUrlLength The length of the entire URL, including protocol if any
+     * @param string $protocol The protocol used
+     * @param string $host The hostname to check validity of
+     * @return bool true if the host is valid
+     */
+    public function isValidHostAndLength($originalUrlLength, $protocol, $host)
+    {
+        if (empty($host)) {
+            return false;
+        }
+
+        $originalHostLength = StringUtils::strlen($host);
+
+        // Use IDN for all host names, if the host is all ASCII, it returns unchanged.
+        // It comes with an added benefit of checking the host length to be between 1 to 63 characters.
+        $encodedHost = idn_to_ascii($host, IDNA_ALLOW_UNASSIGNED);
+        if ($encodedHost === false || empty($encodedHost)) {
+            return false;
+        }
+
+        $punycodeEncodedHostLength = StringUtils::strlen($encodedHost);
+        if ($punycodeEncodedHostLength === 0) {
+            return false;
+        }
+
+        // The punycodeEncoded host length might be different now, offset that length from the URL.
+        $encodedUrlLength = $originalUrlLength + $punycodeEncodedHostLength - $originalHostLength;
+        // Add the protocol to our length check, if there isn't one, to ensure it doesn't go over the limit.
+        $urlLengthWithProtocol = $encodedUrlLength + ($protocol == null ? self::URL_GROUP_PROTOCOL_LENGTH : 0);
+
+        return $urlLengthWithProtocol <= self::MAX_URL_LENGTH;
     }
 
     /**
