@@ -283,7 +283,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $validUrlPrecedingChars = '(?:[^A-Z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
+            $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
             $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
             $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
             $validPortNumber = '[0-9]+';
@@ -392,7 +392,7 @@ class Regex
      */
     private static function getValidUrlPath()
     {
-        $validGeneralUrlPathChars = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . static::$latinAccents . ']';
+        $validGeneralUrlPathChars = '[a-z\p{Cyrillic}0-9' . preg_quote('!*;:=+,.$/%#[]-_~&', '/') . '|@' . static::$latinAccents . ']';
 
         # Allow URL paths to contain up to two nested levels of balanced parentheses:
         # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
@@ -438,8 +438,8 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $mention_preceding_chars = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
-            $regexp = '/' . $mention_preceding_chars . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
+            $mentionPrecedingChars = '([^a-z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
+            $regexp = '/' . $mentionPrecedingChars . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
         }
 
         return $regexp;
