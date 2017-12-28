@@ -134,7 +134,7 @@ class LooseAutolink extends Autolink
     public function addLinksToHashtags()
     {
         return preg_replace_callback(
-            self::$patterns['valid_hashtag'],
+            Regex::getValidHashtagMatcher(),
             array($this, '_addLinksToHashtags'),
             $this->tweet
         );
@@ -148,7 +148,7 @@ class LooseAutolink extends Autolink
     public function addLinksToCashtags()
     {
         return preg_replace_callback(
-            self::$patterns['valid_cashtag'],
+            Regex::getValidCashtagMatcher(),
             array($this, '_addLinksToCashtags'),
             $this->tweet
         );
@@ -161,7 +161,7 @@ class LooseAutolink extends Autolink
      */
     public function addLinksToURLs()
     {
-        return preg_replace_callback(self::$patterns['valid_url'], array($this, '_addLinksToURLs'), $this->tweet);
+        return preg_replace_callback(Regex::getValidUrlMatcher(), array($this, '_addLinksToURLs'), $this->tweet);
     }
 
     /**
@@ -172,7 +172,7 @@ class LooseAutolink extends Autolink
     public function addLinksToUsernamesAndLists()
     {
         return preg_replace_callback(
-            self::$patterns['valid_mentions_or_lists'],
+            Regex::getValidMentionsOrListsMatcher(),
             array($this, '_addLinksToUsernamesAndLists'),
             $this->tweet
         );
@@ -261,7 +261,7 @@ class LooseAutolink extends Autolink
     protected function _addLinksToHashtags($matches)
     {
         list($all, $before, $hash, $tag, $after) = array_pad($matches, 5, '');
-        if (preg_match(self::$patterns['end_hashtag_match'], $after)
+        if (preg_match(Regex::getEndHashtagMatcher(), $after)
             || (!preg_match('!\A["\']!', $before) && preg_match('!\A["\']!', $after)) || preg_match('!\A</!', $after)) {
             return $all;
         }
@@ -269,7 +269,7 @@ class LooseAutolink extends Autolink
         $element = $hash . $tag;
         $url = $this->url_base_hash . $tag;
         $class_hash = $this->class_hash;
-        if (preg_match(self::$patterns['rtl_chars'], $element)) {
+        if (preg_match(Regex::getRtlCharsMatcher(), $element)) {
             $class_hash .= ' rtl';
         }
         $replacement .= $this->wrapHash($url, $class_hash, $element);
@@ -286,7 +286,7 @@ class LooseAutolink extends Autolink
     protected function _addLinksToCashtags($matches)
     {
         list($all, $before, $cash, $tag, $after) = array_pad($matches, 5, '');
-        if (preg_match(self::$patterns['end_cashtag_match'], $after)
+        if (preg_match(Regex::getEndCashtagMatcher(), $after)
             || (!preg_match('!\A["\']!', $before) && preg_match('!\A["\']!', $after)) || preg_match('!\A</!', $after)) {
             return $all;
         }
@@ -331,7 +331,7 @@ class LooseAutolink extends Autolink
             $class = $this->class_list;
             $url = $this->url_base_list . $element;
         } else {
-            if (preg_match(self::$patterns['end_mention_match'], $after)) {
+            if (preg_match(Regex::getEndMentionMatcher(), $after)) {
                 return $all;
             }
             # Replace the username

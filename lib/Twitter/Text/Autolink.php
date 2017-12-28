@@ -30,7 +30,7 @@ use Twitter\Text\StringUtils;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
-class Autolink extends Regex
+class Autolink
 {
 
     /**
@@ -140,6 +140,13 @@ class Autolink extends Regex
     protected $extractor = null;
 
     /**
+     * The tweet to be used in parsing.
+     *
+     * @var  string
+     */
+    protected $tweet = '';
+
+    /**
      * Provides fluent method chaining.
      *
      * @param  string  $tweet        The tweet to be converted.
@@ -170,13 +177,14 @@ class Autolink extends Regex
     {
         if ($escape && !empty($tweet)) {
             if ($full_encode) {
-                parent::__construct(htmlentities($tweet, ENT_QUOTES, 'UTF-8', false));
+                $this->tweet = htmlentities($tweet, ENT_QUOTES, 'UTF-8', false);
             } else {
-                parent::__construct(htmlspecialchars($tweet, ENT_QUOTES, 'UTF-8', false));
+                $this->tweet = htmlspecialchars($tweet, ENT_QUOTES, 'UTF-8', false);
             }
         } else {
-            parent::__construct($tweet);
+            $this->tweet = $tweet;
         }
+
         $this->extractor = Extractor::create();
     }
 
@@ -650,7 +658,7 @@ class Autolink extends Regex
         if (!empty($this->class_hash)) {
             $class[] = $this->class_hash;
         }
-        if (preg_match(self::$patterns['rtl_chars'], $linkText)) {
+        if (preg_match(Regex::getRtlCharsMatcher(), $linkText)) {
             $class[] = 'rtl';
         }
         if (!empty($class)) {

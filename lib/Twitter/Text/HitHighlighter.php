@@ -27,7 +27,7 @@ use Twitter\Text\StringUtils;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
-class HitHighlighter extends Regex
+class HitHighlighter
 {
 
     /**
@@ -36,6 +36,13 @@ class HitHighlighter extends Regex
      * @var  string
      */
     protected $tag = 'em';
+
+    /**
+     * The tweet to be used in parsing.
+     *
+     * @var  string
+     */
+    protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
@@ -67,12 +74,12 @@ class HitHighlighter extends Regex
     {
         if (!empty($tweet) && $escape) {
             if ($full_encode) {
-                parent::__construct(htmlentities($tweet, ENT_QUOTES, 'UTF-8', false));
+                $this->tweet = htmlentities($tweet, ENT_QUOTES, 'UTF-8', false);
             } else {
-                parent::__construct(htmlspecialchars($tweet, ENT_QUOTES, 'UTF-8', false));
+                $this->tweet = htmlspecialchars($tweet, ENT_QUOTES, 'UTF-8', false);
             }
         } else {
-            parent::__construct($tweet);
+            $this->tweet = $tweet;
         }
     }
 

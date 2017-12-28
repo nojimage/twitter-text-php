@@ -27,7 +27,7 @@ use Twitter\Text\StringUtils;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
-class Validator extends Regex
+class Validator
 {
 
     /**
@@ -58,6 +58,13 @@ class Validator extends Regex
     protected $extractor = null;
 
     /**
+     * The tweet to be used in parsing.
+     *
+     * @var  string
+     */
+    protected $tweet = '';
+
+    /**
      * Provides fluent method chaining.
      *
      * @param  string  $tweet  The tweet to be validated.
@@ -79,10 +86,10 @@ class Validator extends Regex
      */
     public function __construct($tweet = null, $config = null)
     {
-        parent::__construct($tweet);
         if (!empty($config)) {
             $this->setConfiguration($config);
         }
+        $this->tweet = $tweet;
         $this->extractor = Extractor::create();
     }
 
@@ -178,7 +185,7 @@ class Validator extends Regex
         if ($length > self::MAX_LENGTH) {
             return false;
         }
-        if (preg_match(self::$patterns['invalid_characters'], $tweet)) {
+        if (preg_match(Regex::getInvalidCharactersMatcher(), $tweet)) {
             return false;
         }
         return true;
@@ -240,7 +247,7 @@ class Validator extends Regex
         if (empty($list) || !$length) {
             return false;
         }
-        preg_match(self::$patterns['valid_mentions_or_lists'], $list, $matches);
+        preg_match(Regex::getValidMentionsOrListsMatcher(), $list, $matches);
         $matches = array_pad($matches, 5, '');
         return isset($matches) && $matches[1] === '' && $matches[4] && !empty($matches[4]) && $matches[5] === '';
     }
@@ -300,26 +307,35 @@ class Validator extends Regex
         if (is_null($url)) {
             $url = $this->tweet;
         }
+
         $length = StringUtils::strlen($url);
         if (empty($url) || !$length) {
             return false;
         }
-        preg_match(self::$patterns['validate_url_unencoded'], $url, $matches);
+
+        preg_match(Regex::getValidateUrlUnencodedMatcher(), $url, $matches);
         $match = array_shift($matches);
         if (!$matches || $match !== $url) {
             return false;
         }
+
         list($scheme, $authority, $path, $query, $fragment) = array_pad($matches, 5, '');
+
         # Check scheme, path, query, fragment:
         if (($require_protocol && !(
-            self::isValidMatch($scheme, self::$patterns['validate_url_scheme']) && preg_match('/^https?$/i', $scheme))
-            ) || !self::isValidMatch($path, self::$patterns['validate_url_path']) || !self::isValidMatch($query, self::$patterns['validate_url_query'], true)
-            || !self::isValidMatch($fragment, self::$patterns['validate_url_fragment'], true)) {
+                self::isValidMatch($scheme, Regex::getValidateUrlSchemeMatcher())
+                && preg_match('/^https?$/i', $scheme)
+            ))
+            || !self::isValidMatch($path, Regex::getValidateUrlPathMatcher())
+            || !self::isValidMatch($query, Regex::getValidateUrlQueryMatcher(), true)
+            || !self::isValidMatch($fragment, Regex::getValidateUrlFragmentMatcher(), true)) {
             return false;
         }
+
         # Check authority:
-        $authority_pattern = $unicode_domains ? 'validate_url_unicode_authority' : 'validate_url_authority';
-        return self::isValidMatch($authority, self::$patterns[$authority_pattern]);
+        $authorityPattern = $unicode_domains ? Regex::getValidateUrlUnicodeAuthorityMatcher() : Regex::getValidateUrlAuthorityMatcher();
+
+        return self::isValidMatch($authority, $authorityPattern);
     }
 
     /**

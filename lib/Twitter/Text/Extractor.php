@@ -29,13 +29,20 @@ use Twitter\Text\StringUtils;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
-class Extractor extends Regex
+class Extractor
 {
 
     /**
      * @var boolean
      */
     protected $extractURLWithoutProtocol = true;
+
+    /**
+     * The tweet to be used in parsing.
+     *
+     * @var  string
+     */
+    protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
@@ -60,7 +67,7 @@ class Extractor extends Regex
      */
     public function __construct($tweet = null)
     {
-        parent::__construct($tweet);
+        $this->tweet = $tweet;
     }
 
     /**
@@ -205,9 +212,9 @@ class Extractor extends Regex
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $matched = preg_match(self::$patterns['valid_reply'], $tweet, $matches);
+        $matched = preg_match(Regex::getValidReplyMatcher(), $tweet, $matches);
         # Check username ending in
-        if ($matched && preg_match(self::$patterns['end_mention_match'], $matches[2])) {
+        if ($matched && preg_match(Regex::getEndMentionMatcher(), $matches[2])) {
             $matched = false;
         }
         return $matched ? $matches[1] : null;
@@ -243,7 +250,7 @@ class Extractor extends Regex
             return array();
         }
 
-        preg_match_all(self::$patterns['valid_hashtag'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidHashtagMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
         $tags = array();
 
         foreach ($matches as $match) {
@@ -251,7 +258,7 @@ class Extractor extends Regex
             $start_position = $hash[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $hash[1])) : $hash[1];
             $end_position = $start_position + StringUtils::strlen($hash[0] . $hashtag[0]);
 
-            if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+            if (preg_match(Regex::getEndHashtagMatcher(), $outer[0])) {
                 continue;
             }
 
@@ -296,7 +303,7 @@ class Extractor extends Regex
             return array();
         }
 
-        preg_match_all(self::$patterns['valid_cashtag'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidCashtagMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
         $tags = array();
 
         foreach ($matches as $match) {
@@ -304,7 +311,7 @@ class Extractor extends Regex
             $start_position = $dollar[1] > 0 ? StringUtils::strlen(substr($tweet, 0, $dollar[1])) : $dollar[1];
             $end_position = $start_position + StringUtils::strlen($dollar[0] . $cash_text[0]);
 
-            if (preg_match(self::$patterns['end_hashtag_match'], $outer[0])) {
+            if (preg_match(Regex::getEndHashtagMatcher(), $outer[0])) {
                 continue;
             }
 
@@ -335,7 +342,7 @@ class Extractor extends Regex
         }
 
         $urls = array();
-        preg_match_all(self::$patterns['valid_url'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidUrlMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
         foreach ($matches as $match) {
             list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($match, 8, array(''));
@@ -354,14 +361,14 @@ class Extractor extends Regex
             // If protocol is missing and domain contains non-ASCII characters,
             // extract ASCII-only domains.
             if (empty($protocol)) {
-                if (!$this->extractURLWithoutProtocol || preg_match(self::$patterns['invalid_url_without_protocol_preceding_chars'], $before)) {
+                if (!$this->extractURLWithoutProtocol || preg_match(Regex::getInvalidUrlWithoutProtocolPrecedingCharsMatcher(), $before)) {
                     continue;
                 }
 
                 $last_url = null;
                 $ascii_end_position = 0;
 
-                if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
+                if (preg_match(Regex::getValidAsciiDomainMatcher(), $domain, $asciiDomain)) {
                     $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
                     $ascii_start_position = StringUtils::strpos($domain, $asciiDomain[0], $ascii_end_position);
                     $ascii_end_position = $ascii_start_position + StringUtils::strlen($asciiDomain[0]);
@@ -370,8 +377,8 @@ class Extractor extends Regex
                         'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
                     );
                     if (!empty($path)
-                        || preg_match(self::$patterns['valid_special_short_domain'], $asciiDomain[0])
-                        || !preg_match(self::$patterns['invalid_short_domain'], $asciiDomain[0])) {
+                        || preg_match(Regex::getValidSpecialShortDomainMatcher(), $asciiDomain[0])
+                        || !preg_match(Regex::getInvalidCharactersMatcher(), $asciiDomain[0])) {
                         $urls[] = $last_url;
                     }
                 }
@@ -389,7 +396,7 @@ class Extractor extends Regex
                 }
             } else {
                 // In the case of t.co URLs, don't allow additional path characters
-                if (preg_match(self::$patterns['valid_tco_url'], $url, $tcoUrlMatches)) {
+                if (preg_match(Regex::getValidTcoUrlMatcher(), $url, $tcoUrlMatches)) {
                     $url = $tcoUrlMatches[0];
                     $end_position = $start_position + StringUtils::strlen($url);
                 }
@@ -453,7 +460,7 @@ class Extractor extends Regex
             return array();
         }
 
-        preg_match_all(self::$patterns['valid_mentions_or_lists'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidMentionsOrListsMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
         $results = array();
 
         foreach ($matches as $match) {
@@ -466,7 +473,7 @@ class Extractor extends Regex
                 'indices' => array($start_position, $end_position),
             );
 
-            if (preg_match(self::$patterns['end_mention_match'], $outer[0])) {
+            if (preg_match(Regex::getEndMentionMatcher(), $outer[0])) {
                 continue;
             }
 
