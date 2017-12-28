@@ -27,7 +27,7 @@ use Twitter\Text\StringUtils;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
-class Validator extends Regex
+class Validator
 {
 
     /**
@@ -58,6 +58,13 @@ class Validator extends Regex
     protected $extractor = null;
 
     /**
+     * The tweet to be used in parsing.
+     *
+     * @var  string
+     */
+    protected $tweet = '';
+
+    /**
      * Provides fluent method chaining.
      *
      * @param  string  $tweet  The tweet to be validated.
@@ -79,10 +86,10 @@ class Validator extends Regex
      */
     public function __construct($tweet = null, $config = null)
     {
-        parent::__construct($tweet);
         if (!empty($config)) {
             $this->setConfiguration($config);
         }
+        $this->tweet = $tweet;
         $this->extractor = Extractor::create();
     }
 

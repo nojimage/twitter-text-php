@@ -29,13 +29,20 @@ use Twitter\Text\StringUtils;
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
-class Extractor extends Regex
+class Extractor
 {
 
     /**
      * @var boolean
      */
     protected $extractURLWithoutProtocol = true;
+
+    /**
+     * The tweet to be used in parsing.
+     *
+     * @var  string
+     */
+    protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
@@ -60,7 +67,7 @@ class Extractor extends Regex
      */
     public function __construct($tweet = null)
     {
-        parent::__construct($tweet);
+        $this->tweet = $tweet;
     }
 
     /**
