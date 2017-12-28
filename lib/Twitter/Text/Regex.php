@@ -392,7 +392,7 @@ class Regex
      */
     private static function getValidUrlPath()
     {
-        $validGeneralUrlPathChars = '[a-z\p{Cyrillic}0-9' . preg_quote('!*;:=+,.$/%#[]-_~&', '/') . '|@' . static::$latinAccents . ']';
+        $validGeneralUrlPathChars = '[a-z0-9' . preg_quote("!*';:=+,.$/%#[]–\x{2013}_~", '/') . '|&@' . static::$latinAccents . '\p{Cyrillic}]';
 
         # Allow URL paths to contain up to two nested levels of balanced parentheses:
         # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
@@ -411,7 +411,7 @@ class Regex
             . '\))';
         # Valid end-of-path characters (so /foo. does not gobble the period).
         # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
-        $validUrlPathEndingChars = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . static::$latinAccents . ']|(?:' . $validUrlBalancedParens . ')';
+        $validUrlPathEndingChars = '[a-z0-9=_#\/\+\-' . static::$latinAccents . '\p{Cyrillic}]|(?:' . $validUrlBalancedParens . ')';
 
         return '(?:(?:'
             . $validGeneralUrlPathChars . '*(?:'
