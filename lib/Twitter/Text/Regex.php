@@ -304,11 +304,11 @@ class Regex
     }
 
     /**
-     * Get domain valid chars
+     * Get valid domain chars
      *
      * @return string
      */
-    private static function getDomainValidChars()
+    private static function getValidDomainChars()
     {
         return '0-9a-z' . static::$latinAccents;
     }
@@ -320,7 +320,7 @@ class Regex
      */
     private static function getValidSubdomain()
     {
-        $domainValidChars = static::getDomainValidChars();
+        $domainValidChars = static::getValidDomainChars();
 
         return '(?>(?:[' . $domainValidChars . '][' . $domainValidChars . '\-_]*)?[' . $domainValidChars . ']\.)';
     }
@@ -332,19 +332,31 @@ class Regex
      */
     private static function getValidDomainName()
     {
-        $domainValidChars = static::getDomainValidChars();
+        $domainValidChars = static::getValidDomainChars();
 
         return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]*)?[' . $domainValidChars . ']\.)';
     }
 
     /**
-     * Get domain valid unicode chars
+     * Get valid unicode domain chars
      *
      * @return string
      */
-    private static function getDomainValidUnicodeChars()
+    private static function getValidUnicodeDomainChars()
     {
         return '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . static::$spaces . ']';
+    }
+
+    /**
+     * Get valid unicode domain name
+     *
+     * @return string
+     */
+    private static function getValidUnicodeDomainName()
+    {
+        $domainValidChars = static::getValidUnicodeDomainChars();
+
+        return '(?:(?:' . $domainValidChars . '(?:' . $domainValidChars . '|[\-])*)?' . $domainValidChars . '\.)';
     }
 
     /**
@@ -356,7 +368,7 @@ class Regex
     {
         $validSubdomain = static::getValidSubdomain();
         $validDomainName = static::getValidDomainName();
-        $domainValidUnicodeChars = static::getDomainValidUnicodeChars();
+        $validUnicodeDomainName = static::getValidUnicodeDomainName();
         $validGTLD = TldLists::getValidGTLD();
         $validCcTLD = TldLists::getValidCcTLD();
 
@@ -367,18 +379,19 @@ class Regex
             . '(?:' . $validGTLD . '|' . $validCcTLD . '|' . static::$validPunycode . '))'
             // domain + gTLD | protocol + unicode domain + gTLD
             . '|(?:'
-            . '(?:'
-            . $validDomainName . '|(?:(?<=http:\/\/|https:\/\/)' . $domainValidUnicodeChars . '+\.)'
+            . '(?:' . $validSubdomain . '+' . $validDomainName
+            . '|' . $validDomainName
+            . '|(?:(?<=http:\/\/|https:\/\/)' . $validUnicodeDomainName . ')'
             . ')'
             . $validGTLD
             . ')'
             // domain + gTLD | some ccTLD
             // e.g. twitter.com
-            . '|(?:' . $validDomainName . static::$validPunycode . ')'
-            . '|(?:' . $validDomainName . static::$validSpecialCcTLD . ')'
-            // protocol + domain + ccTLD | protocol + unicode domain + ccTLD
+            . '|(?:' . $validDomainName
+            . '(?:' . static::$validPunycode . '|' . static::$validSpecialCcTLD . '))'
+            // protocol + (domain | unicode domain) + ccTLD
             . '|(?:(?<=http:\/\/|https:\/\/)'
-            . '(?:' . $validDomainName . '|' . $domainValidUnicodeChars . '+\.)'
+            . '(?:' . $validDomainName . '|' . $validUnicodeDomainName . ')'
             . $validCcTLD . ')'
             // domain + ccTLD + '/'
             // e.g. t.co/
