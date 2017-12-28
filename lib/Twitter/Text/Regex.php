@@ -133,6 +133,10 @@ class Regex
     private static $validateUrlIpv6 = '(?:\[[a-f0-9:\.]+\])';
     private static $validateUrlPort = '[0-9]{1,5}';
 
+    # URL related hash regex collection
+    private static $validSpecialCcTLD = '(?:(?:co|tv)(?=[^0-9a-z@]|$))';
+    private static $validPunycode = '(?:xn--[0-9a-z]+)';
+
     /**
      * This constructor is used to populate some variables.
      *
@@ -141,115 +145,6 @@ class Regex
     protected function __construct($tweet = null)
     {
         $this->tweet = $tweet;
-    }
-
-    /**
-     * Emulate a static initialiser while PHP doesn't have one.
-     */
-    public static function __static()
-    {
-        # Check whether we have initialized the regular expressions:
-        static $initialized = false;
-        if ($initialized) {
-            return;
-        }
-        # Get a shorter reference to the regular expression array:
-        $re = & self::$patterns;
-        # Initialise local storage arrays:
-        $tmp = array();
-
-        # URL related hash regex collection
-
-        $tmp['valid_url_preceding_chars'] = '(?:[^A-Z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
-
-        $tmp['domain_valid_chars'] = '0-9a-z' . static::$latinAccents;
-        $tmp['valid_subdomain'] = '(?>(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-_]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
-        $tmp['valid_domain_name'] = '(?:(?:[' . $tmp['domain_valid_chars'] . '][' . $tmp['domain_valid_chars'] . '\-]*)?[' . $tmp['domain_valid_chars'] . ']\.)';
-        $tmp['domain_valid_unicode_chars'] = '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . static::$spaces . ']';
-
-        $tmp['valid_gTLD'] = TldLists::getValidGTLD();
-        $tmp['valid_ccTLD'] = TldLists::getValidCcTLD();
-        $tmp['valid_special_ccTLD'] = '(?:(?:' . 'co|tv' . ')(?=[^0-9a-z@]|$))';
-        $tmp['valid_punycode'] = '(?:xn--[0-9a-z]+)';
-
-        $tmp['valid_domain'] = ''
-            // subdomains + domain + TLD
-            // e.g. www.twitter.com, foo.co.jp, bar.co.uk
-            . '(?:' . $tmp['valid_subdomain'] . '+' . $tmp['valid_domain_name']
-            . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . '|' . $tmp['valid_punycode'] . '))'
-            // domain + gTLD | protocol + unicode domain + gTLD
-            . '|(?:'
-            . '(?:'
-            . $tmp['valid_domain_name'] . '|(?:(?<=http:\/\/|https:\/\/)' . $tmp['domain_valid_unicode_chars'] . '+\.)'
-            . ')'
-            . $tmp['valid_gTLD']
-            . ')'
-            // domain + gTLD | some ccTLD
-            // e.g. twitter.com
-            . '|(?:' . $tmp['valid_domain_name'] . $tmp['valid_punycode'] . ')'
-            . '|(?:' . $tmp['valid_domain_name'] . $tmp['valid_special_ccTLD'] . ')'
-            // protocol + domain + ccTLD | protocol + unicode domain + ccTLD
-            . '|(?:(?<=http:\/\/|https:\/\/)'
-            . '(?:' . $tmp['valid_domain_name'] . '|' . $tmp['domain_valid_unicode_chars'] . '+\.)'
-            . $tmp['valid_ccTLD'] . ')'
-            // domain + ccTLD + '/'
-            // e.g. t.co/
-            . '|(?:' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . '(?=\/))';
-        # Used by the extractor:
-        $re['valid_ascii_domain'] = '/' . $tmp['valid_subdomain'] . '*' . $tmp['valid_domain_name'] . '(?:' . $tmp['valid_gTLD'] . '|' . $tmp['valid_ccTLD'] . '|' . $tmp['valid_punycode'] . ')/iu';
-
-        # Used by the extractor for stricter t.co URL extraction:
-        $re['valid_tco_url'] = '/^https?:\/\/t\.co\/[a-z0-9]+/iu';
-
-        # Used by the extractor to filter out unwanted URLs:
-        $re['invalid_short_domain'] = '/\A' . $tmp['valid_domain_name'] . $tmp['valid_ccTLD'] . '\Z/iu';
-        $re['valid_special_short_domain'] = '/\A' . $tmp['valid_domain_name'] . $tmp['valid_special_ccTLD'] . '\Z/iu';
-        $re['invalid_url_without_protocol_preceding_chars'] = '/[\-_.\/]\z/iu';
-
-        $tmp['valid_port_number'] = '[0-9]+';
-
-        $tmp['valid_general_url_path_chars'] = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . static::$latinAccents . ']';
-        # Allow URL paths to contain up to two nested levels of balanced parentheses:
-        # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
-        # 2. Used in IIS sessions, e.g. /S(dfd346)/
-        # 3. Used in Rdio URLs like /track/We_Up_(Album_Version_(Edited))/
-        $tmp['valid_url_balanced_parens'] = '(?:\('
-            . '(?:' . $tmp['valid_general_url_path_chars'] . '+'
-            . '|'
-            // allow one nested level of balanced parentheses
-            . '(?:'
-            . $tmp['valid_general_url_path_chars'] . '*'
-            . '\(' . $tmp['valid_general_url_path_chars'] . '+' . '\)'
-            . $tmp['valid_general_url_path_chars'] . '*'
-            . ')'
-            . ')'
-            . '\))';
-        # Valid end-of-path characters (so /foo. does not gobble the period).
-        # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
-        $tmp['valid_url_path_ending_chars'] = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . static::$latinAccents . ']|(?:' . $tmp['valid_url_balanced_parens'] . ')';
-        $tmp['valid_url_path'] = '(?:(?:'
-            . $tmp['valid_general_url_path_chars'] . '*(?:'
-            . $tmp['valid_url_balanced_parens'] . ' '
-            . $tmp['valid_general_url_path_chars'] . '*)*'
-            . $tmp['valid_url_path_ending_chars'] . ')|(?:@'
-            . $tmp['valid_general_url_path_chars'] . '+\/))';
-
-        $tmp['valid_url_query_chars'] = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
-        $tmp['valid_url_query_ending_chars'] = '[a-z0-9_&=#\/\-]';
-
-        $re['valid_url'] = '/(?:'                           # $1 Complete match (preg_match() already matches everything.)
-            . '(' . $tmp['valid_url_preceding_chars'] . ')' # $2 Preceding characters
-            . '('                                           # $3 Complete URL
-            . '(https?:\/\/)?'                              # $4 Protocol (optional)
-            . '(' . $tmp['valid_domain'] . ')'              # $5 Domain(s)
-            . '(?::(' . $tmp['valid_port_number'] . '))?'   # $6 Port number (optional)
-            . '(\/' . $tmp['valid_url_path'] . '*)?'        # $7 URL Path
-            . '(\?' . $tmp['valid_url_query_chars'] . '*' . $tmp['valid_url_query_ending_chars'] . ')?' # $8 Query String
-            . ')'
-            . ')/iux';
-
-        # Flag that initialization is complete:
-        $initialized = true;
     }
 
     /**
@@ -284,6 +179,246 @@ class Regex
         }
 
         return $regexp;
+    }
+
+    // =================================================================================================================
+
+    /**
+     * Get valid ascii domain matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidAsciiDomainMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/' . static::getValidSubdomain() . '*' . static::getValidDomainName()
+                . '(?:' . TldLists::getValidGTLD() . '|' . TldLists::getValidCcTLD()
+                . '|' . static::$validPunycode . ')/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid tco url matcher
+     *
+     * Used by the extractor for stricter t.co URL extraction
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidTcoUrlMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/^https?:\/\/t\.co\/[a-z0-9]+/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get invalid short domain matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getInvalidShortDomainMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/\A' . static::getValidDomainName() . TldLists::getValidCcTLD() . '\Z/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid special short domain matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidSpecialShortDomainMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/\A' . static::getValidDomainName() . static::$validSpecialCcTLD . '\Z/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get invalid url without protocol preceding chars matcher
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getInvalidUrlWithoutProtocolPrecedingCharsMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $regexp = '/[\-_.\/]\z/iu';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get valid url
+     *
+     * @staticvar string $regexp
+     * @return string
+     */
+    public static function getValidUrlMatcher()
+    {
+        static $regexp = null;
+
+        if ($regexp === null) {
+            $validUrlPrecedingChars = '(?:[^A-Z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
+            $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
+            $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
+            $validPortNumber = '[0-9]+';
+
+            $regexp = '/(?:'                                      # $1 Complete match (preg_match() already matches everything.)
+                . '(' . $validUrlPrecedingChars . ')' # $2 Preceding characters
+                . '('                                             # $3 Complete URL
+                . '(https?:\/\/)?'                                # $4 Protocol (optional)
+                . '(' . static::getValidDomain() . ')'            # $5 Domain(s)
+                . '(?::(' . $validPortNumber . '))?'      # $6 Port number (optional)
+                . '(\/' . static::getValidUrlPath() . '*)?'       # $7 URL Path
+                . '(\?' . $validUrlQueryChars . '*' . $validUrlQueryEndingChars . ')?' # $8 Query String
+                . ')'
+                . ')/iux';
+        }
+
+        return $regexp;
+    }
+
+    /**
+     * Get domain valid chars
+     *
+     * @return string
+     */
+    private static function getDomainValidChars()
+    {
+        return '0-9a-z' . static::$latinAccents;
+    }
+
+    /**
+     * Get valid subdomain
+     *
+     * @return string
+     */
+    private static function getValidSubdomain()
+    {
+        $domainValidChars = static::getDomainValidChars();
+
+        return '(?>(?:[' . $domainValidChars . '][' . $domainValidChars . '\-_]*)?[' . $domainValidChars . ']\.)';
+    }
+
+    /**
+     * Get valid domain name
+     *
+     * @return string
+     */
+    private static function getValidDomainName()
+    {
+        $domainValidChars = static::getDomainValidChars();
+
+        return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]*)?[' . $domainValidChars . ']\.)';
+    }
+
+    /**
+     * Get domain valid unicode chars
+     *
+     * @return string
+     */
+    private static function getDomainValidUnicodeChars()
+    {
+        return '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . static::$spaces . ']';
+    }
+
+    /**
+     * Get valid domain
+     *
+     * @return string
+     */
+    private static function getValidDomain()
+    {
+        $validSubdomain = static::getValidSubdomain();
+        $validDomainName = static::getValidDomainName();
+        $domainValidUnicodeChars = static::getDomainValidUnicodeChars();
+        $validGTLD = TldLists::getValidGTLD();
+        $validCcTLD = TldLists::getValidCcTLD();
+
+        return ''
+            // subdomains + domain + TLD
+            // e.g. www.twitter.com, foo.co.jp, bar.co.uk
+            . '(?:' . $validSubdomain . '+' . $validDomainName
+            . '(?:' . $validGTLD . '|' . $validCcTLD . '|' . static::$validPunycode . '))'
+            // domain + gTLD | protocol + unicode domain + gTLD
+            . '|(?:'
+            . '(?:'
+            . $validDomainName . '|(?:(?<=http:\/\/|https:\/\/)' . $domainValidUnicodeChars . '+\.)'
+            . ')'
+            . $validGTLD
+            . ')'
+            // domain + gTLD | some ccTLD
+            // e.g. twitter.com
+            . '|(?:' . $validDomainName . static::$validPunycode . ')'
+            . '|(?:' . $validDomainName . static::$validSpecialCcTLD . ')'
+            // protocol + domain + ccTLD | protocol + unicode domain + ccTLD
+            . '|(?:(?<=http:\/\/|https:\/\/)'
+            . '(?:' . $validDomainName . '|' . $domainValidUnicodeChars . '+\.)'
+            . $validCcTLD . ')'
+            // domain + ccTLD + '/'
+            // e.g. t.co/
+            . '|(?:' . $validDomainName . $validCcTLD . '(?=\/))';
+    }
+
+    /**
+     * Get valid url path
+     *
+     * @return string
+     */
+    private static function getValidUrlPath()
+    {
+        $validGeneralUrlPathChars = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . static::$latinAccents . ']';
+
+        # Allow URL paths to contain up to two nested levels of balanced parentheses:
+        # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
+        # 2. Used in IIS sessions, e.g. /S(dfd346)/
+        # 3. Used in Rdio URLs like /track/We_Up_(Album_Version_(Edited))/
+        $validUrlBalancedParens = '(?:\('
+            . '(?:' . $validGeneralUrlPathChars . '+'
+            . '|'
+            // allow one nested level of balanced parentheses
+            . '(?:'
+            . $validGeneralUrlPathChars . '*'
+            . '\(' . $validGeneralUrlPathChars . '+' . '\)'
+            . $validGeneralUrlPathChars . '*'
+            . ')'
+            . ')'
+            . '\))';
+        # Valid end-of-path characters (so /foo. does not gobble the period).
+        # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
+        $validUrlPathEndingChars = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . static::$latinAccents . ']|(?:' . $validUrlBalancedParens . ')';
+
+        return '(?:(?:'
+            . $validGeneralUrlPathChars . '*(?:'
+            . $validUrlBalancedParens . ' '
+            . $validGeneralUrlPathChars . '*)*'
+            . $validUrlPathEndingChars . ')|(?:@'
+            . $validGeneralUrlPathChars . '+\/))';
     }
 
     // =================================================================================================================
@@ -681,6 +816,3 @@ class Regex
         return $regexp;
     }
 }
-
-# Cause regular expressions to be initialized as soon as this file is loaded:
-Regex::__static();

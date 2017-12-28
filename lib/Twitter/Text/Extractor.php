@@ -335,7 +335,7 @@ class Extractor extends Regex
         }
 
         $urls = array();
-        preg_match_all(self::$patterns['valid_url'], $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        preg_match_all(Regex::getValidUrlMatcher(), $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
         foreach ($matches as $match) {
             list($all, $before, $url, $protocol, $domain, $port, $path, $query) = array_pad($match, 8, array(''));
@@ -354,14 +354,14 @@ class Extractor extends Regex
             // If protocol is missing and domain contains non-ASCII characters,
             // extract ASCII-only domains.
             if (empty($protocol)) {
-                if (!$this->extractURLWithoutProtocol || preg_match(self::$patterns['invalid_url_without_protocol_preceding_chars'], $before)) {
+                if (!$this->extractURLWithoutProtocol || preg_match(Regex::getInvalidUrlWithoutProtocolPrecedingCharsMatcher(), $before)) {
                     continue;
                 }
 
                 $last_url = null;
                 $ascii_end_position = 0;
 
-                if (preg_match(self::$patterns['valid_ascii_domain'], $domain, $asciiDomain)) {
+                if (preg_match(Regex::getValidAsciiDomainMatcher(), $domain, $asciiDomain)) {
                     $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
                     $ascii_start_position = StringUtils::strpos($domain, $asciiDomain[0], $ascii_end_position);
                     $ascii_end_position = $ascii_start_position + StringUtils::strlen($asciiDomain[0]);
@@ -370,8 +370,8 @@ class Extractor extends Regex
                         'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
                     );
                     if (!empty($path)
-                        || preg_match(self::$patterns['valid_special_short_domain'], $asciiDomain[0])
-                        || !preg_match(self::$patterns['invalid_short_domain'], $asciiDomain[0])) {
+                        || preg_match(Regex::getValidSpecialShortDomainMatcher(), $asciiDomain[0])
+                        || !preg_match(Regex::getInvalidCharactersMatcher(), $asciiDomain[0])) {
                         $urls[] = $last_url;
                     }
                 }
@@ -389,7 +389,7 @@ class Extractor extends Regex
                 }
             } else {
                 // In the case of t.co URLs, don't allow additional path characters
-                if (preg_match(self::$patterns['valid_tco_url'], $url, $tcoUrlMatches)) {
+                if (preg_match(Regex::getValidTcoUrlMatcher(), $url, $tcoUrlMatches)) {
                     $url = $tcoUrlMatches[0];
                     $end_position = $start_position + StringUtils::strlen($url);
                 }

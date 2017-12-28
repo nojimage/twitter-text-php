@@ -161,7 +161,7 @@ class LooseAutolink extends Autolink
      */
     public function addLinksToURLs()
     {
-        return preg_replace_callback(self::$patterns['valid_url'], array($this, '_addLinksToURLs'), $this->tweet);
+        return preg_replace_callback(Regex::getValidUrlMatcher(), array($this, '_addLinksToURLs'), $this->tweet);
     }
 
     /**
