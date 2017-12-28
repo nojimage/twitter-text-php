@@ -87,14 +87,14 @@ class Autolink
      *
      * @var  string
      */
-    protected $url_base_hash = 'https://twitter.com/#!/search?q=%23';
+    protected $url_base_hash = 'https://twitter.com/search?q=%23';
 
     /**
      * URL base for cashtag links (the hashtag without the $ will be appended).
      *
      * @var  string
      */
-    protected $url_base_cash = 'https://twitter.com/#!/search?q=%24';
+    protected $url_base_cash = 'https://twitter.com/search?q=%24';
 
     /**
      * Whether to include the value 'nofollow' in the 'rel' attribute.
