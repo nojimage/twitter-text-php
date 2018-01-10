@@ -344,6 +344,25 @@ class ConformanceTest extends TestCase
     /**
      * @group conformance
      * @group Extractor
+     * @dataProvider  extractHashtagsFromAstralProvider
+     */
+    public function testExtractHashtagsFromAstral($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractHashtags($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractHashtagsFromAstralProvider()
+    {
+        return $this->providerHelper('extract', 'hashtags_from_astral');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractHashtagsWithIndicesProvider
      */
     public function testExtractHashtagsWithIndices($description, $text, $expected)
