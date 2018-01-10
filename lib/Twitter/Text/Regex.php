@@ -215,7 +215,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/^https?:\/\/t\.co\/[a-z0-9]+/iu';
+            $regexp = '/^https?:\/\/t\.co\/([a-z0-9]+)/iu';
         }
 
         return $regexp;

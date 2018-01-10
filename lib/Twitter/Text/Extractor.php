@@ -46,9 +46,13 @@ class Extractor
     const URL_GROUP_PROTOCOL_LENGTH = 4104; // https:// + MAX_URL_LENGTH
 
     /**
+     * The maximum t.co path length that the Twitter backend supports.
+     */
+    const MAX_TCO_SLUG_LENGTH = 40;
+
+    /**
      * @var boolean
      */
-
     protected $extractURLWithoutProtocol = true;
 
     /**
@@ -386,7 +390,14 @@ class Extractor
                 // In the case of t.co URLs, don't allow additional path characters
                 if (preg_match(Regex::getValidTcoUrlMatcher(), $url, $tcoUrlMatches)) {
                     $url = $tcoUrlMatches[0];
+                    $tcoUrlSlug = $tcoUrlMatches[1];
                     $end_position = $start_position + StringUtils::strlen($url);
+
+                    // In the case of t.co URLs, don't allow additional path characters and
+                    // ensure that the slug is under 40 chars.
+                    if (strlen($tcoUrlSlug) > static::MAX_TCO_SLUG_LENGTH) {
+                        continue;
+                    }
                 }
                 if ($this->isValidHostAndLength(StringUtils::strlen($url), $protocol, $domain)) {
                     $urls[] = array(
