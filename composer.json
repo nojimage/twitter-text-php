@@ -42,8 +42,8 @@
   ],
   "require": {
     "php": ">=5.3.3",
-    "php-mbstring": "*",
-    "php-intl": "*"
+    "ext-mbstring": "*",
+    "ext-intl": "*"
   },
   "require-dev": {
     "symfony/yaml": "~2.6.0",
