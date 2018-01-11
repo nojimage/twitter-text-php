@@ -334,7 +334,7 @@ class Regex
     {
         $domainValidChars = static::getValidDomainChars();
 
-        return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]*)?[' . $domainValidChars . ']\.)';
+        return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]{0,61})?[' . $domainValidChars . ']\.)';
     }
 
     /**
