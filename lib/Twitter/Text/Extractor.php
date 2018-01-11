@@ -430,7 +430,7 @@ class Extractor
 
         // Use IDN for all host names, if the host is all ASCII, it returns unchanged.
         // It comes with an added benefit of checking the host length to be between 1 to 63 characters.
-        $encodedHost = idn_to_ascii($host, IDNA_ALLOW_UNASSIGNED);
+        $encodedHost = StringUtils::idnToAscii($host);
         if ($encodedHost === false || empty($encodedHost)) {
             return false;
         }

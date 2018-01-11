@@ -103,6 +103,17 @@ class StringUtils
     }
 
     /**
+     * idn_to_ascii wrapper
+     *
+     * @param string $domain as utf8
+     * @return string
+     */
+    public static function idnToAscii($domain)
+    {
+        return idn_to_ascii($domain, IDNA_ALLOW_UNASSIGNED);
+    }
+
+    /**
      * normalize text from NFC
      *
      * @param string $text
