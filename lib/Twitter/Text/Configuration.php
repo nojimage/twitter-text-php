@@ -112,4 +112,24 @@ class Configuration
     {
         return new Configuration(json_decode($json, true));
     }
+
+    /**
+     * maxWeightedTweetLength * scale
+     *
+     * @return int
+     */
+    public function getScaledMaxWeightedTweetLength()
+    {
+        return $this->maxWeightedTweetLength * $this->scale;
+    }
+
+    /**
+     * transformedURLLength * scale
+     *
+     * @return int
+     */
+    public function getScaledTransformedURLLength()
+    {
+        return $this->transformedURLLength * $this->scale;
+    }
 }

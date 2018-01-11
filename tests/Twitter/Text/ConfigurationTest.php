@@ -119,4 +119,24 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $v1Config = Configuration::fromJson($this->readConfigJson('v1'));
         $this->assertSame($this->getConfigration('v1'), $v1Config->toArray());
     }
+
+    /**
+     * test for getScaledMaxWeightedTweetLength
+     *
+     * @return void
+     */
+    public function testGetScaledMaxWeightedTweetLength()
+    {
+        $this->assertSame(28000, $this->config->getScaledMaxWeightedTweetLength());
+    }
+
+    /**
+     * test for getScaledTransformedUrlWeight
+     *
+     * @return void
+     */
+    public function testGetScaledTransformedURLLength()
+    {
+        $this->assertSame(2300, $this->config->getScaledTransformedURLLength());
+    }
 }
