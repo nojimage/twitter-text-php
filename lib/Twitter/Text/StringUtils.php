@@ -101,4 +101,44 @@ class StringUtils
         }
         return (is_null($length) === true) ? substr_replace($string, $replacement, $start) : substr_replace($string, $replacement, $start, $length);
     }
+
+    /**
+     * normalize text from NFC
+     *
+     * @param string $text
+     * @return string
+     */
+    public static function normalizeFromNFC($text)
+    {
+        return normalizer_normalize($text);
+    }
+
+    /**
+     * get code point
+     *
+     * @param string $char
+     * @param string $encoding
+     * @return int
+     */
+    public static function ord($char, $encoding = 'UTF-8')
+    {
+        if (mb_strlen($char, $encoding) > 1) {
+            $char = mb_substr($char, 0, 1, $encoding);
+        }
+
+        return current(unpack('N', mb_convert_encoding($char, 'UCS-4BE', $encoding)));
+    }
+
+    /**
+     * get code point at
+     *
+     * @param string $str
+     * @param int $offset
+     * @param string $encoding
+     * @return int
+     */
+    public static function codePointAt($str, $offset, $encoding = 'UTF-8')
+    {
+        return static::ord(mb_substr($str, $offset, 1, $encoding), $encoding);
+    }
 }

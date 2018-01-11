@@ -27,6 +27,7 @@ use Twitter\Text\Validator;
  * @property Extractor $extractor
  * @property HitHighlighter $highlighter
  * @property Validator $validator
+ * @property Parser $parser
  */
 class ConformanceTest extends TestCase
 {
@@ -39,6 +40,7 @@ class ConformanceTest extends TestCase
         $this->extractor = new Extractor();
         $this->highlighter = new HitHighlighter();
         $this->validator = new Validator();
+        $this->parser = new Parser();
     }
 
     protected function tearDown()
@@ -567,5 +569,24 @@ class ConformanceTest extends TestCase
     public function getTweetLengthProvider()
     {
         return $this->providerHelper('validate', 'lengths');
+    }
+
+    /**
+     * @group conformance
+     * @group Validaion
+     * @dataProvider getWeightedTweetsCounterTestProvider
+     */
+    public function testGetWeightedTweetsCounter($description, $text, $expected)
+    {
+        $result = $this->parser->parseTweet($text);
+        $this->assertSame($expected, $result->toArray(), $description);
+    }
+
+    /**
+     *
+     */
+    public function getWeightedTweetsCounterTestProvider()
+    {
+        return $this->providerHelper('validate', 'WeightedTweetsCounterTest');
     }
 }
