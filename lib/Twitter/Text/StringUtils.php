@@ -79,27 +79,25 @@ class StringUtils
      */
     public static function substrReplace($string, $replacement, $start, $length = null, $encoding = 'UTF-8')
     {
-        if (extension_loaded('mbstring') === true) {
-            $string_length = static::strlen($string, $encoding);
-            if ($start < 0) {
-                $start = max(0, $string_length + $start);
-            } elseif ($start > $string_length) {
-                $start = $string_length;
-            }
-            if ($length < 0) {
-                $length = max(0, $string_length - $start + $length);
-            } elseif ((is_null($length) === true) || ($length > $string_length)) {
-                $length = $string_length;
-            }
-            if (($start + $length) > $string_length) {
-                $length = $string_length - $start;
-            }
-
-            $suffixOffset = $start + $length;
-            $suffixLength = $string_length - $start - $length;
-            return static::substr($string, 0, $start, $encoding) . $replacement . static::substr($string, $suffixOffset, $suffixLength, $encoding);
+        $string_length = static::strlen($string, $encoding);
+        if ($start < 0) {
+            $start = max(0, $string_length + $start);
+        } elseif ($start > $string_length) {
+            $start = $string_length;
         }
-        return (is_null($length) === true) ? substr_replace($string, $replacement, $start) : substr_replace($string, $replacement, $start, $length);
+        if ($length < 0) {
+            $length = max(0, $string_length - $start + $length);
+        } elseif ((is_null($length) === true) || ($length > $string_length)) {
+            $length = $string_length;
+        }
+        if (($start + $length) > $string_length) {
+            $length = $string_length - $start;
+        }
+
+        $suffixOffset = $start + $length;
+        $suffixLength = $string_length - $start - $length;
+
+        return static::substr($string, 0, $start, $encoding) . $replacement . static::substr($string, $suffixOffset, $suffixLength, $encoding);
     }
 
     /**
