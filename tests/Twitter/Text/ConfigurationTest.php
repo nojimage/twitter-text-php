@@ -124,6 +124,23 @@ class ConfigurationTest extends TestCase
     }
 
     /**
+     * test for Configuration::v1
+     *
+     * @return void
+     */
+    public function testV1Configuration()
+    {
+        $config = Configuration::v1();
+
+        $this->assertSame(1, $config->version);
+        $this->assertSame(140, $config->maxWeightedTweetLength);
+        $this->assertSame(1, $config->scale);
+        $this->assertSame(1, $config->defaultWeight);
+        $this->assertSame(23, $config->transformedURLLength);
+        $this->assertSame(array(), $config->ranges);
+    }
+
+    /**
      * test for getScaledMaxWeightedTweetLength
      *
      * @return void

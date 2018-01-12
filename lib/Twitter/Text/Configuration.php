@@ -28,11 +28,11 @@ class Configuration
 {
 
     /**
-     * default configuration from v2.json
+     * configuration from v2.json
      *
      * @var array
      */
-    static private $defaultConfigraion = array(
+    static private $v2Config = array(
         'version' => 2,
         'maxWeightedTweetLength' => 280,
         'scale' => 100,
@@ -63,6 +63,20 @@ class Configuration
     );
 
     /**
+     * configration from v1.json
+     *
+     * @var array
+     */
+    static private $v1Config = array(
+        'version' => 1,
+        'maxWeightedTweetLength' => 140,
+        'scale' => 1,
+        'defaultWeight' => 1,
+        'transformedURLLength' => 23,
+        'ranges' => array(),
+    );
+
+    /**
      * @var array
      */
     private $config = array();
@@ -75,7 +89,7 @@ class Configuration
     public function __construct(array $config = null)
     {
         if ($config === null) {
-            $config = static::$defaultConfigraion;
+            $config = static::$v2Config;
         }
 
         $this->config = $config;
@@ -111,6 +125,16 @@ class Configuration
     public static function fromJson($json)
     {
         return new Configuration(json_decode($json, true));
+    }
+
+    /**
+     * Get twitter-text 1.x configuration
+     *
+     * @return Configuration
+     */
+    public static function v1()
+    {
+        return new self(static::$v1Config);
     }
 
     /**

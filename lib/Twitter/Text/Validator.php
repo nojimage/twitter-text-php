@@ -172,26 +172,25 @@ class Validator
     /**
      * Check whether a tweet is valid.
      *
-     * @param string $tweet The tweet to validate.
+     * @param string        $tweet  The tweet to validate.
+     * @param Configuration $config using configration
      * @return boolean  Whether the tweet is valid.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function isValidTweetText($tweet = null)
+    public function isValidTweetText($tweet = null, Configuration $config = null)
     {
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = $this->getTweetLength($tweet);
-        if (!$tweet || !$length) {
-            return false;
+
+        if (is_null($config)) {
+            // default use v1 config
+            $config = Configuration::v1();
         }
-        if ($length > self::MAX_LENGTH) {
-            return false;
-        }
-        if (preg_match(Regex::getInvalidCharactersMatcher(), $tweet)) {
-            return false;
-        }
-        return true;
+
+        $result = Parser::create($config)->parseTweet($tweet);
+
+        return $result->valid;
     }
 
     /**
@@ -301,21 +300,23 @@ class Validator
      * Determines the length of a tweet.  Takes shortening of URLs into account.
      *
      * @param string $tweet The tweet to validate.
+     * @param Configuration $config using configration
      * @return int  the length of a tweet.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function getTweetLength($tweet = null)
+    public function getTweetLength($tweet = null, Configuration $config = null)
     {
         if (is_null($tweet)) {
             $tweet = $this->tweet;
         }
-        $length = StringUtils::strlen($tweet);
-        $urls_with_indices = $this->extractor->extractURLsWithIndices($tweet);
-        foreach ($urls_with_indices as $x) {
-            $length += $x['indices'][0] - $x['indices'][1];
-            $length += stripos($x['url'], 'https://') === 0 ? $this->short_url_length_https : $this->short_url_length;
+        if (is_null($config)) {
+            // default use v1 config
+            $config = Configuration::v1();
         }
-        return $length;
+
+        $result = Parser::create($config)->parseTweet($tweet);
+
+        return $result->weightedLength;
     }
 
     /**
