@@ -31,21 +31,6 @@ class Regex
 {
 
     /**
-     * Contains all generated regular expressions.
-     *
-     * @var string  The regex patterns.
-     */
-    protected static $patterns = array();
-
-    /**
-     * The tweet to be used in parsing.  This should be populated by the
-     * constructor of all subclasses.
-     *
-     * @var string
-     */
-    protected $tweet = '';
-
-    /**
      * Expression to match whitespace characters.
      *
      * 0x0009-0x000D  Cc # <control-0009>..<control-000D>
@@ -136,16 +121,6 @@ class Regex
     # URL related hash regex collection
     private static $validSpecialCcTLD = '(?:(?:co|tv)(?=[^0-9a-z@]|$))';
     private static $validPunycode = '(?:xn--[0-9a-z]+)';
-
-    /**
-     * This constructor is used to populate some variables.
-     *
-     * @param string  $tweet  The tweet to parse.
-     */
-    protected function __construct($tweet = null)
-    {
-        $this->tweet = $tweet;
-    }
 
     /**
      * Get invalid characters matcher

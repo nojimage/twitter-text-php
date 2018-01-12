@@ -143,14 +143,15 @@ class Autolink
      * The tweet to be used in parsing.
      *
      * @var string
+     * @deprecated will be removed
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param string  $tweet        The tweet to be converted.
-     * @param bool    $full_encode  Whether to encode all special characters.
+     * @param string  $tweet        [deprecated] The tweet to be converted.
+     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
      *
      * @see __construct()
      *
@@ -169,9 +170,9 @@ class Autolink
      *
      * @see htmlspecialchars()
      *
-     * @param string  $tweet        The tweet to be converted.
-     * @param bool    $escape       Whether to escape the tweet (default: true).
-     * @param bool    $full_encode  Whether to encode all special characters.
+     * @param string  $tweet        [deprecated] The tweet to be converted.
+     * @param bool    $escape       [deprecated] Whether to escape the tweet (default: true).
+     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
      */
     public function __construct($tweet = null, $escape = true, $full_encode = false)
     {

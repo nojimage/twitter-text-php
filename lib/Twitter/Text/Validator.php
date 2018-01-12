@@ -61,13 +61,14 @@ class Validator
      * The tweet to be used in parsing.
      *
      * @var string
+     * @deprecated will be removed
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param string  $tweet  The tweet to be validated.
+     * @param string  $tweet  [deprecated] The tweet to be validated.
      * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
      *
      * @see __construct()
@@ -82,7 +83,8 @@ class Validator
     /**
      * Reads in a tweet to be parsed and validates it.
      *
-     * @param string  $tweet  The tweet to validate.
+     * @param string  $tweet  [deprecated] The tweet to validate.
+     * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
      */
     public function __construct($tweet = null, $config = null)
     {

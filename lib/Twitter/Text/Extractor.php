@@ -64,13 +64,14 @@ class Extractor
      * The tweet to be used in parsing.
      *
      * @var string
+     * @deprecated will be removed
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param string  $tweet        The tweet to be converted.
+     * @param string $tweet [deprecated] The tweet to be converted.
      *
      * @see __construct()
      *
@@ -86,7 +87,7 @@ class Extractor
      *
      * Extracts various parts of a tweet including URLs, usernames, hashtags...
      *
-     * @param string  $tweet  The tweet to extract.
+     * @param string $tweet [deprecated] The tweet to extract.
      */
     public function __construct($tweet = null)
     {
