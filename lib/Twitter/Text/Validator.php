@@ -29,31 +29,6 @@ use Twitter\Text\StringUtils;
  */
 class Validator
 {
-
-    /**
-     * The maximum length of a tweet.
-     *
-     * @var int
-     * @deprecated will be removed
-     */
-    const MAX_LENGTH = 140;
-
-    /**
-     * The length of a short URL beginning with http:
-     *
-     * @var int
-     * @deprecated will be removed
-     */
-    protected $short_url_length = 23;
-
-    /**
-     * The length of a short URL beginning with http:
-     *
-     * @var int
-     * @deprecated will be removed
-     */
-    protected $short_url_length_https = 23;
-
     /**
      *
      * @var Extractor
@@ -61,15 +36,21 @@ class Validator
     protected $extractor = null;
 
     /**
+     *
+     * @var Configuration
+     */
+    protected $config = null;
+
+    /**
      * Provides fluent method chaining.
      *
-     * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
+     * @param Configuration $config A Twitter Text Configuration
      *
      * @see __construct()
      *
      * @return Validator
      */
-    public static function create($config = null)
+    public static function create(Configuration $config = null)
     {
         return new self($config);
     }
@@ -77,93 +58,45 @@ class Validator
     /**
      * Reads in a tweet to be parsed and validates it.
      *
-     * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
+     * @param Configuration $config A Twitter Text Configuration
      */
-    public function __construct($config = null)
+    public function __construct(Configuration $config = null)
     {
-        if (!empty($config)) {
-            $this->setConfiguration($config);
-        }
+        $this->_setConfiguration($config);
         $this->extractor = Extractor::create();
     }
 
     /**
-     * Setup short URL length from Twitter API /help/configuration response
+     * Setup configuration
      *
-     * @param mixed $config
+     * @see Configuration
+     *
+     * @param Configuration $config
      * @return Validator
-     * @link https://dev.twitter.com/docs/api/1/get/help/configuration
-     * @deprecated will be removed
+     * @throws \InvalidArgumentException
      */
-    public function setConfiguration($config)
+    public function _setConfiguration(Configuration $config = null)
     {
-        if (is_array($config)) {
-            // setup from array
-            if (isset($config['short_url_length'])) {
-                $this->setShortUrlLength($config['short_url_length']);
-            }
-            if (isset($config['short_url_length_https'])) {
-                $this->setShortUrlLengthHttps($config['short_url_length_https']);
-            }
-        } elseif (is_object($config)) {
-            // setup from object
-            if (isset($config->short_url_length)) {
-                $this->setShortUrlLength($config->short_url_length);
-            }
-            if (isset($config->short_url_length_https)) {
-                $this->setShortUrlLengthHttps($config->short_url_length_https);
-            }
+        if (is_null($config)) {
+            // default use v1 config
+            $this->config = Configuration::v1();
+        } elseif (is_a($config, '\Twitter\Text\Configuration')) {
+            $this->config = $config;
+        } else {
+            throw new \InvalidArgumentException('Invalid Configuration');
         }
 
         return $this;
     }
 
     /**
-     * Set the length of a short URL beginning with http:
+     * Get current configuration
      *
-     * @param mixed $length
-     * @return Validator
-     * @deprecated will be removed
+     * @return Configuration
      */
-    public function setShortUrlLength($length)
+    public function getConfiguration()
     {
-        $this->short_url_length = intval($length);
-        return $this;
-    }
-
-    /**
-     * Get the length of a short URL beginning with http:
-     *
-     * @return int
-     * @deprecated will be removed
-     */
-    public function getShortUrlLength()
-    {
-        return $this->short_url_length;
-    }
-
-    /**
-     * Set the length of a short URL beginning with https:
-     *
-     * @param mixed $length
-     * @return Validator
-     * @deprecated will be removed
-     */
-    public function setShortUrlLengthHttps($length)
-    {
-        $this->short_url_length_https = intval($length);
-        return $this;
-    }
-
-    /**
-     * Get the length of a short URL beginning with https:
-     *
-     * @return int
-     * @deprecated will be removed
-     */
-    public function getShortUrlLengthHttps()
-    {
-        return $this->short_url_length_https;
+        return $this->config;
     }
 
     /**
@@ -177,8 +110,7 @@ class Validator
     public function isValidTweetText($tweet, Configuration $config = null)
     {
         if (is_null($config)) {
-            // default use v1 config
-            $config = Configuration::v1();
+            $config = $this->config;
         }
 
         $result = Parser::create($config)->parseTweet($tweet);
@@ -287,8 +219,7 @@ class Validator
     public function getTweetLength($tweet, Configuration $config = null)
     {
         if (is_null($config)) {
-            // default use v1 config
-            $config = Configuration::v1();
+            $config = $this->config;
         }
 
         $result = Parser::create($config)->parseTweet($tweet);

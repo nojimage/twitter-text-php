@@ -53,14 +53,9 @@ class ValidatorTest extends TestCase
     /**
      * @group Validation
      */
-    public function testConfiglationFromArray()
+    public function testDefaultConfigraionIsV1()
     {
-        $validator = Validator::create('', array(
-                'short_url_length' => 22,
-                'short_url_length_https' => 23,
-        ));
-        $this->assertSame(22, $validator->getShortUrlLength());
-        $this->assertSame(23, $validator->getShortUrlLengthHttps());
+        $this->assertSame(Configuration::v1()->toArray(), $this->validator->getConfiguration()->toArray());
     }
 
     /**
@@ -68,11 +63,8 @@ class ValidatorTest extends TestCase
      */
     public function testConfiglationFromObject()
     {
-        $conf = new \stdClass();
-        $conf->short_url_length = 22;
-        $conf->short_url_length_https = 23;
-        $validator = Validator::create('', $conf);
-        $this->assertSame(22, $validator->getShortUrlLength());
-        $this->assertSame(23, $validator->getShortUrlLengthHttps());
+        $conf = new Configuration();
+        $validator = Validator::create($conf);
+        $this->assertSame($conf, $validator->getConfiguration());
     }
 }
