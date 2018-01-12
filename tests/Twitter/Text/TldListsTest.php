@@ -2,13 +2,13 @@
 
 namespace Twitter\Text;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Twitter\Text\TldLists;
 
 /**
  * Test for TldLists
  */
-class TldListsTest extends PHPUnit_Framework_TestCase
+class TldListsTest extends TestCase
 {
 
     /**

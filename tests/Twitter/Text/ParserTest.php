@@ -9,6 +9,9 @@
 
 namespace Twitter\Text;
 
+use PHPUnit\Framework\TestCase;
+use Twitter\Text\Parser;
+
 /**
  * Twitter Text Parser Unit Tests
  *
@@ -17,7 +20,7 @@ namespace Twitter\Text;
  * @license   http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package   Twitter.Text
  */
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCase
 {
 
     /**
