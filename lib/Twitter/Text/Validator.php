@@ -174,6 +174,7 @@ class Validator
      *
      * @param string $tweet The tweet to validate.
      * @return boolean  Whether the tweet is valid.
+     * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
     public function isValidTweetText($tweet = null)
     {
@@ -301,6 +302,7 @@ class Validator
      *
      * @param string $tweet The tweet to validate.
      * @return int  the length of a tweet.
+     * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
     public function getTweetLength($tweet = null)
     {
