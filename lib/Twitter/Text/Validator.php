@@ -61,40 +61,29 @@ class Validator
     protected $extractor = null;
 
     /**
-     * The tweet to be used in parsing.
-     *
-     * @var string
-     * @deprecated will be removed
-     */
-    protected $tweet = '';
-
-    /**
      * Provides fluent method chaining.
      *
-     * @param string  $tweet  [deprecated] The tweet to be validated.
      * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
      *
      * @see __construct()
      *
      * @return Validator
      */
-    public static function create($tweet = null, $config = null)
+    public static function create($config = null)
     {
-        return new self($tweet, $config);
+        return new self($config);
     }
 
     /**
      * Reads in a tweet to be parsed and validates it.
      *
-     * @param string  $tweet  [deprecated] The tweet to validate.
      * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
      */
-    public function __construct($tweet = null, $config = null)
+    public function __construct($config = null)
     {
         if (!empty($config)) {
             $this->setConfiguration($config);
         }
-        $this->tweet = $tweet;
         $this->extractor = Extractor::create();
     }
 
@@ -185,12 +174,8 @@ class Validator
      * @return boolean  Whether the tweet is valid.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function isValidTweetText($tweet = null, Configuration $config = null)
+    public function isValidTweetText($tweet, Configuration $config = null)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (is_null($config)) {
             // default use v1 config
             $config = Configuration::v1();
@@ -207,11 +192,8 @@ class Validator
      * @param string $username The username to validate.
      * @return boolean  Whether the username is valid.
      */
-    public function isValidUsername($username = null)
+    public function isValidUsername($username)
     {
-        if (is_null($username)) {
-            $username = $this->tweet;
-        }
         $length = StringUtils::strlen($username);
         if (empty($username) || !$length) {
             return false;
@@ -226,11 +208,8 @@ class Validator
      * @param string $list The list name to validate.
      * @return boolean  Whether the list is valid.
      */
-    public function isValidList($list = null)
+    public function isValidList($list)
     {
-        if (is_null($list)) {
-            $list = $this->tweet;
-        }
         $length = StringUtils::strlen($list);
         if (empty($list) || !$length) {
             return false;
@@ -246,11 +225,8 @@ class Validator
      * @param string $hashtag The hashtag to validate.
      * @return boolean  Whether the hashtag is valid.
      */
-    public function isValidHashtag($hashtag = null)
+    public function isValidHashtag($hashtag)
     {
-        if (is_null($hashtag)) {
-            $hashtag = $this->tweet;
-        }
         $length = StringUtils::strlen($hashtag);
         if (empty($hashtag) || !$length) {
             return false;
@@ -268,12 +244,8 @@ class Validator
      *
      * @return boolean  Whether the URL is valid.
      */
-    public function isValidURL($url = null, $unicode_domains = true, $require_protocol = true)
+    public function isValidURL($url, $unicode_domains = true, $require_protocol = true)
     {
-        if (is_null($url)) {
-            $url = $this->tweet;
-        }
-
         $length = StringUtils::strlen($url);
         if (empty($url) || !$length) {
             return false;
@@ -312,11 +284,8 @@ class Validator
      * @return int  the length of a tweet.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function getTweetLength($tweet = null, Configuration $config = null)
+    public function getTweetLength($tweet, Configuration $config = null)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         if (is_null($config)) {
             // default use v1 config
             $config = Configuration::v1();
