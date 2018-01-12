@@ -51,6 +51,11 @@ class Extractor
     const MAX_TCO_SLUG_LENGTH = 40;
 
     /**
+     * The maximum hostname length that the ASCII domain.
+     */
+    const MAX_ASCII_HOSTNAME_LENGTH = 63;
+
+    /**
      * @var boolean
      */
     protected $extractURLWithoutProtocol = true;
@@ -361,6 +366,11 @@ class Extractor
                 $ascii_end_position = 0;
 
                 if (preg_match(Regex::getValidAsciiDomainMatcher(), $domain, $asciiDomain)) {
+                    // check hostname length
+                    if (isset($asciiDomain[1]) && strlen(rtrim($asciiDomain[1], '.')) > static::MAX_ASCII_HOSTNAME_LENGTH) {
+                        continue;
+                    }
+
                     $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
                     $ascii_start_position = StringUtils::strpos($domain, $asciiDomain[0], $ascii_end_position);
                     $ascii_end_position = $ascii_start_position + StringUtils::strlen($asciiDomain[0]);

@@ -194,8 +194,8 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/' . static::getValidSubdomain() . '*' . static::getValidDomainName()
-                . '(?:' . TldLists::getValidGTLD() . '|' . TldLists::getValidCcTLD()
+            $regexp = '/' . static::getValidSubdomain() . '*(' . static::getValidDomainName()
+                . ')(?:' . TldLists::getValidGTLD() . '|' . TldLists::getValidCcTLD()
                 . '|' . static::$validPunycode . ')/iu';
         }
 
@@ -334,7 +334,7 @@ class Regex
     {
         $domainValidChars = static::getValidDomainChars();
 
-        return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]{0,61})?[' . $domainValidChars . ']\.)';
+        return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]*)?[' . $domainValidChars . ']\.)';
     }
 
     /**
