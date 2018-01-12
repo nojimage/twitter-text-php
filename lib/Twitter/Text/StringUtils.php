@@ -108,6 +108,11 @@ class StringUtils
      */
     public static function idnToAscii($domain)
     {
+        // INTL_IDNA_VARIANT_UTS46 defined PHP 5.4.0 or later
+        if (defined('INTL_IDNA_VARIANT_UTS46')) {
+            return idn_to_ascii($domain, IDNA_ALLOW_UNASSIGNED, INTL_IDNA_VARIANT_UTS46);
+        }
+
         return idn_to_ascii($domain, IDNA_ALLOW_UNASSIGNED);
     }
 
