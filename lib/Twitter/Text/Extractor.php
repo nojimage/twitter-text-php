@@ -61,37 +61,24 @@ class Extractor
     protected $extractURLWithoutProtocol = true;
 
     /**
-     * The tweet to be used in parsing.
-     *
-     * @var string
-     * @deprecated will be removed
-     */
-    protected $tweet = '';
-
-    /**
      * Provides fluent method chaining.
-     *
-     * @param string $tweet [deprecated] The tweet to be converted.
      *
      * @see __construct()
      *
      * @return Extractor
      */
-    public static function create($tweet = null)
+    public static function create()
     {
-        return new self($tweet);
+        return new self();
     }
 
     /**
      * Reads in a tweet to be parsed and extracts elements from it.
      *
      * Extracts various parts of a tweet including URLs, usernames, hashtags...
-     *
-     * @param string $tweet [deprecated] The tweet to extract.
      */
-    public function __construct($tweet = null)
+    public function __construct()
     {
-        $this->tweet = $tweet;
     }
 
     /**
@@ -101,11 +88,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The elements in the tweet.
      */
-    public function extract($tweet = null)
+    public function extract($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         return array(
             'hashtags' => $this->extractHashtags($tweet),
             'urls' => $this->extractURLs($tweet),
@@ -123,11 +107,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array list of extracted entities
      */
-    public function extractEntitiesWithIndices($tweet = null)
+    public function extractEntitiesWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         $entities = array();
         $entities = array_merge($entities, $this->extractURLsWithIndices($tweet));
         $entities = array_merge($entities, $this->extractHashtagsWithIndices($tweet, false));
@@ -143,7 +124,7 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The hashtag elements in the tweet.
      */
-    public function extractHashtags($tweet = null)
+    public function extractHashtags($tweet)
     {
         $hashtagsOnly = array();
         $hashtagsWithIndices = $this->extractHashtagsWithIndices($tweet);
@@ -160,7 +141,7 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The cashtag elements in the tweet.
      */
-    public function extractCashtags($tweet = null)
+    public function extractCashtags($tweet)
     {
         $cashtagsOnly = array();
         $cashtagsWithIndices = $this->extractCashtagsWithIndices($tweet);
@@ -177,7 +158,7 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The URL elements in the tweet.
      */
-    public function extractURLs($tweet = null)
+    public function extractURLs($tweet)
     {
         $urlsOnly = array();
         $urlsWithIndices = $this->extractURLsWithIndices($tweet);
@@ -196,7 +177,7 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The usernames elements in the tweet.
      */
-    public function extractMentionedScreennames($tweet = null)
+    public function extractMentionedScreennames($tweet)
     {
         $usernamesOnly = array();
         $mentionsWithIndices = $this->extractMentionsOrListsWithIndices($tweet);
@@ -218,11 +199,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The usernames replied to in a tweet.
      */
-    public function extractReplyScreenname($tweet = null)
+    public function extractReplyScreenname($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         $matched = preg_match(Regex::getValidReplyMatcher(), $tweet, $matches);
         # Check username ending in
         if ($matched && preg_match(Regex::getEndMentionMatcher(), $matches[2])) {
@@ -238,12 +216,8 @@ class Extractor
      * @param boolean $checkUrlOverlap if true, check if extracted hashtags overlap URLs and remove overlapping ones
      * @return array  The hashtag elements in the tweet.
      */
-    public function extractHashtagsWithIndices($tweet = null, $checkUrlOverlap = true)
+    public function extractHashtagsWithIndices($tweet, $checkUrlOverlap = true)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (!preg_match('/[#＃]/iu', $tweet)) {
             return array();
         }
@@ -291,12 +265,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The cashtag elements in the tweet.
      */
-    public function extractCashtagsWithIndices($tweet = null)
+    public function extractCashtagsWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (!preg_match('/\$/iu', $tweet)) {
             return array();
         }
@@ -328,12 +298,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The URLs elements in the tweet.
      */
-    public function extractURLsWithIndices($tweet = null)
+    public function extractURLsWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         $needle = $this->extractURLWithoutProtocol() ? '.' : ':';
         if (strpos($tweet, $needle) === false) {
             return array();
@@ -465,12 +431,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The username elements in the tweet.
      */
-    public function extractMentionedScreennamesWithIndices($tweet = null)
+    public function extractMentionedScreennamesWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         $usernamesOnly = array();
         $mentions = $this->extractMentionsOrListsWithIndices($tweet);
         foreach ($mentions as $mention) {
@@ -488,12 +450,8 @@ class Extractor
      * @param string  $tweet  The tweet to extract.
      * @return array  The username elements in the tweet.
      */
-    public function extractMentionsOrListsWithIndices($tweet = null)
+    public function extractMentionsOrListsWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (!preg_match('/[@＠]/iu', $tweet)) {
             return array();
         }
