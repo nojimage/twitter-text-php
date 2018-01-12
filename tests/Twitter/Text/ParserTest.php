@@ -49,6 +49,14 @@ class ParserTest extends TestCase
     }
 
     /**
+     * test for create
+     */
+    public function testCreate()
+    {
+        $this->assertInstanceOf('\Twitter\Text\Parser', Parser::create());
+    }
+
+    /**
      * test for parseTweet
      */
     public function testParseTweet()
@@ -65,6 +73,32 @@ class ParserTest extends TestCase
         $this->assertSame(210, $result->displayRangeEnd);
         $this->assertSame(0, $result->validRangeStart);
         $this->assertSame(210, $result->validRangeEnd);
+    }
+
+    /**
+     * test for parseTweet with v1 configration
+     */
+    public function testParseTweetWithV1Configuration()
+    {
+        $text = "We're expanding the character limit! We want it to be easier and faster for everyone to express themselves.\n\nMore characters. More expression. More of what's happening.\nhttps://cards.twitter.com/cards/gsby/4ztbu";
+
+        $result = Parser::create(new Configuration(array(
+            'version' => 1,
+            'maxWeightedTweetLength' => 140,
+            'scale' => 1,
+            'defaultWeight' => 1,
+            'transformedURLLength' => 23,
+            'ranges' => array(),
+        )))->parseTweet($text);
+
+        $this->assertInstanceOf('\Twitter\Text\ParseResults', $result);
+        $this->assertSame(192, $result->weightedLength);
+        $this->assertSame(1371, $result->permillage);
+        $this->assertSame(false, $result->valid);
+        $this->assertSame(0, $result->displayRangeStart);
+        $this->assertSame(210, $result->displayRangeEnd);
+        $this->assertSame(0, $result->validRangeStart);
+        $this->assertSame(139, $result->validRangeEnd);
     }
 
     /**

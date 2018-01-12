@@ -26,9 +26,20 @@ class Parser
     private $config;
 
     /**
+     * Create a Parser
+     *
+     * @param Configuration $config
+     * @return Parser
+     */
+    public static function create(Configuration $config = null)
+    {
+        return new self($config);
+    }
+
+    /**
      * construct
      *
-     * @param \Twitter\Text\Configuration $config
+     * @param Configuration $config
      */
     public function __construct(Configuration $config = null)
     {
