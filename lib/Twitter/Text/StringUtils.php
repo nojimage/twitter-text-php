@@ -67,13 +67,13 @@ class StringUtils
     /**
      * A multibyte-aware substring replacement function.
      *
-     * @param  string  $string       The string to modify.
-     * @param  string  $replacement  The replacement string.
-     * @param  int     $start        The start of the replacement.
-     * @param  int     $length       The number of characters to replace.
-     * @param  string  $encoding     The encoding of the string.
+     * @param string  $string       The string to modify.
+     * @param string  $replacement  The replacement string.
+     * @param int     $start        The start of the replacement.
+     * @param int     $length       The number of characters to replace.
+     * @param string  $encoding     The encoding of the string.
      *
-     * @return  string  The modified string.
+     * @return string  The modified string.
      *
      * @see http://www.php.net/manual/en/function.substr-replace.php#90146
      */

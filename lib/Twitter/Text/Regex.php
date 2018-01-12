@@ -33,7 +33,7 @@ class Regex
     /**
      * Contains all generated regular expressions.
      *
-     * @var  string  The regex patterns.
+     * @var string  The regex patterns.
      */
     protected static $patterns = array();
 
@@ -41,7 +41,7 @@ class Regex
      * The tweet to be used in parsing.  This should be populated by the
      * constructor of all subclasses.
      *
-     * @var  string
+     * @var string
      */
     protected $tweet = '';
 
@@ -140,7 +140,7 @@ class Regex
     /**
      * This constructor is used to populate some variables.
      *
-     * @param  string  $tweet  The tweet to parse.
+     * @param string  $tweet  The tweet to parse.
      */
     protected function __construct($tweet = null)
     {

@@ -33,21 +33,21 @@ class Validator
     /**
      * The maximum length of a tweet.
      *
-     * @var  int
+     * @var int
      */
     const MAX_LENGTH = 140;
 
     /**
      * The length of a short URL beginning with http:
      *
-     * @var  int
+     * @var int
      */
     protected $short_url_length = 23;
 
     /**
      * The length of a short URL beginning with http:
      *
-     * @var  int
+     * @var int
      */
     protected $short_url_length_https = 23;
 
@@ -60,19 +60,19 @@ class Validator
     /**
      * The tweet to be used in parsing.
      *
-     * @var  string
+     * @var string
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param  string  $tweet  The tweet to be validated.
-     * @param  mixed   $config Setup short URL length from Twitter API /help/configuration response.
+     * @param string  $tweet  The tweet to be validated.
+     * @param mixed   $config Setup short URL length from Twitter API /help/configuration response.
      *
-     * @see  __construct()
+     * @see __construct()
      *
-     * @return  Validator
+     * @return Validator
      */
     public static function create($tweet = null, $config = null)
     {
@@ -82,7 +82,7 @@ class Validator
     /**
      * Reads in a tweet to be parsed and validates it.
      *
-     * @param  string  $tweet  The tweet to validate.
+     * @param string  $tweet  The tweet to validate.
      */
     public function __construct($tweet = null, $config = null)
     {
@@ -171,7 +171,7 @@ class Validator
      * Check whether a tweet is valid.
      *
      * @param string $tweet The tweet to validate.
-     * @return  boolean  Whether the tweet is valid.
+     * @return boolean  Whether the tweet is valid.
      */
     public function isValidTweetText($tweet = null)
     {
@@ -195,7 +195,7 @@ class Validator
      * Check whether a username is valid.
      *
      * @param string $username The username to validate.
-     * @return  boolean  Whether the username is valid.
+     * @return boolean  Whether the username is valid.
      */
     public function isValidUsername($username = null)
     {
@@ -214,7 +214,7 @@ class Validator
      * Check whether a list is valid.
      *
      * @param string $list The list name to validate.
-     * @return  boolean  Whether the list is valid.
+     * @return boolean  Whether the list is valid.
      */
     public function isValidList($list = null)
     {
@@ -234,7 +234,7 @@ class Validator
      * Check whether a hashtag is valid.
      *
      * @param string $hashtag The hashtag to validate.
-     * @return  boolean  Whether the hashtag is valid.
+     * @return boolean  Whether the hashtag is valid.
      */
     public function isValidHashtag($hashtag = null)
     {
@@ -252,11 +252,11 @@ class Validator
     /**
      * Check whether a URL is valid.
      *
-     * @param  string   $url               The url to validate.
-     * @param  boolean  $unicode_domains   Consider the domain to be unicode.
-     * @param  boolean  $require_protocol  Require a protocol for valid domain?
+     * @param string   $url               The url to validate.
+     * @param boolean  $unicode_domains   Consider the domain to be unicode.
+     * @param boolean  $require_protocol  Require a protocol for valid domain?
      *
-     * @return  boolean  Whether the URL is valid.
+     * @return boolean  Whether the URL is valid.
      */
     public function isValidURL($url = null, $unicode_domains = true, $require_protocol = true)
     {
@@ -298,7 +298,7 @@ class Validator
      * Determines the length of a tweet.  Takes shortening of URLs into account.
      *
      * @param string $tweet The tweet to validate.
-     * @return  int  the length of a tweet.
+     * @return int  the length of a tweet.
      */
     public function getTweetLength($tweet = null)
     {
@@ -317,11 +317,11 @@ class Validator
     /**
      * A helper function to check for a valid match.  Used in URL validation.
      *
-     * @param  string   $string    The subject string to test.
-     * @param  string   $pattern   The pattern to match against.
-     * @param  boolean  $optional  Whether a match is compulsory or not.
+     * @param string   $string    The subject string to test.
+     * @param string   $pattern   The pattern to match against.
+     * @param boolean  $optional  Whether a match is compulsory or not.
      *
-     * @return  boolean  Whether an exact match was found.
+     * @return boolean  Whether an exact match was found.
      */
     protected static function isValidMatch($string, $pattern, $optional = false)
     {

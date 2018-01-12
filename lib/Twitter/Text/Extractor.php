@@ -63,18 +63,18 @@ class Extractor
     /**
      * The tweet to be used in parsing.
      *
-     * @var  string
+     * @var string
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param  string  $tweet        The tweet to be converted.
+     * @param string  $tweet        The tweet to be converted.
      *
-     * @see  __construct()
+     * @see __construct()
      *
-     * @return  Extractor
+     * @return Extractor
      */
     public static function create($tweet = null)
     {
@@ -86,7 +86,7 @@ class Extractor
      *
      * Extracts various parts of a tweet including URLs, usernames, hashtags...
      *
-     * @param  string  $tweet  The tweet to extract.
+     * @param string  $tweet  The tweet to extract.
      */
     public function __construct($tweet = null)
     {
@@ -97,8 +97,8 @@ class Extractor
      * Extracts all parts of a tweet and returns an associative array containing
      * the extracted elements.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The elements in the tweet.
      */
     public function extract($tweet = null)
     {
@@ -119,7 +119,7 @@ class Extractor
     /**
      * Extract URLs, @mentions, lists and #hashtag from a given text/tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
+     * @param string  $tweet  The tweet to extract.
      * @return array list of extracted entities
      */
     public function extractEntitiesWithIndices($tweet = null)
@@ -139,8 +139,8 @@ class Extractor
     /**
      * Extracts all the hashtags from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The hashtag elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The hashtag elements in the tweet.
      */
     public function extractHashtags($tweet = null)
     {
@@ -156,8 +156,8 @@ class Extractor
     /**
      * Extracts all the cashtags from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The cashtag elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The cashtag elements in the tweet.
      */
     public function extractCashtags($tweet = null)
     {
@@ -173,8 +173,8 @@ class Extractor
     /**
      * Extracts all the URLs from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The URL elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The URL elements in the tweet.
      */
     public function extractURLs($tweet = null)
     {
@@ -192,8 +192,8 @@ class Extractor
      *
      * A mention is an occurrence of a username anywhere in a tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The usernames elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The usernames elements in the tweet.
      */
     public function extractMentionedScreennames($tweet = null)
     {
@@ -214,8 +214,8 @@ class Extractor
      *
      * A reply is an occurrence of a username at the beginning of a tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The usernames replied to in a tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The usernames replied to in a tweet.
      */
     public function extractReplyScreenname($tweet = null)
     {
@@ -233,9 +233,9 @@ class Extractor
     /**
      * Extracts all the hashtags and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
+     * @param string  $tweet  The tweet to extract.
      * @param boolean $checkUrlOverlap if true, check if extracted hashtags overlap URLs and remove overlapping ones
-     * @return  array  The hashtag elements in the tweet.
+     * @return array  The hashtag elements in the tweet.
      */
     public function extractHashtagsWithIndices($tweet = null, $checkUrlOverlap = true)
     {
@@ -287,8 +287,8 @@ class Extractor
     /**
      * Extracts all the cashtags and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The cashtag elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The cashtag elements in the tweet.
      */
     public function extractCashtagsWithIndices($tweet = null)
     {
@@ -324,8 +324,8 @@ class Extractor
     /**
      * Extracts all the URLs and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The URLs elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The URLs elements in the tweet.
      */
     public function extractURLsWithIndices($tweet = null)
     {
@@ -461,8 +461,8 @@ class Extractor
     /**
      * Extracts all the usernames and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The username elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The username elements in the tweet.
      */
     public function extractMentionedScreennamesWithIndices($tweet = null)
     {
@@ -484,8 +484,8 @@ class Extractor
     /**
      * Extracts all the usernames and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The username elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The username elements in the tweet.
      */
     public function extractMentionsOrListsWithIndices($tweet = null)
     {

@@ -20,7 +20,7 @@ use Twitter\Text\Extractor;
  * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @param      Extractor $extractor
+ * @param     Extractor $extractor
  */
 class ExtractorTest extends TestCase
 {
@@ -40,9 +40,9 @@ class ExtractorTest extends TestCase
     /**
      * A helper function for providers.
      *
-     * @param  string  $test  The test to fetch data for.
+     * @param string  $test  The test to fetch data for.
      *
-     * @return  array  The test data to provide.
+     * @return array  The test data to provide.
      */
     protected function providerHelper($test)
     {
