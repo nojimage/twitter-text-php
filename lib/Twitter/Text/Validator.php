@@ -34,6 +34,7 @@ class Validator
      * The maximum length of a tweet.
      *
      * @var int
+     * @deprecated will be removed
      */
     const MAX_LENGTH = 140;
 
@@ -41,6 +42,7 @@ class Validator
      * The length of a short URL beginning with http:
      *
      * @var int
+     * @deprecated will be removed
      */
     protected $short_url_length = 23;
 
@@ -48,6 +50,7 @@ class Validator
      * The length of a short URL beginning with http:
      *
      * @var int
+     * @deprecated will be removed
      */
     protected $short_url_length_https = 23;
 
@@ -101,6 +104,7 @@ class Validator
      * @param mixed $config
      * @return Validator
      * @link https://dev.twitter.com/docs/api/1/get/help/configuration
+     * @deprecated will be removed
      */
     public function setConfiguration($config)
     {
@@ -130,6 +134,7 @@ class Validator
      *
      * @param mixed $length
      * @return Validator
+     * @deprecated will be removed
      */
     public function setShortUrlLength($length)
     {
@@ -141,6 +146,7 @@ class Validator
      * Get the length of a short URL beginning with http:
      *
      * @return int
+     * @deprecated will be removed
      */
     public function getShortUrlLength()
     {
@@ -152,6 +158,7 @@ class Validator
      *
      * @param mixed $length
      * @return Validator
+     * @deprecated will be removed
      */
     public function setShortUrlLengthHttps($length)
     {
@@ -163,6 +170,7 @@ class Validator
      * Get the length of a short URL beginning with https:
      *
      * @return int
+     * @deprecated will be removed
      */
     public function getShortUrlLengthHttps()
     {
