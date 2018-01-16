@@ -24,7 +24,6 @@ use Twitter\Text\HitHighlighter;
  */
 class HitHighlighterTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();

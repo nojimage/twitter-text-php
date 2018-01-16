@@ -604,8 +604,10 @@ class Autolink
             //   …
             // </span>
             //
-            // Exception: pic.twitter.com images, for which expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
-            // For those URLs, display_url is not a substring of expanded_url, so we don't do anything special to render the elided parts.
+            // Exception: pic.twitter.com images, for which
+            // expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
+            // For those URLs, display_url is not a substring of expanded_url, so we don't do anything
+            //special to render the elided parts.
             // For a pic.twitter.com URL, the only elided part will be the "https://", so this is fine.
             $displayURL = $entity['display_url'];
             $expandedURL = $entity['expanded_url'];
@@ -614,7 +616,10 @@ class Autolink
 
             if ($diplayURLIndexInExpandedURL !== false) {
                 $beforeDisplayURL = mb_substr($expandedURL, 0, $diplayURLIndexInExpandedURL);
-                $afterDisplayURL = mb_substr($expandedURL, $diplayURLIndexInExpandedURL + mb_strlen($displayURLSansEllipses));
+                $afterDisplayURL = mb_substr(
+                    $expandedURL,
+                    $diplayURLIndexInExpandedURL + mb_strlen($displayURLSansEllipses)
+                );
                 $precedingEllipsis = (preg_match('/\A…/u', $displayURL)) ? '…' : '';
                 $followingEllipsis = (preg_match('/…\z/u', $displayURL)) ? '…' : '';
 

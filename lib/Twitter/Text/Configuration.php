@@ -32,7 +32,7 @@ class Configuration
      *
      * @var array
      */
-    static private $v2Config = array(
+    private static $v2Config = array(
         'version' => 2,
         'maxWeightedTweetLength' => 280,
         'scale' => 100,
@@ -67,7 +67,7 @@ class Configuration
      *
      * @var array
      */
-    static private $v1Config = array(
+    private static $v1Config = array(
         'version' => 1,
         'maxWeightedTweetLength' => 140,
         'scale' => 1,

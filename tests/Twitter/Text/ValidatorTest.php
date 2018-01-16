@@ -24,7 +24,6 @@ use Twitter\Text\Validator;
  */
 class ValidatorTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();

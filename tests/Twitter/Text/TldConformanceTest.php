@@ -24,7 +24,6 @@ use Twitter\Text\Extractor;
  */
 class TldConformanceTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();

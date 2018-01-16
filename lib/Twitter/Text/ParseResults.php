@@ -67,8 +67,13 @@ class ParseResults
      * @param array $displayTextRange
      * @param array $validTextRange
      */
-    public function __construct($weightedLength = 0, $permillage = 0, $isValid = false, array $displayTextRange = array(0, 0), array $validTextRange = array(0, 0))
-    {
+    public function __construct(
+        $weightedLength = 0,
+        $permillage = 0,
+        $isValid = false,
+        array $displayTextRange = array(0, 0),
+        array $validTextRange = array(0, 0)
+    ) {
         $this->weightedLength = $weightedLength;
         $this->permillage = $permillage;
         $this->valid = $isValid;
@@ -108,13 +113,17 @@ class ParseResults
      */
     public function __set($name, $value)
     {
-        if ($name === 'displayRangeStart' && $this->lte($value, $this->displayTextRange[1], $name, 'displayRangeEnd')) {
+        if ($name === 'displayRangeStart'
+            && $this->lte($value, $this->displayTextRange[1], $name, 'displayRangeEnd')) {
             $this->displayTextRange[0] = (int)$value;
-        } elseif ($name === 'displayRangeEnd' && $this->gte($value, $this->displayTextRange[0], $name, 'displayRangeStart')) {
+        } elseif ($name === 'displayRangeEnd'
+            && $this->gte($value, $this->displayTextRange[0], $name, 'displayRangeStart')) {
             $this->displayTextRange[1] = (int)$value;
-        } elseif ($name === 'validRangeStart' && $this->lte($value, $this->validTextRange[1], $name, 'validRangeEnd')) {
+        } elseif ($name === 'validRangeStart'
+            && $this->lte($value, $this->validTextRange[1], $name, 'validRangeEnd')) {
             $this->validTextRange[0] = (int)$value;
-        } elseif ($name === 'validRangeEnd' && $this->gte($value, $this->validTextRange[0], $name, 'validRangeStart')) {
+        } elseif ($name === 'validRangeEnd'
+            && $this->gte($value, $this->validTextRange[0], $name, 'validRangeStart')) {
             $this->validTextRange[1] = (int)$value;
         } elseif ($name === 'valid') {
             $this->result[$name] = (bool)$value;
@@ -136,7 +145,8 @@ class ParseResults
     private function lte($lessValue, $greaterValue, $lessValueLabel, $greaterValueLabel)
     {
         if ($lessValue > $greaterValue) {
-            throw new \RangeException("$lessValueLabel should be less than equals $greaterValueLabel: [$lessValue, $greaterValue]");
+            throw new \RangeException("$lessValueLabel should be less than equals $greaterValueLabel: "
+                . "[$lessValue, $greaterValue]");
         }
 
         return true;
@@ -155,7 +165,8 @@ class ParseResults
     private function gte($greaterValue, $lessValue, $greaterValueLabel, $lessValueLabel)
     {
         if ($lessValue > $greaterValue) {
-            throw new \RangeException("$greaterValueLabel should be greater than equals $lessValueLabel: [$lessValue, $greaterValue]");
+            throw new \RangeException("$greaterValueLabel should be greater than equals $lessValueLabel: "
+                . "[$lessValue, $greaterValue]");
         }
 
         return true;

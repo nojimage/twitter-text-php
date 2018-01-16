@@ -31,7 +31,6 @@ use Twitter\Text\Validator;
  */
 class InternalEncodingTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();
@@ -417,7 +416,10 @@ class InternalEncodingTest extends TestCase
      */
     public function highlightProvider()
     {
-        return array_merge($this->providerHelper('hit_highlighting', 'plain_text'), $this->providerHelper('hit_highlighting', 'with_links'));
+        $plainText = $this->providerHelper('hit_highlighting', 'plain_text');
+        $withLinks = $this->providerHelper('hit_highlighting', 'with_links');
+
+        return array_merge($plainText, $withLinks);
     }
 
     /**

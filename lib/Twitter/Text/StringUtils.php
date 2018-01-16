@@ -97,7 +97,9 @@ class StringUtils
         $suffixOffset = $start + $length;
         $suffixLength = $string_length - $start - $length;
 
-        return static::substr($string, 0, $start, $encoding) . $replacement . static::substr($string, $suffixOffset, $suffixLength, $encoding);
+        return static::substr($string, 0, $start, $encoding)
+            . $replacement
+            . static::substr($string, $suffixOffset, $suffixLength, $encoding);
     }
 
     /**

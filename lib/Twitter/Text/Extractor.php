@@ -325,7 +325,8 @@ class Extractor
             // If protocol is missing and domain contains non-ASCII characters,
             // extract ASCII-only domains.
             if (empty($protocol)) {
-                if (!$this->extractURLWithoutProtocol || preg_match(Regex::getInvalidUrlWithoutProtocolPrecedingCharsMatcher(), $before)) {
+                if (!$this->extractURLWithoutProtocol
+                    || preg_match(Regex::getInvalidUrlWithoutProtocolPrecedingCharsMatcher(), $before)) {
                     continue;
                 }
 
@@ -334,7 +335,8 @@ class Extractor
 
                 if (preg_match(Regex::getValidAsciiDomainMatcher(), $domain, $asciiDomain)) {
                     // check hostname length
-                    if (isset($asciiDomain[1]) && strlen(rtrim($asciiDomain[1], '.')) > static::MAX_ASCII_HOSTNAME_LENGTH) {
+                    if (isset($asciiDomain[1])
+                        && strlen(rtrim($asciiDomain[1], '.')) > static::MAX_ASCII_HOSTNAME_LENGTH) {
                         continue;
                     }
 
@@ -343,7 +345,10 @@ class Extractor
                     $ascii_end_position = $ascii_start_position + StringUtils::strlen($asciiDomain[0]);
                     $last_url = array(
                         'url' => $asciiDomain[0],
-                        'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
+                        'indices' => array(
+                            $start_position + $ascii_start_position,
+                            $start_position + $ascii_end_position
+                        ),
                     );
                     if (!empty($path)
                         || preg_match(Regex::getValidSpecialShortDomainMatcher(), $asciiDomain[0])

@@ -62,7 +62,7 @@ class Validator
      */
     public function __construct(Configuration $config = null)
     {
-        $this->_setConfiguration($config);
+        $this->setConfiguration($config);
         $this->extractor = Extractor::create();
     }
 
@@ -75,7 +75,7 @@ class Validator
      * @return Validator
      * @throws \InvalidArgumentException
      */
-    public function _setConfiguration(Configuration $config = null)
+    public function setConfiguration(Configuration $config = null)
     {
         if (is_null($config)) {
             // default use v1 config
@@ -203,7 +203,9 @@ class Validator
         }
 
         # Check authority:
-        $authorityPattern = $unicode_domains ? Regex::getValidateUrlUnicodeAuthorityMatcher() : Regex::getValidateUrlAuthorityMatcher();
+        $authorityPattern = $unicode_domains ?
+            Regex::getValidateUrlUnicodeAuthorityMatcher() :
+            Regex::getValidateUrlAuthorityMatcher();
 
         return self::isValidMatch($authority, $authorityPattern);
     }
