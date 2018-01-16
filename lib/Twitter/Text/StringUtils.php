@@ -67,38 +67,94 @@ class StringUtils
     /**
      * A multibyte-aware substring replacement function.
      *
-     * @param  string  $string       The string to modify.
-     * @param  string  $replacement  The replacement string.
-     * @param  int     $start        The start of the replacement.
-     * @param  int     $length       The number of characters to replace.
-     * @param  string  $encoding     The encoding of the string.
+     * @param string  $string       The string to modify.
+     * @param string  $replacement  The replacement string.
+     * @param int     $start        The start of the replacement.
+     * @param int     $length       The number of characters to replace.
+     * @param string  $encoding     The encoding of the string.
      *
-     * @return  string  The modified string.
+     * @return string  The modified string.
      *
      * @see http://www.php.net/manual/en/function.substr-replace.php#90146
      */
     public static function substrReplace($string, $replacement, $start, $length = null, $encoding = 'UTF-8')
     {
-        if (extension_loaded('mbstring') === true) {
-            $string_length = static::strlen($string, $encoding);
-            if ($start < 0) {
-                $start = max(0, $string_length + $start);
-            } elseif ($start > $string_length) {
-                $start = $string_length;
-            }
-            if ($length < 0) {
-                $length = max(0, $string_length - $start + $length);
-            } elseif ((is_null($length) === true) || ($length > $string_length)) {
-                $length = $string_length;
-            }
-            if (($start + $length) > $string_length) {
-                $length = $string_length - $start;
-            }
-
-            $suffixOffset = $start + $length;
-            $suffixLength = $string_length - $start - $length;
-            return static::substr($string, 0, $start, $encoding) . $replacement . static::substr($string, $suffixOffset, $suffixLength, $encoding);
+        $string_length = static::strlen($string, $encoding);
+        if ($start < 0) {
+            $start = max(0, $string_length + $start);
+        } elseif ($start > $string_length) {
+            $start = $string_length;
         }
-        return (is_null($length) === true) ? substr_replace($string, $replacement, $start) : substr_replace($string, $replacement, $start, $length);
+        if ($length < 0) {
+            $length = max(0, $string_length - $start + $length);
+        } elseif ((is_null($length) === true) || ($length > $string_length)) {
+            $length = $string_length;
+        }
+        if (($start + $length) > $string_length) {
+            $length = $string_length - $start;
+        }
+
+        $suffixOffset = $start + $length;
+        $suffixLength = $string_length - $start - $length;
+
+        return static::substr($string, 0, $start, $encoding)
+            . $replacement
+            . static::substr($string, $suffixOffset, $suffixLength, $encoding);
+    }
+
+    /**
+     * idn_to_ascii wrapper
+     *
+     * @param string $domain as utf8
+     * @return string
+     */
+    public static function idnToAscii($domain)
+    {
+        // INTL_IDNA_VARIANT_UTS46 defined PHP 5.4.0 or later
+        if (defined('INTL_IDNA_VARIANT_UTS46')) {
+            return idn_to_ascii($domain, IDNA_ALLOW_UNASSIGNED, INTL_IDNA_VARIANT_UTS46);
+        }
+
+        return idn_to_ascii($domain, IDNA_ALLOW_UNASSIGNED);
+    }
+
+    /**
+     * normalize text from NFC
+     *
+     * @param string $text
+     * @return string
+     */
+    public static function normalizeFromNFC($text)
+    {
+        return normalizer_normalize($text);
+    }
+
+    /**
+     * get code point
+     *
+     * @param string $char
+     * @param string $encoding
+     * @return int
+     */
+    public static function ord($char, $encoding = 'UTF-8')
+    {
+        if (mb_strlen($char, $encoding) > 1) {
+            $char = mb_substr($char, 0, 1, $encoding);
+        }
+
+        return current(unpack('N', mb_convert_encoding($char, 'UCS-4BE', $encoding)));
+    }
+
+    /**
+     * get code point at
+     *
+     * @param string $str
+     * @param int $offset
+     * @param string $encoding
+     * @return int
+     */
+    public static function codePointAt($str, $offset, $encoding = 'UTF-8')
+    {
+        return static::ord(mb_substr($str, $offset, 1, $encoding), $encoding);
     }
 }

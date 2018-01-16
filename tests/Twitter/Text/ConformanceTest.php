@@ -27,10 +27,10 @@ use Twitter\Text\Validator;
  * @property Extractor $extractor
  * @property HitHighlighter $highlighter
  * @property Validator $validator
+ * @property Parser $parser
  */
 class ConformanceTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();
@@ -39,6 +39,7 @@ class ConformanceTest extends TestCase
         $this->extractor = new Extractor();
         $this->highlighter = new HitHighlighter();
         $this->validator = new Validator();
+        $this->parser = new Parser();
     }
 
     protected function tearDown()
@@ -50,9 +51,9 @@ class ConformanceTest extends TestCase
     /**
      * A helper function for providers.
      *
-     * @param  string $type  The test to fetch data from.
-     * @param  string $test  The test to fetch data for.
-     * @return  array  The test data to provide.
+     * @param string $type  The test to fetch data from.
+     * @param string $test  The test to fetch data for.
+     * @return array  The test data to provide.
      */
     protected function providerHelper($type, $test)
     {
@@ -220,18 +221,6 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group Extractor
-     * @group deprecated
-     * @dataProvider  extractMentionedScreennamesProvider
-     */
-    public function testExtractMentionedUsernames($description, $text, $expected)
-    {
-        $extracted = Extractor::create($text)->extractMentionedUsernames();
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
      *
      */
     public function extractMentionedScreennamesProvider()
@@ -247,18 +236,6 @@ class ConformanceTest extends TestCase
     public function testExtractMentionedScreennamesWithIndices($description, $text, $expected)
     {
         $extracted = $this->extractor->extractMentionedScreennamesWithIndices($text);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
-     * @group conformance
-     * @group Extractor
-     * @group deprecated
-     * @dataProvider  extractMentionsWithIndicesProvider
-     */
-    public function testExtractMentionedUsernamesWithIndices($description, $text, $expected)
-    {
-        $extracted = Extractor::create($text)->extractMentionedUsernamesWithIndices();
         $this->assertSame($expected, $extracted, $description);
     }
 
@@ -282,18 +259,6 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group Extractor
-     * @group deprecated
-     * @dataProvider  extractMentionsOrListsWithIndicesProvider
-     */
-    public function testExtractMentionedUsernamesOrListsWithIndices($description, $text, $expected)
-    {
-        $extracted = Extractor::create($text)->extractMentionedUsernamesOrListsWithIndices();
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
      *
      */
     public function extractMentionsOrListsWithIndicesProvider()
@@ -309,18 +274,6 @@ class ConformanceTest extends TestCase
     public function testExtractReplyScreenname($description, $text, $expected)
     {
         $extracted = $this->extractor->extractReplyScreenname($text);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
-     * @group conformance
-     * @group Extractor
-     * @group deprecated
-     * @dataProvider  extractReplyScreennameProvider
-     */
-    public function testExtractRepliedUsernames($description, $text, $expected)
-    {
-        $extracted = Extractor::create($text)->extractRepliedUsernames();
         $this->assertSame($expected, $extracted, $description);
     }
 
@@ -392,6 +345,25 @@ class ConformanceTest extends TestCase
     /**
      * @group conformance
      * @group Extractor
+     * @dataProvider  extractHashtagsFromAstralProvider
+     */
+    public function testExtractHashtagsFromAstral($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractHashtags($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractHashtagsFromAstralProvider()
+    {
+        return $this->providerHelper('extract', 'hashtags_from_astral');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractHashtagsWithIndicesProvider
      */
     public function testExtractHashtagsWithIndices($description, $text, $expected)
@@ -458,23 +430,14 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group HitHighlighter
-     * @group deprecated
-     * @dataProvider  highlightProvider
-     */
-    public function testAddHitHighlighting($description, $text, $hits, $expected)
-    {
-        $extracted = HitHighlighter::create($text)->addHitHighlighting($hits);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
      *
      */
     public function highlightProvider()
     {
-        return array_merge($this->providerHelper('hit_highlighting', 'plain_text'), $this->providerHelper('hit_highlighting', 'with_links'));
+        $plainText = $this->providerHelper('hit_highlighting', 'plain_text');
+        $withLinks = $this->providerHelper('hit_highlighting', 'with_links');
+
+        return array_merge($plainText, $withLinks);
     }
 
     /**
@@ -485,18 +448,6 @@ class ConformanceTest extends TestCase
     public function testIsValidTweetText($description, $text, $expected)
     {
         $validated = $this->validator->isValidTweetText($text);
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
-     * @group conformance
-     * @group Validation
-     * @group deprecated
-     * @dataProvider  isValidTweetTextProvider
-     */
-    public function testValidateTweet($description, $text, $expected)
-    {
-        $validated = Validator::create($text)->validateTweet();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -520,18 +471,6 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group Validation
-     * @group deprecated
-     * @dataProvider  isValidUsernameProvider
-     */
-    public function testValidateUsername($description, $text, $expected)
-    {
-        $validated = Validator::create($text)->validateUsername();
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
      *
      */
     public function isValidUsernameProvider()
@@ -547,18 +486,6 @@ class ConformanceTest extends TestCase
     public function testIsValidList($description, $text, $expected)
     {
         $validated = $this->validator->isValidList($text);
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
-     * @group conformance
-     * @group Validation
-     * @group deprecated
-     * @dataProvider  isValidListProvider
-     */
-    public function testValidateList($description, $text, $expected)
-    {
-        $validated = Validator::create($text)->validateList();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -582,18 +509,6 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group Validation
-     * @group deprecated
-     * @dataProvider  isValidHashtagProvider
-     */
-    public function testValidateHashtag($description, $text, $expected)
-    {
-        $validated = Validator::create($text)->validateHashtag();
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
      *
      */
     public function isValidHashtagProvider()
@@ -609,18 +524,6 @@ class ConformanceTest extends TestCase
     public function testIsValidURL($description, $text, $expected)
     {
         $validated = $this->validator->isValidURL($text);
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
-     * @group conformance
-     * @group Validation
-     * @group deprecated
-     * @dataProvider  isValidURLProvider
-     */
-    public function testValidateURL($description, $text, $expected)
-    {
-        $validated = Validator::create($text)->validateURL();
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -663,22 +566,29 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group Validation
-     * @group deprecated
-     * @dataProvider  getTweetLengthProvider
-     */
-    public function testGetLength($description, $text, $expected)
-    {
-        $validated = Validator::create($text)->getLength();
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
      *
      */
     public function getTweetLengthProvider()
     {
         return $this->providerHelper('validate', 'lengths');
+    }
+
+    /**
+     * @group conformance
+     * @group Validaion
+     * @dataProvider getWeightedTweetsCounterTestProvider
+     */
+    public function testGetWeightedTweetsCounter($description, $text, $expected)
+    {
+        $result = $this->parser->parseTweet($text);
+        $this->assertSame($expected, $result->toArray(), $description);
+    }
+
+    /**
+     *
+     */
+    public function getWeightedTweetsCounterTestProvider()
+    {
+        return $this->providerHelper('validate', 'WeightedTweetsCounterTest');
     }
 }
