@@ -29,28 +29,6 @@ use Twitter\Text\StringUtils;
  */
 class Validator
 {
-
-    /**
-     * The maximum length of a tweet.
-     *
-     * @var  int
-     */
-    const MAX_LENGTH = 140;
-
-    /**
-     * The length of a short URL beginning with http:
-     *
-     * @var  int
-     */
-    protected $short_url_length = 23;
-
-    /**
-     * The length of a short URL beginning with http:
-     *
-     * @var  int
-     */
-    protected $short_url_length_https = 23;
-
     /**
      *
      * @var Extractor
@@ -58,161 +36,96 @@ class Validator
     protected $extractor = null;
 
     /**
-     * The tweet to be used in parsing.
      *
-     * @var  string
+     * @var Configuration
      */
-    protected $tweet = '';
+    protected $config = null;
 
     /**
      * Provides fluent method chaining.
      *
-     * @param  string  $tweet  The tweet to be validated.
-     * @param  mixed   $config Setup short URL length from Twitter API /help/configuration response.
+     * @param Configuration $config A Twitter Text Configuration
      *
-     * @see  __construct()
+     * @see __construct()
      *
-     * @return  Validator
+     * @return Validator
      */
-    public static function create($tweet = null, $config = null)
+    public static function create(Configuration $config = null)
     {
-        return new self($tweet, $config);
+        return new self($config);
     }
 
     /**
      * Reads in a tweet to be parsed and validates it.
      *
-     * @param  string  $tweet  The tweet to validate.
+     * @param Configuration $config A Twitter Text Configuration
      */
-    public function __construct($tweet = null, $config = null)
+    public function __construct(Configuration $config = null)
     {
-        if (!empty($config)) {
-            $this->setConfiguration($config);
-        }
-        $this->tweet = $tweet;
+        $this->setConfiguration($config);
         $this->extractor = Extractor::create();
     }
 
     /**
-     * Setup short URL length from Twitter API /help/configuration response
+     * Setup configuration
      *
-     * @param mixed $config
+     * @see Configuration
+     *
+     * @param Configuration $config
      * @return Validator
-     * @link https://dev.twitter.com/docs/api/1/get/help/configuration
+     * @throws \InvalidArgumentException
      */
-    public function setConfiguration($config)
+    public function setConfiguration(Configuration $config = null)
     {
-        if (is_array($config)) {
-            // setup from array
-            if (isset($config['short_url_length'])) {
-                $this->setShortUrlLength($config['short_url_length']);
-            }
-            if (isset($config['short_url_length_https'])) {
-                $this->setShortUrlLengthHttps($config['short_url_length_https']);
-            }
-        } elseif (is_object($config)) {
-            // setup from object
-            if (isset($config->short_url_length)) {
-                $this->setShortUrlLength($config->short_url_length);
-            }
-            if (isset($config->short_url_length_https)) {
-                $this->setShortUrlLengthHttps($config->short_url_length_https);
-            }
+        if (is_null($config)) {
+            // default use v1 config
+            $this->config = Configuration::v1();
+        } elseif (is_a($config, '\Twitter\Text\Configuration')) {
+            $this->config = $config;
+        } else {
+            throw new \InvalidArgumentException('Invalid Configuration');
         }
 
         return $this;
     }
 
     /**
-     * Set the length of a short URL beginning with http:
+     * Get current configuration
      *
-     * @param mixed $length
-     * @return Validator
+     * @return Configuration
      */
-    public function setShortUrlLength($length)
+    public function getConfiguration()
     {
-        $this->short_url_length = intval($length);
-        return $this;
-    }
-
-    /**
-     * Get the length of a short URL beginning with http:
-     *
-     * @return int
-     */
-    public function getShortUrlLength()
-    {
-        return $this->short_url_length;
-    }
-
-    /**
-     * Set the length of a short URL beginning with https:
-     *
-     * @param mixed $length
-     * @return Validator
-     */
-    public function setShortUrlLengthHttps($length)
-    {
-        $this->short_url_length_https = intval($length);
-        return $this;
-    }
-
-    /**
-     * Get the length of a short URL beginning with https:
-     *
-     * @return int
-     */
-    public function getShortUrlLengthHttps()
-    {
-        return $this->short_url_length_https;
+        return $this->config;
     }
 
     /**
      * Check whether a tweet is valid.
      *
-     * @param string $tweet The tweet to validate.
-     * @return  boolean  Whether the tweet is valid.
+     * @param string        $tweet  The tweet to validate.
+     * @param Configuration $config using configration
+     * @return boolean  Whether the tweet is valid.
+     * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function isValidTweetText($tweet = null)
+    public function isValidTweetText($tweet, Configuration $config = null)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
+        if (is_null($config)) {
+            $config = $this->config;
         }
-        $length = $this->getTweetLength($tweet);
-        if (!$tweet || !$length) {
-            return false;
-        }
-        if ($length > self::MAX_LENGTH) {
-            return false;
-        }
-        if (preg_match(Regex::getInvalidCharactersMatcher(), $tweet)) {
-            return false;
-        }
-        return true;
-    }
 
-    /**
-     * Check whether a tweet is valid.
-     *
-     * @return  boolean  Whether the tweet is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateTweet()
-    {
-        return $this->isValidTweetText();
+        $result = Parser::create($config)->parseTweet($tweet);
+
+        return $result->valid;
     }
 
     /**
      * Check whether a username is valid.
      *
      * @param string $username The username to validate.
-     * @return  boolean  Whether the username is valid.
+     * @return boolean  Whether the username is valid.
      */
-    public function isValidUsername($username = null)
+    public function isValidUsername($username)
     {
-        if (is_null($username)) {
-            $username = $this->tweet;
-        }
         $length = StringUtils::strlen($username);
         if (empty($username) || !$length) {
             return false;
@@ -222,27 +135,13 @@ class Validator
     }
 
     /**
-     * Check whether a username is valid.
-     *
-     * @return  boolean  Whether the username is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateUsername()
-    {
-        return $this->isValidUsername();
-    }
-
-    /**
      * Check whether a list is valid.
      *
      * @param string $list The list name to validate.
-     * @return  boolean  Whether the list is valid.
+     * @return boolean  Whether the list is valid.
      */
-    public function isValidList($list = null)
+    public function isValidList($list)
     {
-        if (is_null($list)) {
-            $list = $this->tweet;
-        }
         $length = StringUtils::strlen($list);
         if (empty($list) || !$length) {
             return false;
@@ -253,27 +152,13 @@ class Validator
     }
 
     /**
-     * Check whether a list is valid.
-     *
-     * @return  boolean  Whether the list is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateList()
-    {
-        return $this->isValidList();
-    }
-
-    /**
      * Check whether a hashtag is valid.
      *
      * @param string $hashtag The hashtag to validate.
-     * @return  boolean  Whether the hashtag is valid.
+     * @return boolean  Whether the hashtag is valid.
      */
-    public function isValidHashtag($hashtag = null)
+    public function isValidHashtag($hashtag)
     {
-        if (is_null($hashtag)) {
-            $hashtag = $this->tweet;
-        }
         $length = StringUtils::strlen($hashtag);
         if (empty($hashtag) || !$length) {
             return false;
@@ -283,31 +168,16 @@ class Validator
     }
 
     /**
-     * Check whether a hashtag is valid.
-     *
-     * @return  boolean  Whether the hashtag is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateHashtag()
-    {
-        return $this->isValidHashtag();
-    }
-
-    /**
      * Check whether a URL is valid.
      *
-     * @param  string   $url               The url to validate.
-     * @param  boolean  $unicode_domains   Consider the domain to be unicode.
-     * @param  boolean  $require_protocol  Require a protocol for valid domain?
+     * @param string   $url               The url to validate.
+     * @param boolean  $unicode_domains   Consider the domain to be unicode.
+     * @param boolean  $require_protocol  Require a protocol for valid domain?
      *
-     * @return  boolean  Whether the URL is valid.
+     * @return boolean  Whether the URL is valid.
      */
-    public function isValidURL($url = null, $unicode_domains = true, $require_protocol = true)
+    public function isValidURL($url, $unicode_domains = true, $require_protocol = true)
     {
-        if (is_null($url)) {
-            $url = $this->tweet;
-        }
-
         $length = StringUtils::strlen($url);
         if (empty($url) || !$length) {
             return false;
@@ -333,64 +203,40 @@ class Validator
         }
 
         # Check authority:
-        $authorityPattern = $unicode_domains ? Regex::getValidateUrlUnicodeAuthorityMatcher() : Regex::getValidateUrlAuthorityMatcher();
+        $authorityPattern = $unicode_domains ?
+            Regex::getValidateUrlUnicodeAuthorityMatcher() :
+            Regex::getValidateUrlAuthorityMatcher();
 
         return self::isValidMatch($authority, $authorityPattern);
-    }
-
-    /**
-     * Check whether a URL is valid.
-     *
-     * @param  boolean  $unicode_domains   Consider the domain to be unicode.
-     * @param  boolean  $require_protocol  Require a protocol for valid domain?
-     *
-     * @return  boolean  Whether the URL is valid.
-     * @deprecated since version 1.1.0
-     */
-    public function validateURL($unicode_domains = true, $require_protocol = true)
-    {
-        return $this->isValidURL(null, $unicode_domains, $require_protocol);
     }
 
     /**
      * Determines the length of a tweet.  Takes shortening of URLs into account.
      *
      * @param string $tweet The tweet to validate.
-     * @return  int  the length of a tweet.
+     * @param Configuration $config using configration
+     * @return int  the length of a tweet.
+     * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function getTweetLength($tweet = null)
+    public function getTweetLength($tweet, Configuration $config = null)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
+        if (is_null($config)) {
+            $config = $this->config;
         }
-        $length = StringUtils::strlen($tweet);
-        $urls_with_indices = $this->extractor->extractURLsWithIndices($tweet);
-        foreach ($urls_with_indices as $x) {
-            $length += $x['indices'][0] - $x['indices'][1];
-            $length += stripos($x['url'], 'https://') === 0 ? $this->short_url_length_https : $this->short_url_length;
-        }
-        return $length;
-    }
 
-    /**
-     * Determines the length of a tweet.  Takes shortening of URLs into account.
-     *
-     * @return  int  the length of a tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function getLength()
-    {
-        return $this->getTweetLength();
+        $result = Parser::create($config)->parseTweet($tweet);
+
+        return $result->weightedLength;
     }
 
     /**
      * A helper function to check for a valid match.  Used in URL validation.
      *
-     * @param  string   $string    The subject string to test.
-     * @param  string   $pattern   The pattern to match against.
-     * @param  boolean  $optional  Whether a match is compulsory or not.
+     * @param string   $string    The subject string to test.
+     * @param string   $pattern   The pattern to match against.
+     * @param boolean  $optional  Whether a match is compulsory or not.
      *
-     * @return  boolean  Whether an exact match was found.
+     * @return boolean  Whether an exact match was found.
      */
     protected static function isValidMatch($string, $pattern, $optional = false)
     {

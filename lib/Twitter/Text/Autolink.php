@@ -36,70 +36,70 @@ class Autolink
     /**
      * CSS class for auto-linked URLs.
      *
-     * @var  string
+     * @var string
      */
     protected $class_url = '';
 
     /**
      * CSS class for auto-linked username URLs.
      *
-     * @var  string
+     * @var string
      */
     protected $class_user = 'tweet-url username';
 
     /**
      * CSS class for auto-linked list URLs.
      *
-     * @var  string
+     * @var string
      */
     protected $class_list = 'tweet-url list-slug';
 
     /**
      * CSS class for auto-linked hashtag URLs.
      *
-     * @var  string
+     * @var string
      */
     protected $class_hash = 'tweet-url hashtag';
 
     /**
      * CSS class for auto-linked cashtag URLs.
      *
-     * @var  string
+     * @var string
      */
     protected $class_cash = 'tweet-url cashtag';
 
     /**
      * URL base for username links (the username without the @ will be appended).
      *
-     * @var  string
+     * @var string
      */
     protected $url_base_user = 'https://twitter.com/';
 
     /**
      * URL base for list links (the username/list without the @ will be appended).
      *
-     * @var  string
+     * @var string
      */
     protected $url_base_list = 'https://twitter.com/';
 
     /**
      * URL base for hashtag links (the hashtag without the # will be appended).
      *
-     * @var  string
+     * @var string
      */
-    protected $url_base_hash = 'https://twitter.com/#!/search?q=%23';
+    protected $url_base_hash = 'https://twitter.com/search?q=%23';
 
     /**
      * URL base for cashtag links (the hashtag without the $ will be appended).
      *
-     * @var  string
+     * @var string
      */
-    protected $url_base_cash = 'https://twitter.com/#!/search?q=%24';
+    protected $url_base_cash = 'https://twitter.com/search?q=%24';
 
     /**
      * Whether to include the value 'nofollow' in the 'rel' attribute.
      *
-     * @var  bool
+     * @var bool
      */
     protected $nofollow = true;
 
@@ -111,7 +111,7 @@ class Autolink
      * been undeprecated and thus the 'target' attribute can be used.  If this is
      * set to false then the 'target' attribute will be output.
      *
-     * @var  bool
+     * @var bool
      */
     protected $external = true;
 
@@ -122,7 +122,7 @@ class Autolink
      * since been reinstated in HTML 5.  To output the 'target' attribute you
      * must disable the adding of the string 'external' to the 'rel' attribute.
      *
-     * @var  string
+     * @var string
      */
     protected $target = '_blank';
 
@@ -142,19 +142,20 @@ class Autolink
     /**
      * The tweet to be used in parsing.
      *
-     * @var  string
+     * @var string
+     * @deprecated will be removed
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param  string  $tweet        The tweet to be converted.
-     * @param  bool    $full_encode  Whether to encode all special characters.
+     * @param string  $tweet        [deprecated] The tweet to be converted.
+     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
      *
-     * @see  __construct()
+     * @see __construct()
      *
-     * @return  Autolink
+     * @return Autolink
      */
     public static function create($tweet = null, $full_encode = false)
     {
@@ -167,11 +168,11 @@ class Autolink
      * As the intent is to produce links and output the modified tweet to the
      * user, we take this opportunity to ensure that we escape user input.
      *
-     * @see  htmlspecialchars()
+     * @see htmlspecialchars()
      *
-     * @param  string  $tweet        The tweet to be converted.
-     * @param  bool    $escape       Whether to escape the tweet (default: true).
-     * @param  bool    $full_encode  Whether to encode all special characters.
+     * @param string  $tweet        [deprecated] The tweet to be converted.
+     * @param bool    $escape       [deprecated] Whether to escape the tweet (default: true).
+     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
      */
     public function __construct($tweet = null, $escape = true, $full_encode = false)
     {
@@ -191,7 +192,7 @@ class Autolink
     /**
      * CSS class for auto-linked URLs.
      *
-     * @return  string  CSS class for URL links.
+     * @return string  CSS class for URL links.
      */
     public function getURLClass()
     {
@@ -201,9 +202,9 @@ class Autolink
     /**
      * CSS class for auto-linked URLs.
      *
-     * @param  string  $v  CSS class for URL links.
+     * @param string  $v  CSS class for URL links.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setURLClass($v)
     {
@@ -214,7 +215,7 @@ class Autolink
     /**
      * CSS class for auto-linked username URLs.
      *
-     * @return  string  CSS class for username links.
+     * @return string  CSS class for username links.
      */
     public function getUsernameClass()
     {
@@ -224,9 +225,9 @@ class Autolink
     /**
      * CSS class for auto-linked username URLs.
      *
-     * @param  string  $v  CSS class for username links.
+     * @param string  $v  CSS class for username links.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setUsernameClass($v)
     {
@@ -237,7 +238,7 @@ class Autolink
     /**
      * CSS class for auto-linked username/list URLs.
      *
-     * @return  string  CSS class for username/list links.
+     * @return string  CSS class for username/list links.
      */
     public function getListClass()
     {
@@ -247,9 +248,9 @@ class Autolink
     /**
      * CSS class for auto-linked username/list URLs.
      *
-     * @param  string  $v  CSS class for username/list links.
+     * @param string  $v  CSS class for username/list links.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setListClass($v)
     {
@@ -260,7 +261,7 @@ class Autolink
     /**
      * CSS class for auto-linked hashtag URLs.
      *
-     * @return  string  CSS class for hashtag links.
+     * @return string  CSS class for hashtag links.
      */
     public function getHashtagClass()
     {
@@ -270,9 +271,9 @@ class Autolink
     /**
      * CSS class for auto-linked hashtag URLs.
      *
-     * @param  string  $v  CSS class for hashtag links.
+     * @param string  $v  CSS class for hashtag links.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setHashtagClass($v)
     {
@@ -283,7 +284,7 @@ class Autolink
     /**
      * CSS class for auto-linked cashtag URLs.
      *
-     * @return  string  CSS class for cashtag links.
+     * @return string  CSS class for cashtag links.
      */
     public function getCashtagClass()
     {
@@ -293,9 +294,9 @@ class Autolink
     /**
      * CSS class for auto-linked cashtag URLs.
      *
-     * @param  string  $v  CSS class for cashtag links.
+     * @param string  $v  CSS class for cashtag links.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setCashtagClass($v)
     {
@@ -306,7 +307,7 @@ class Autolink
     /**
      * Whether to include the value 'nofollow' in the 'rel' attribute.
      *
-     * @return  bool  Whether to add 'nofollow' to the 'rel' attribute.
+     * @return bool  Whether to add 'nofollow' to the 'rel' attribute.
      */
     public function getNoFollow()
     {
@@ -316,9 +317,9 @@ class Autolink
     /**
      * Whether to include the value 'nofollow' in the 'rel' attribute.
      *
-     * @param  bool  $v  The value to add to the 'target' attribute.
+     * @param bool  $v  The value to add to the 'target' attribute.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setNoFollow($v)
     {
@@ -334,7 +335,7 @@ class Autolink
      * been undeprecated and thus the 'target' attribute can be used.  If this is
      * set to false then the 'target' attribute will be output.
      *
-     * @return  bool  Whether to add 'external' to the 'rel' attribute.
+     * @return bool  Whether to add 'external' to the 'rel' attribute.
      */
     public function getExternal()
     {
@@ -349,9 +350,9 @@ class Autolink
      * been undeprecated and thus the 'target' attribute can be used.  If this is
      * set to false then the 'target' attribute will be output.
      *
-     * @param  bool  $v  The value to add to the 'target' attribute.
+     * @param bool  $v  The value to add to the 'target' attribute.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setExternal($v)
     {
@@ -366,7 +367,7 @@ class Autolink
      * since been reinstated in HTML 5.  To output the 'target' attribute you
      * must disable the adding of the string 'external' to the 'rel' attribute.
      *
-     * @return  string  The value to add to the 'target' attribute.
+     * @return string  The value to add to the 'target' attribute.
      */
     public function getTarget()
     {
@@ -380,9 +381,9 @@ class Autolink
      * since been reinstated in HTML 5.  To output the 'target' attribute you
      * must disable the adding of the string 'external' to the 'rel' attribute.
      *
-     * @param  string  $v  The value to add to the 'target' attribute.
+     * @param string  $v  The value to add to the 'target' attribute.
      *
-     * @return  Autolink  Fluid method chaining.
+     * @return Autolink  Fluid method chaining.
      */
     public function setTarget($v)
     {
@@ -431,8 +432,8 @@ class Autolink
     /**
      * Auto-link hashtags, URLs, usernames and lists, with JSON entities.
      *
-     * @param  string The tweet to be converted
-     * @param  mixed  The entities info
+     * @param string The tweet to be converted
+     * @param mixed  The entities info
      * @return string that auto-link HTML added
      * @since 1.1.0
      */
@@ -480,7 +481,7 @@ class Autolink
     /**
      * Auto-link hashtags, URLs, usernames and lists.
      *
-     * @param  string The tweet to be converted
+     * @param string The tweet to be converted
      * @return string that auto-link HTML added
      * @since 1.1.0
      */
@@ -603,8 +604,10 @@ class Autolink
             //   …
             // </span>
             //
-            // Exception: pic.twitter.com images, for which expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
-            // For those URLs, display_url is not a substring of expanded_url, so we don't do anything special to render the elided parts.
+            // Exception: pic.twitter.com images, for which
+            // expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
+            // For those URLs, display_url is not a substring of expanded_url, so we don't do anything
+            //special to render the elided parts.
             // For a pic.twitter.com URL, the only elided part will be the "https://", so this is fine.
             $displayURL = $entity['display_url'];
             $expandedURL = $entity['expanded_url'];
@@ -613,7 +616,10 @@ class Autolink
 
             if ($diplayURLIndexInExpandedURL !== false) {
                 $beforeDisplayURL = mb_substr($expandedURL, 0, $diplayURLIndexInExpandedURL);
-                $afterDisplayURL = mb_substr($expandedURL, $diplayURLIndexInExpandedURL + mb_strlen($displayURLSansEllipses));
+                $afterDisplayURL = mb_substr(
+                    $expandedURL,
+                    $diplayURLIndexInExpandedURL + mb_strlen($displayURLSansEllipses)
+                );
                 $precedingEllipsis = (preg_match('/\A…/u', $displayURL)) ? '…' : '';
                 $followingEllipsis = (preg_match('/…\z/u', $displayURL)) ? '…' : '';
 

@@ -23,7 +23,6 @@ use Twitter\Text\Autolink;
  */
 class AutolinkTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();
@@ -46,6 +45,11 @@ class AutolinkTest extends TestCase
     {
         $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
         $linkedText = $this->linker->autoLink($text);
-        $this->assertSame('@<a class="tweet-url username" href="https://twitter.com/ummjackson" rel="external nofollow" target="_blank">ummjackson</a> 🤡 <a href="https://i.imgur.com/I32CQ81.jpg" rel="external nofollow" target="_blank">https://i.imgur.com/I32CQ81.jpg</a>', $linkedText);
+
+        // @codingStandardsIgnoreStart
+        $expected = '@<a class="tweet-url username" href="https://twitter.com/ummjackson" rel="external nofollow" target="_blank">ummjackson</a> 🤡 <a href="https://i.imgur.com/I32CQ81.jpg" rel="external nofollow" target="_blank">https://i.imgur.com/I32CQ81.jpg</a>';
+        // @codingStandardsIgnoreEnd
+
+        $this->assertSame($expected, $linkedText);
     }
 }

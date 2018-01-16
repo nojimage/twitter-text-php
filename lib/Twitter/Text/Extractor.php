@@ -33,55 +33,63 @@ class Extractor
 {
 
     /**
+     * The maximum url length that the Twitter backend supports.
+     */
+    const MAX_URL_LENGTH = 4096;
+
+    /**
+     * The backend adds http:// for normal links and https to *.twitter.com URLs (it also rewrites http to https for
+     * URLs matching *.twitter.com). We're better off adding https:// all the time.
+     * By making the assumption that URL_GROUP_PROTOCOL_LENGTH is https, the trade off is we'll disallow a http URL
+     * that is 4096 characters.
+     */
+    const URL_GROUP_PROTOCOL_LENGTH = 4104; // https:// + MAX_URL_LENGTH
+
+    /**
+     * The maximum t.co path length that the Twitter backend supports.
+     */
+    const MAX_TCO_SLUG_LENGTH = 40;
+
+    /**
+     * The maximum hostname length that the ASCII domain.
+     */
+    const MAX_ASCII_HOSTNAME_LENGTH = 63;
+
+    /**
      * @var boolean
      */
     protected $extractURLWithoutProtocol = true;
 
     /**
-     * The tweet to be used in parsing.
-     *
-     * @var  string
-     */
-    protected $tweet = '';
-
-    /**
      * Provides fluent method chaining.
      *
-     * @param  string  $tweet        The tweet to be converted.
+     * @see __construct()
      *
-     * @see  __construct()
-     *
-     * @return  Extractor
+     * @return Extractor
      */
-    public static function create($tweet = null)
+    public static function create()
     {
-        return new self($tweet);
+        return new self();
     }
 
     /**
      * Reads in a tweet to be parsed and extracts elements from it.
      *
      * Extracts various parts of a tweet including URLs, usernames, hashtags...
-     *
-     * @param  string  $tweet  The tweet to extract.
      */
-    public function __construct($tweet = null)
+    public function __construct()
     {
-        $this->tweet = $tweet;
     }
 
     /**
      * Extracts all parts of a tweet and returns an associative array containing
      * the extracted elements.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The elements in the tweet.
      */
-    public function extract($tweet = null)
+    public function extract($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         return array(
             'hashtags' => $this->extractHashtags($tweet),
             'urls' => $this->extractURLs($tweet),
@@ -96,14 +104,11 @@ class Extractor
     /**
      * Extract URLs, @mentions, lists and #hashtag from a given text/tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
+     * @param string  $tweet  The tweet to extract.
      * @return array list of extracted entities
      */
-    public function extractEntitiesWithIndices($tweet = null)
+    public function extractEntitiesWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         $entities = array();
         $entities = array_merge($entities, $this->extractURLsWithIndices($tweet));
         $entities = array_merge($entities, $this->extractHashtagsWithIndices($tweet, false));
@@ -116,10 +121,10 @@ class Extractor
     /**
      * Extracts all the hashtags from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The hashtag elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The hashtag elements in the tweet.
      */
-    public function extractHashtags($tweet = null)
+    public function extractHashtags($tweet)
     {
         $hashtagsOnly = array();
         $hashtagsWithIndices = $this->extractHashtagsWithIndices($tweet);
@@ -133,10 +138,10 @@ class Extractor
     /**
      * Extracts all the cashtags from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The cashtag elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The cashtag elements in the tweet.
      */
-    public function extractCashtags($tweet = null)
+    public function extractCashtags($tweet)
     {
         $cashtagsOnly = array();
         $cashtagsWithIndices = $this->extractCashtagsWithIndices($tweet);
@@ -150,10 +155,10 @@ class Extractor
     /**
      * Extracts all the URLs from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The URL elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The URL elements in the tweet.
      */
-    public function extractURLs($tweet = null)
+    public function extractURLs($tweet)
     {
         $urlsOnly = array();
         $urlsWithIndices = $this->extractURLsWithIndices($tweet);
@@ -169,10 +174,10 @@ class Extractor
      *
      * A mention is an occurrence of a username anywhere in a tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The usernames elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The usernames elements in the tweet.
      */
-    public function extractMentionedScreennames($tweet = null)
+    public function extractMentionedScreennames($tweet)
     {
         $usernamesOnly = array();
         $mentionsWithIndices = $this->extractMentionsOrListsWithIndices($tweet);
@@ -187,31 +192,15 @@ class Extractor
     }
 
     /**
-     * Extract all the usernames from the tweet.
-     *
-     * A mention is an occurrence of a username anywhere in a tweet.
-     *
-     * @return  array  The usernames elements in the tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractMentionedUsernames()
-    {
-        return $this->extractMentionedScreennames();
-    }
-
-    /**
      * Extract all the usernames replied to from the tweet.
      *
      * A reply is an occurrence of a username at the beginning of a tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The usernames replied to in a tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The usernames replied to in a tweet.
      */
-    public function extractReplyScreenname($tweet = null)
+    public function extractReplyScreenname($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
         $matched = preg_match(Regex::getValidReplyMatcher(), $tweet, $matches);
         # Check username ending in
         if ($matched && preg_match(Regex::getEndMentionMatcher(), $matches[2])) {
@@ -221,31 +210,14 @@ class Extractor
     }
 
     /**
-     * Extract all the usernames replied to from the tweet.
-     *
-     * A reply is an occurrence of a username at the beginning of a tweet.
-     *
-     * @return  array  The usernames replied to in a tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractRepliedUsernames()
-    {
-        return $this->extractReplyScreenname();
-    }
-
-    /**
      * Extracts all the hashtags and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
+     * @param string  $tweet  The tweet to extract.
      * @param boolean $checkUrlOverlap if true, check if extracted hashtags overlap URLs and remove overlapping ones
-     * @return  array  The hashtag elements in the tweet.
+     * @return array  The hashtag elements in the tweet.
      */
-    public function extractHashtagsWithIndices($tweet = null, $checkUrlOverlap = true)
+    public function extractHashtagsWithIndices($tweet, $checkUrlOverlap = true)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (!preg_match('/[#＃]/iu', $tweet)) {
             return array();
         }
@@ -290,15 +262,11 @@ class Extractor
     /**
      * Extracts all the cashtags and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The cashtag elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The cashtag elements in the tweet.
      */
-    public function extractCashtagsWithIndices($tweet = null)
+    public function extractCashtagsWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (!preg_match('/\$/iu', $tweet)) {
             return array();
         }
@@ -327,15 +295,11 @@ class Extractor
     /**
      * Extracts all the URLs and the indices they occur at from the tweet.
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The URLs elements in the tweet.
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The URLs elements in the tweet.
      */
-    public function extractURLsWithIndices($tweet = null)
+    public function extractURLsWithIndices($tweet)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         $needle = $this->extractURLWithoutProtocol() ? '.' : ':';
         if (strpos($tweet, $needle) === false) {
             return array();
@@ -361,7 +325,8 @@ class Extractor
             // If protocol is missing and domain contains non-ASCII characters,
             // extract ASCII-only domains.
             if (empty($protocol)) {
-                if (!$this->extractURLWithoutProtocol || preg_match(Regex::getInvalidUrlWithoutProtocolPrecedingCharsMatcher(), $before)) {
+                if (!$this->extractURLWithoutProtocol
+                    || preg_match(Regex::getInvalidUrlWithoutProtocolPrecedingCharsMatcher(), $before)) {
                     continue;
                 }
 
@@ -369,12 +334,21 @@ class Extractor
                 $ascii_end_position = 0;
 
                 if (preg_match(Regex::getValidAsciiDomainMatcher(), $domain, $asciiDomain)) {
+                    // check hostname length
+                    if (isset($asciiDomain[1])
+                        && strlen(rtrim($asciiDomain[1], '.')) > static::MAX_ASCII_HOSTNAME_LENGTH) {
+                        continue;
+                    }
+
                     $asciiDomain[0] = preg_replace('/' . preg_quote($domain, '/') . '/u', $asciiDomain[0], $url);
                     $ascii_start_position = StringUtils::strpos($domain, $asciiDomain[0], $ascii_end_position);
                     $ascii_end_position = $ascii_start_position + StringUtils::strlen($asciiDomain[0]);
                     $last_url = array(
                         'url' => $asciiDomain[0],
-                        'indices' => array($start_position + $ascii_start_position, $start_position + $ascii_end_position),
+                        'indices' => array(
+                            $start_position + $ascii_start_position,
+                            $start_position + $ascii_end_position
+                        ),
                     );
                     if (!empty($path)
                         || preg_match(Regex::getValidSpecialShortDomainMatcher(), $asciiDomain[0])
@@ -398,12 +372,21 @@ class Extractor
                 // In the case of t.co URLs, don't allow additional path characters
                 if (preg_match(Regex::getValidTcoUrlMatcher(), $url, $tcoUrlMatches)) {
                     $url = $tcoUrlMatches[0];
+                    $tcoUrlSlug = $tcoUrlMatches[1];
                     $end_position = $start_position + StringUtils::strlen($url);
+
+                    // In the case of t.co URLs, don't allow additional path characters and
+                    // ensure that the slug is under 40 chars.
+                    if (strlen($tcoUrlSlug) > static::MAX_TCO_SLUG_LENGTH) {
+                        continue;
+                    }
                 }
-                $urls[] = array(
-                    'url' => $url,
-                    'indices' => array($start_position, $end_position),
-                );
+                if ($this->isValidHostAndLength(StringUtils::strlen($url), $protocol, $domain)) {
+                    $urls[] = array(
+                        'url' => $url,
+                        'indices' => array($start_position, $end_position),
+                    );
+                }
             }
         }
 
@@ -411,17 +394,50 @@ class Extractor
     }
 
     /**
-     * Extracts all the usernames and the indices they occur at from the tweet.
+     * Verifies that the host name adheres to RFC 3490 and 1035
+     * Also, verifies that the entire url (including protocol) doesn't exceed MAX_URL_LENGTH
      *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The username elements in the tweet.
+     * @param int $originalUrlLength The length of the entire URL, including protocol if any
+     * @param string $protocol The protocol used
+     * @param string $host The hostname to check validity of
+     * @return bool true if the host is valid
      */
-    public function extractMentionedScreennamesWithIndices($tweet = null)
+    public function isValidHostAndLength($originalUrlLength, $protocol, $host)
     {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
+        if (empty($host)) {
+            return false;
         }
 
+        $originalHostLength = StringUtils::strlen($host);
+
+        // Use IDN for all host names, if the host is all ASCII, it returns unchanged.
+        // It comes with an added benefit of checking the host length to be between 1 to 63 characters.
+        $encodedHost = StringUtils::idnToAscii($host);
+        if ($encodedHost === false || empty($encodedHost)) {
+            return false;
+        }
+
+        $punycodeEncodedHostLength = StringUtils::strlen($encodedHost);
+        if ($punycodeEncodedHostLength === 0) {
+            return false;
+        }
+
+        // The punycodeEncoded host length might be different now, offset that length from the URL.
+        $encodedUrlLength = $originalUrlLength + $punycodeEncodedHostLength - $originalHostLength;
+        // Add the protocol to our length check, if there isn't one, to ensure it doesn't go over the limit.
+        $urlLengthWithProtocol = $encodedUrlLength + ($protocol == null ? self::URL_GROUP_PROTOCOL_LENGTH : 0);
+
+        return $urlLengthWithProtocol <= self::MAX_URL_LENGTH;
+    }
+
+    /**
+     * Extracts all the usernames and the indices they occur at from the tweet.
+     *
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The username elements in the tweet.
+     */
+    public function extractMentionedScreennamesWithIndices($tweet)
+    {
         $usernamesOnly = array();
         $mentions = $this->extractMentionsOrListsWithIndices($tweet);
         foreach ($mentions as $mention) {
@@ -436,26 +452,11 @@ class Extractor
     /**
      * Extracts all the usernames and the indices they occur at from the tweet.
      *
-     * @return  array  The username elements in the tweet.
-     * @deprecated since version 1.1.0
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The username elements in the tweet.
      */
-    public function extractMentionedUsernamesWithIndices()
+    public function extractMentionsOrListsWithIndices($tweet)
     {
-        return $this->extractMentionedScreennamesWithIndices();
-    }
-
-    /**
-     * Extracts all the usernames and the indices they occur at from the tweet.
-     *
-     * @param  string  $tweet  The tweet to extract.
-     * @return  array  The username elements in the tweet.
-     */
-    public function extractMentionsOrListsWithIndices($tweet = null)
-    {
-        if (is_null($tweet)) {
-            $tweet = $this->tweet;
-        }
-
         if (!preg_match('/[@＠]/iu', $tweet)) {
             return array();
         }
@@ -485,17 +486,6 @@ class Extractor
         }
 
         return $results;
-    }
-
-    /**
-     * Extracts all the usernames and the indices they occur at from the tweet.
-     *
-     * @return  array  The username elements in the tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function extractMentionedUsernamesOrListsWithIndices()
-    {
-        return $this->extractMentionsOrListsWithIndices();
     }
 
     /**

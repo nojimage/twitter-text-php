@@ -24,7 +24,6 @@ use Twitter\Text\HitHighlighter;
  */
 class HitHighlighterTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();
@@ -40,9 +39,9 @@ class HitHighlighterTest extends TestCase
     /**
      * A helper function for providers.
      *
-     * @param  string  $test  The test to fetch data for.
+     * @param string  $test  The test to fetch data for.
      *
-     * @return  array  The test data to provide.
+     * @return array  The test data to provide.
      */
     protected function providerHelper($test)
     {

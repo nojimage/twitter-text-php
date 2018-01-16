@@ -28,10 +28,10 @@ use Twitter\Text\Validator;
  * @property Extractor $extractor
  * @property HitHighlighter $highlighter
  * @property Validator $validator
+ * @property Parser $parser
  */
 class InternalEncodingTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();
@@ -41,6 +41,7 @@ class InternalEncodingTest extends TestCase
         $this->extractor = new Extractor();
         $this->highlighter = new HitHighlighter();
         $this->validator = new Validator();
+        $this->parser = new Parser();
     }
 
     protected function tearDown()
@@ -53,9 +54,9 @@ class InternalEncodingTest extends TestCase
     /**
      * A helper function for providers.
      *
-     * @param  string $type  The test to fetch data from.
-     * @param  string $test  The test to fetch data for.
-     * @return  array  The test data to provide.
+     * @param string $type  The test to fetch data from.
+     * @param string $test  The test to fetch data for.
+     * @return array  The test data to provide.
      */
     protected function providerHelper($type, $test)
     {
@@ -347,6 +348,25 @@ class InternalEncodingTest extends TestCase
     /**
      * @group encoding
      * @group Extractor
+     * @dataProvider  extractHashtagsFromAstralProvider
+     */
+    public function testExtractHashtagsFromAstral($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractHashtags($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractHashtagsFromAstralProvider()
+    {
+        return $this->providerHelper('extract', 'hashtags_from_astral');
+    }
+
+    /**
+     * @group encoding
+     * @group Extractor
      * @dataProvider  extractHashtagsWithIndicesProvider
      */
     public function testExtractHashtagsWithIndices($description, $text, $expected)
@@ -417,7 +437,10 @@ class InternalEncodingTest extends TestCase
      */
     public function highlightProvider()
     {
-        return array_merge($this->providerHelper('hit_highlighting', 'plain_text'), $this->providerHelper('hit_highlighting', 'with_links'));
+        $plainText = $this->providerHelper('hit_highlighting', 'plain_text');
+        $withLinks = $this->providerHelper('hit_highlighting', 'with_links');
+
+        return array_merge($plainText, $withLinks);
     }
 
     /**
@@ -551,5 +574,24 @@ class InternalEncodingTest extends TestCase
     public function getTweetLengthProvider()
     {
         return $this->providerHelper('validate', 'lengths');
+    }
+
+    /**
+     * @group encoding
+     * @group Validaion
+     * @dataProvider getWeightedTweetsCounterTestProvider
+     */
+    public function testGetWeightedTweetsCounter($description, $text, $expected)
+    {
+        $result = $this->parser->parseTweet($text);
+        $this->assertSame($expected, $result->toArray(), $description);
+    }
+
+    /**
+     *
+     */
+    public function getWeightedTweetsCounterTestProvider()
+    {
+        return $this->providerHelper('validate', 'WeightedTweetsCounterTest');
     }
 }

@@ -31,21 +31,6 @@ class Regex
 {
 
     /**
-     * Contains all generated regular expressions.
-     *
-     * @var  string  The regex patterns.
-     */
-    protected static $patterns = array();
-
-    /**
-     * The tweet to be used in parsing.  This should be populated by the
-     * constructor of all subclasses.
-     *
-     * @var  string
-     */
-    protected $tweet = '';
-
-    /**
      * Expression to match whitespace characters.
      *
      * 0x0009-0x000D  Cc # <control-0009>..<control-000D>
@@ -63,8 +48,8 @@ class Regex
      *
      * @var string
      */
-    #
-    private static $spaces = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}';
+    // @codingStandardsIgnoreStart
+    private static $spaces = '\x{0009}-\x{000D}\x{0020}\x{0085}\x{00a0}\x{1680}\x{180E}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}'; // @codingStandardsIgnoreEnd
 
     /**
      * Expression to match latin accented characters.
@@ -92,7 +77,8 @@ class Regex
      *
      * @var string
      */
-    private static $latinAccents = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}';
+    // @codingStandardsIgnoreStart
+    private static $latinAccents = '\x{00c0}-\x{00d6}\x{00d8}-\x{00f6}\x{00f8}-\x{00ff}\x{0100}-\x{024f}\x{0253}-\x{0254}\x{0256}-\x{0257}\x{0259}\x{025b}\x{0263}\x{0268}\x{026f}\x{0272}\x{0289}\x{028b}\x{02bb}\x{0300}-\x{036f}\x{1e00}-\x{1eff}'; // @codingStandardsIgnoreEnd
 
     /**
      * Invalid Characters
@@ -115,7 +101,8 @@ class Regex
      *
      * @var string
      */
-    private static $rtlChars = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}';
+    // @codingStandardsIgnoreStart
+    private static $rtlChars = '\x{0600}-\x{06ff}\x{0750}-\x{077f}\x{08a0}-\x{08ff}\x{0590}-\x{05ff}\x{fb50}-\x{fdff}\x{fe70}-\x{feff}'; // @codingStandardsIgnoreEnd
 
     # Expression to match at and hash sign characters:
     private static $atSigns = '@＠';
@@ -129,23 +116,14 @@ class Regex
     private static $validateUrlUnreserved = '[a-z\p{Cyrillic}0-9\-._~]';
     private static $validateUrlPctEncoded = '(?:%[0-9a-f]{2})';
     private static $validateUrlSubDelims = '[!$&\'()*+,;=]';
-    private static $validateUrlIpv4 = '(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3})';
+    // @codingStandardsIgnoreStart
+    private static $validateUrlIpv4 = '(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3})'; // @codingStandardsIgnoreEnd
     private static $validateUrlIpv6 = '(?:\[[a-f0-9:\.]+\])';
     private static $validateUrlPort = '[0-9]{1,5}';
 
     # URL related hash regex collection
     private static $validSpecialCcTLD = '(?:(?:co|tv)(?=[^0-9a-z@]|$))';
     private static $validPunycode = '(?:xn--[0-9a-z]+)';
-
-    /**
-     * This constructor is used to populate some variables.
-     *
-     * @param  string  $tweet  The tweet to parse.
-     */
-    protected function __construct($tweet = null)
-    {
-        $this->tweet = $tweet;
-    }
 
     /**
      * Get invalid characters matcher
@@ -194,8 +172,8 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/' . static::getValidSubdomain() . '*' . static::getValidDomainName()
-                . '(?:' . TldLists::getValidGTLD() . '|' . TldLists::getValidCcTLD()
+            $regexp = '/' . static::getValidSubdomain() . '*(' . static::getValidDomainName()
+                . ')(?:' . TldLists::getValidGTLD() . '|' . TldLists::getValidCcTLD()
                 . '|' . static::$validPunycode . ')/iu';
         }
 
@@ -215,7 +193,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/^https?:\/\/t\.co\/[a-z0-9]+/iu';
+            $regexp = '/^https?:\/\/t\.co\/([a-z0-9]+)/iu';
         }
 
         return $regexp;
@@ -283,18 +261,18 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $validUrlPrecedingChars = '(?:[^A-Z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
+            $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
             $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
             $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
             $validPortNumber = '[0-9]+';
 
-            $regexp = '/(?:'                                      # $1 Complete match (preg_match() already matches everything.)
-                . '(' . $validUrlPrecedingChars . ')' # $2 Preceding characters
-                . '('                                             # $3 Complete URL
-                . '(https?:\/\/)?'                                # $4 Protocol (optional)
-                . '(' . static::getValidDomain() . ')'            # $5 Domain(s)
-                . '(?::(' . $validPortNumber . '))?'      # $6 Port number (optional)
-                . '(\/' . static::getValidUrlPath() . '*)?'       # $7 URL Path
+            $regexp = '/(?:'                           # $1 Complete match (preg_match() already matches everything.)
+                . '(' . $validUrlPrecedingChars . ')'  # $2 Preceding characters
+                . '('                                  # $3 Complete URL
+                . '(https?:\/\/)?'                     # $4 Protocol (optional)
+                . '(' . static::getValidDomain() . ')' # $5 Domain(s)
+                . '(?::(' . $validPortNumber . '))?'   # $6 Port number (optional)
+                . '(\/' . static::getValidUrlPath() . '*)?'                            # $7 URL Path
                 . '(\?' . $validUrlQueryChars . '*' . $validUrlQueryEndingChars . ')?' # $8 Query String
                 . ')'
                 . ')/iux';
@@ -304,11 +282,11 @@ class Regex
     }
 
     /**
-     * Get domain valid chars
+     * Get valid domain chars
      *
      * @return string
      */
-    private static function getDomainValidChars()
+    private static function getValidDomainChars()
     {
         return '0-9a-z' . static::$latinAccents;
     }
@@ -320,7 +298,7 @@ class Regex
      */
     private static function getValidSubdomain()
     {
-        $domainValidChars = static::getDomainValidChars();
+        $domainValidChars = static::getValidDomainChars();
 
         return '(?>(?:[' . $domainValidChars . '][' . $domainValidChars . '\-_]*)?[' . $domainValidChars . ']\.)';
     }
@@ -332,19 +310,31 @@ class Regex
      */
     private static function getValidDomainName()
     {
-        $domainValidChars = static::getDomainValidChars();
+        $domainValidChars = static::getValidDomainChars();
 
         return '(?:(?:[' . $domainValidChars . '][' . $domainValidChars . '\-]*)?[' . $domainValidChars . ']\.)';
     }
 
     /**
-     * Get domain valid unicode chars
+     * Get valid unicode domain chars
      *
      * @return string
      */
-    private static function getDomainValidUnicodeChars()
+    private static function getValidUnicodeDomainChars()
     {
         return '[^\p{P}\p{Z}\p{C}' . static::$invalidCharacters . static::$spaces . ']';
+    }
+
+    /**
+     * Get valid unicode domain name
+     *
+     * @return string
+     */
+    private static function getValidUnicodeDomainName()
+    {
+        $domainValidChars = static::getValidUnicodeDomainChars();
+
+        return '(?:(?:' . $domainValidChars . '(?:' . $domainValidChars . '|[\-])*)?' . $domainValidChars . '\.)';
     }
 
     /**
@@ -356,7 +346,7 @@ class Regex
     {
         $validSubdomain = static::getValidSubdomain();
         $validDomainName = static::getValidDomainName();
-        $domainValidUnicodeChars = static::getDomainValidUnicodeChars();
+        $validUnicodeDomainName = static::getValidUnicodeDomainName();
         $validGTLD = TldLists::getValidGTLD();
         $validCcTLD = TldLists::getValidCcTLD();
 
@@ -367,18 +357,19 @@ class Regex
             . '(?:' . $validGTLD . '|' . $validCcTLD . '|' . static::$validPunycode . '))'
             // domain + gTLD | protocol + unicode domain + gTLD
             . '|(?:'
-            . '(?:'
-            . $validDomainName . '|(?:(?<=http:\/\/|https:\/\/)' . $domainValidUnicodeChars . '+\.)'
+            . '(?:' . $validSubdomain . '+' . $validDomainName
+            . '|' . $validDomainName
+            . '|(?:(?<=http:\/\/|https:\/\/)' . $validUnicodeDomainName . ')'
             . ')'
             . $validGTLD
             . ')'
             // domain + gTLD | some ccTLD
             // e.g. twitter.com
-            . '|(?:' . $validDomainName . static::$validPunycode . ')'
-            . '|(?:' . $validDomainName . static::$validSpecialCcTLD . ')'
-            // protocol + domain + ccTLD | protocol + unicode domain + ccTLD
+            . '|(?:' . $validDomainName
+            . '(?:' . static::$validPunycode . '|' . static::$validSpecialCcTLD . '))'
+            // protocol + (domain | unicode domain) + ccTLD
             . '|(?:(?<=http:\/\/|https:\/\/)'
-            . '(?:' . $validDomainName . '|' . $domainValidUnicodeChars . '+\.)'
+            . '(?:' . $validDomainName . '|' . $validUnicodeDomainName . ')'
             . $validCcTLD . ')'
             // domain + ccTLD + '/'
             // e.g. t.co/
@@ -392,7 +383,8 @@ class Regex
      */
     private static function getValidUrlPath()
     {
-        $validGeneralUrlPathChars = '[a-z\p{Cyrillic}0-9!\*;:=\+\,\.\$\/%#\[\]\-_~&|@' . static::$latinAccents . ']';
+        $validGeneralUrlPathChars = '[a-z0-9' . preg_quote("!*';:=+,.$/%#[]–\x{2013}_~", '/')
+            . '|&@' . static::$latinAccents . '\p{Cyrillic}]';
 
         # Allow URL paths to contain up to two nested levels of balanced parentheses:
         # 1. Used in Wikipedia URLs, e.g. /Primer_(film)
@@ -411,7 +403,8 @@ class Regex
             . '\))';
         # Valid end-of-path characters (so /foo. does not gobble the period).
         # 1. Allow =&# for empty URL parameters and other URL-join artifacts.
-        $validUrlPathEndingChars = '[a-z\p{Cyrillic}0-9=_#\/\+\-' . static::$latinAccents . ']|(?:' . $validUrlBalancedParens . ')';
+        $validUrlPathEndingChars = '[a-z0-9=_#\/\+\-' . static::$latinAccents . '\p{Cyrillic}]'
+            . '|(?:' . $validUrlBalancedParens . ')';
 
         return '(?:(?:'
             . $validGeneralUrlPathChars . '*(?:'
@@ -438,8 +431,9 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $mention_preceding_chars = '([^a-zA-Z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
-            $regexp = '/' . $mention_preceding_chars . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
+            $mentionPrecedingChars = '([^a-z0-9_!#\$%&*@＠\/]|^|(?:^|[^a-z0-9_+~.-])RT:?)';
+            $regexp = '/' . $mentionPrecedingChars
+                . '([' . static::$atSigns . '])([a-z0-9_]{1,20})(\/[a-z][a-z0-9_\-]{0,24})?(?=(.*|$))/iu';
         }
 
         return $regexp;
@@ -509,12 +503,15 @@ class Regex
         #   0x0f0b TIBETAN MARK INTERSYLLABIC TSHEG
         #   0x0f0c TIBETAN MARK DELIMITER TSHEG BSTAR
         #   0x00b7 MIDDLE DOT
-        $hashtag_special_chars = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}\x{ff5e}\x{301c}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
+        $hashtag_special_chars = '_\x{200c}\x{200d}\x{a67e}\x{05be}\x{05f3}\x{05f4}'
+            . '\x{ff5e}\x{301c}\x{309b}\x{309c}\x{30a0}\x{30fb}\x{3003}\x{0f0b}\x{0f0c}\x{00b7}';
         $hashtag_letters_numerals_set = '[' . $hashtag_letters . $hashtag_numerals . $hashtag_special_chars . ']';
         $hashtag_letters_set = '[' . $hashtag_letters . ']';
-        $hashtag_boundary = '(?:\A|\x{fe0e}|\x{fe0f}|[^&' . $hashtag_letters . $hashtag_numerals . $hashtag_special_chars . '])';
+        $hashtag_boundary = '(?:\A|\x{fe0e}|\x{fe0f}|[^&'
+            . $hashtag_letters . $hashtag_numerals . $hashtag_special_chars . '])';
 
-        return '(' . $hashtag_boundary . ')(#|\x{ff03})(?!\x{fe0f}|\x{20e3})(' . $hashtag_letters_numerals_set . '*' . $hashtag_letters_set . $hashtag_letters_numerals_set . '*)';
+        return '(' . $hashtag_boundary . ')(#|\x{ff03})(?!\x{fe0f}|\x{20e3})('
+            . $hashtag_letters_numerals_set . '*' . $hashtag_letters_set . $hashtag_letters_numerals_set . '*)';
     }
 
     /**
@@ -564,7 +561,8 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/(^|[' . static::$spaces . '])([' . static::$cashSigns . '])(' . static::$cashtag . ')(?=($|\s|[[:punct:]]))/iu';
+            $regexp = '/(^|[' . static::$spaces . '])([' . static::$cashSigns . '])'
+                . '(' . static::$cashtag . ')(?=($|\s|[[:punct:]]))/iu';
         }
 
         return $regexp;

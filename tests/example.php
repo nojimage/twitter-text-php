@@ -34,7 +34,7 @@ function print_array(array $a)
         '  ', '=> (', '\1', '',
         ), $p);
 }
-$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
+$text = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 
 if ($browser) {
     echo <<<EOHTML
@@ -104,9 +104,9 @@ echo PHP_EOL;
 
 $code = <<<EOPHP
 <?php
-\$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
+\$text = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 \$data = \\Twitter\\Text\\Extractor::create()
-  ->extract(\$tweet);
+  ->extract(\$text);
 print_r(\$data);
 EOPHP;
 if ($browser) {
@@ -121,7 +121,7 @@ if ($browser) {
 }
 
 $data = \Twitter\Text\Extractor::create()
-    ->extract($tweet);
+    ->extract($text);
 
 if ($browser) {
     echo '<h3>Output</h3>', PHP_EOL;
@@ -147,10 +147,10 @@ echo PHP_EOL;
 
 $code = <<<EOPHP
 <?php
-\$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
+\$text = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 \$html = \\Twitter\\Text\\Autolink::create()
   ->setNoFollow(false)
-  ->autoLink(\$tweet);
+  ->autoLink(\$text);
 echo \$html;
 EOPHP;
 if ($browser) {
@@ -166,7 +166,7 @@ if ($browser) {
 
 $html = \Twitter\Text\Autolink::create()
     ->setNoFollow(false)
-    ->autoLink($tweet);
+    ->autoLink($text);
 
 if ($browser) {
     echo '<h3>Markup</h3>', PHP_EOL;
@@ -203,10 +203,10 @@ echo PHP_EOL;
 
 $code = <<<EOPHP
 <?php
-\$tweet = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
+\$text = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 \$hits  = array(array(70, 77), array(101, 108));
 \$html = \\Twitter\\Text\\HitHighlighter::create()
-  ->highlight(\$tweet, \$hits);
+  ->highlight(\$text, \$hits);
 echo \$html;
 EOPHP;
 if ($browser) {
@@ -221,7 +221,7 @@ if ($browser) {
 }
 
 $html = \Twitter\Text\HitHighlighter::create()
-    ->highlight($tweet, array(array(70, 77), array(101, 108)));
+    ->highlight($text, array(array(70, 77), array(101, 108)));
 
 if ($browser) {
     echo '<h3>Markup</h3>', PHP_EOL;

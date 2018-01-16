@@ -14,6 +14,10 @@ $DATA = dirname(__DIR__) . '/vendor/twitter/twitter-text/conformance';
 if (!defined('DATA')) {
     define('DATA', $DATA);
 }
+$CONFIG = dirname(__DIR__) . '/vendor/twitter/twitter-text/config';
+if (!defined('CONFIG')) {
+    define('CONFIG', $CONFIG);
+}
 
 # Include required classes.
 require dirname(__DIR__) . '/vendor/autoload.php';

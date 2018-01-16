@@ -2,12 +2,13 @@
 
 namespace Twitter\Text;
 
+use PHPUnit\Framework\TestCase;
 use Twitter\Text\Regex;
 
 /**
  * test for Regex
  */
-class RegexTest extends \PHPUnit_Framework_TestCase
+class RegexTest extends TestCase
 {
 
     /**

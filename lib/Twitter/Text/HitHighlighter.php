@@ -33,26 +33,27 @@ class HitHighlighter
     /**
      * The tag to surround hits with.
      *
-     * @var  string
+     * @var string
      */
     protected $tag = 'em';
 
     /**
      * The tweet to be used in parsing.
      *
-     * @var  string
+     * @var string
+     * @deprecated will be removed
      */
     protected $tweet = '';
 
     /**
      * Provides fluent method chaining.
      *
-     * @param  string  $tweet        The tweet to be hit highlighted.
-     * @param  bool    $full_encode  Whether to encode all special characters.
+     * @param string  $tweet        [deprecated] The tweet to be hit highlighted.
+     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
      *
-     * @see  __construct()
+     * @see __construct()
      *
-     * @return  HitHighlighter
+     * @return HitHighlighter
      */
     public static function create($tweet = null, $full_encode = false)
     {
@@ -64,11 +65,11 @@ class HitHighlighter
      *
      * We take this opportunity to ensure that we escape user input.
      *
-     * @see  htmlspecialchars()
+     * @see htmlspecialchars()
      *
-     * @param  string  $tweet        The tweet to be hit highlighted.
-     * @param  bool    $escape       Whether to escape the tweet (default: true).
-     * @param  bool    $full_encode  Whether to encode all special characters.
+     * @param string  $tweet        [deprecated] The tweet to be hit highlighted.
+     * @param bool    $escape       [deprecated] Whether to escape the tweet (default: true).
+     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
      */
     public function __construct($tweet = null, $escape = true, $full_encode = false)
     {
@@ -86,7 +87,7 @@ class HitHighlighter
     /**
      * Set the highlighting tag to surround hits with.  The default tag is 'em'.
      *
-     * @return  string  The tag name.
+     * @return string  The tag name.
      */
     public function getTag()
     {
@@ -96,9 +97,9 @@ class HitHighlighter
     /**
      * Set the highlighting tag to surround hits with.  The default tag is 'em'.
      *
-     * @param  string  $v  The tag name.
+     * @param string  $v  The tag name.
      *
-     * @return  HitHighlighter  Fluid method chaining.
+     * @return HitHighlighter  Fluid method chaining.
      */
     public function setTag($v)
     {
@@ -115,7 +116,7 @@ class HitHighlighter
      * @param bool   $escape      Whether to escape the tweet (default: true).
      * @param bool   $full_encode  Whether to encode all special characters.
      *
-     * @return  string  The hit highlighted tweet.
+     * @return string  The hit highlighted tweet.
      */
     public function highlight($tweet = null, array $hits = null)
     {
@@ -191,19 +192,5 @@ class HitHighlighter
             }
         }
         return $highlightTweet;
-    }
-
-    /**
-     * Hit highlights the tweet.
-     *
-     * @param  array  $hits  An array containing the start and end index pairs
-     *                       for the highlighting.
-     *
-     * @return  string  The hit highlighted tweet.
-     * @deprecated since version 1.1.0
-     */
-    public function addHitHighlighting(array $hits)
-    {
-        return $this->highlight($this->tweet, $hits);
     }
 }

@@ -24,7 +24,6 @@ use Twitter\Text\Extractor;
  */
 class TldConformanceTest extends TestCase
 {
-
     protected function setUp()
     {
         parent::setUp();
@@ -40,9 +39,9 @@ class TldConformanceTest extends TestCase
     /**
      * A helper function for providers.
      *
-     * @param  string $type  The test to fetch data from.
-     * @param  string $test  The test to fetch data for.
-     * @return  array  The test data to provide.
+     * @param string $type  The test to fetch data from.
+     * @param string $test  The test to fetch data for.
+     * @return array  The test data to provide.
      */
     protected function providerHelper($type, $test)
     {
