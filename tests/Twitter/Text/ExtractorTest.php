@@ -196,4 +196,55 @@ class ExtractorTest extends TestCase
 
         $this->assertSame($expects, $extracted);
     }
+
+    /**
+     * @group Extractor
+     */
+    public function testExtractEntitiesWithIndices()
+    {
+        // @codingStandardsIgnoreStart
+        $text = '@someone Hey check out out @otheruser/list_name-01! This is #hashtag1 http://example.com Example cashtags: $TEST $Stock $symbol via @username';
+        // @codingStandardsIgnoreEnd
+
+        $extracted = $this->extractor->extractEntitiesWithIndices($text);
+        $expects = array(
+            array(
+                'screen_name' => 'someone',
+                'list_slug' => '',
+                'indices' => array(0, 8)
+            ),
+            array(
+                'screen_name' => 'otheruser',
+                'list_slug' => '/list_name-01',
+                'indices' => array(27, 50)
+            ),
+            array(
+                'hashtag' => 'hashtag1',
+                'indices' => array(60, 69)
+            ),
+            array(
+                'url' => 'http://example.com',
+                'indices' => array(70, 88)
+            ),
+            array(
+                'cashtag' => 'TEST',
+                'indices' => array(107, 112)
+            ),
+            array(
+                'cashtag' => 'Stock',
+                'indices' => array(113, 119)
+            ),
+            array(
+                'cashtag' => 'symbol',
+                'indices' => array(120, 127)
+            ),
+            array(
+                'screen_name' => 'username',
+                'list_slug' => '',
+                'indices' => array(132, 141)
+            )
+        );
+
+        $this->assertSame($expects, $extracted);
+    }
 }
