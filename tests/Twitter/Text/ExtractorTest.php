@@ -71,6 +71,9 @@ class ExtractorTest extends TestCase
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
 
+    /**
+     * @group Extractor
+     */
     public function testUrlWithSpecialCCTLDWithoutProtocol()
     {
         $text = 'MLB.tv vine.co';
@@ -88,6 +91,9 @@ class ExtractorTest extends TestCase
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
 
+    /**
+     * @group Extractor
+     */
     public function testExtractURLsWithEmoji()
     {
         $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
@@ -99,12 +105,18 @@ class ExtractorTest extends TestCase
         );
     }
 
+    /**
+     * @group Extractor
+     */
     public function testExtractURLsPrecededByEllipsis()
     {
         $extracted = $this->extractor->extractURLs('text: ...http://www.example.com');
         $this->assertSame(array('http://www.example.com'), $extracted, 'Unextract url preceded by ellipsis');
     }
 
+    /**
+     * @group Extractor
+     */
     public function testExtractURLsWith64CharDomainWithoutProtocol()
     {
         $text = 'randomurlrandomurlrandomurlrandomurlrandomurlrandomurlrandomurls.com';
@@ -113,6 +125,9 @@ class ExtractorTest extends TestCase
         $this->assertSame(array(), $extracted, 'Handle a 64 character domain without protocol');
     }
 
+    /**
+     * @group Extractor
+     */
     public function testExtractURLsHandleLongUrlWithInvalidDomainLabelsAndShortUrl()
     {
         // @codingStandardsIgnoreStart
@@ -126,5 +141,59 @@ class ExtractorTest extends TestCase
                 'indices' => array(12056, 12076),
             ),
         ), $extracted, 'Handle long url with invalid domain labels and short url');
+    }
+
+    /**
+     * @group Extractor
+     */
+    public function testExtract()
+    {
+        // @codingStandardsIgnoreStart
+        $text = '@someone Hey check out out @otheruser/list_name-01! This is #hashtag1 http://example.com Example cashtags: $TEST $Stock $symbol via @username';
+        // @codingStandardsIgnoreEnd
+
+        $extracted = $this->extractor->extract($text);
+        $expects = array(
+            'hashtags' => array(
+                'hashtag1'
+            ),
+            'urls' => array(
+                'http://example.com'
+            ),
+            'mentions' => array(
+                'someone',
+                'otheruser',
+                'username'
+            ),
+            'replyto' => 'someone',
+            'hashtags_with_indices' => array(
+                array(
+                    'hashtag' => 'hashtag1',
+                    'indices' => array(60, 69)
+                )
+            ),
+            'urls_with_indices' => array(
+                array(
+                    'url' => 'http://example.com',
+                    'indices' => array(70, 88)
+                )
+            ),
+            'mentions_with_indices' => array(
+                array(
+                    'screen_name' => 'someone',
+                    'indices' => array(0, 8)
+                ),
+                array(
+                    'screen_name' => 'otheruser',
+                    'indices' => array(27, 50)
+                ),
+                array(
+                    'screen_name' => 'username',
+                    'indices' => array(132, 141)
+                )
+            )
+        );
+
+        $this->assertSame($expects, $extracted);
     }
 }

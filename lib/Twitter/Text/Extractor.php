@@ -93,11 +93,11 @@ class Extractor
         return array(
             'hashtags' => $this->extractHashtags($tweet),
             'urls' => $this->extractURLs($tweet),
-            'mentions' => $this->extractMentionedUsernames($tweet),
-            'replyto' => $this->extractRepliedUsernames($tweet),
+            'mentions' => $this->extractMentionedScreennames($tweet),
+            'replyto' => $this->extractReplyScreenname($tweet),
             'hashtags_with_indices' => $this->extractHashtagsWithIndices($tweet),
             'urls_with_indices' => $this->extractURLsWithIndices($tweet),
-            'mentions_with_indices' => $this->extractMentionedUsernamesWithIndices($tweet),
+            'mentions_with_indices' => $this->extractMentionedScreennamesWithIndices($tweet),
         );
     }
 
