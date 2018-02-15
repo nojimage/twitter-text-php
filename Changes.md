@@ -1,9 +1,13 @@
 # Changes
 
+## 2.0.2
+
+- Pass twitter-text conformance 2.0.5
+- Change default configuration to v2 in `Validator`.
+
 ## 2.0.1
 
-- Pass twitter-text conformance 2.0.1
-- Change default configuration to v2 in `Validator`.
+- Fixes wrong method call in Extractor::extract() #19
 
 ## 2.0.0
 
