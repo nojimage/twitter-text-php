@@ -1,5 +1,10 @@
 # Changes
 
+## 2.0.1
+
+- Pass twitter-text conformance 2.0.1
+- Change default configuration to v2 in `Validator`.
+
 ## 2.0.0
 
 - Pass twitter-text conformance 2.0.0
