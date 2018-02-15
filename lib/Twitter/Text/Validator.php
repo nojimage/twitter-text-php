@@ -78,8 +78,8 @@ class Validator
     public function setConfiguration(Configuration $config = null)
     {
         if (is_null($config)) {
-            // default use v1 config
-            $this->config = Configuration::v1();
+            // default use v2 config
+            $this->config = new Configuration();
         } elseif (is_a($config, '\Twitter\Text\Configuration')) {
             $this->config = $config;
         } else {

@@ -445,9 +445,9 @@ class ConformanceTest extends TestCase
      * @group Validation
      * @dataProvider  isValidTweetTextProvider
      */
-    public function testIsValidTweetText($description, $text, $expected)
+    public function testV1TweetValidity($description, $text, $expected)
     {
-        $validated = $this->validator->isValidTweetText($text);
+        $validated = $this->validator->isValidTweetText($text, Configuration::v1());
         $this->assertSame($expected, $validated, $description);
     }
 
@@ -552,25 +552,6 @@ class ConformanceTest extends TestCase
     public function isValidURLWithoutProtocolProvider()
     {
         return $this->providerHelper('validate', 'urls_without_protocol');
-    }
-
-    /**
-     * @group conformance
-     * @group Validation
-     * @dataProvider  getTweetLengthProvider
-     */
-    public function testGetTweetLength($description, $text, $expected)
-    {
-        $validated = $this->validator->getTweetLength($text);
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
-     *
-     */
-    public function getTweetLengthProvider()
-    {
-        return $this->providerHelper('validate', 'lengths');
     }
 
     /**
