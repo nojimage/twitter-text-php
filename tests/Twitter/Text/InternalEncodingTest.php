@@ -448,9 +448,9 @@ class InternalEncodingTest extends TestCase
      * @group Validation
      * @dataProvider  isValidTweetTextProvider
      */
-    public function testIsValidTweetText($description, $text, $expected)
+    public function testV1TweetValidity($description, $text, $expected)
     {
-        $validated = $this->validator->isValidTweetText($text);
+        $validated = $this->validator->isValidTweetText($text, Configuration::v1());
         $this->assertSame($expected, $validated, $description);
     }
 
