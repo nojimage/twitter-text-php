@@ -351,9 +351,9 @@ class Regex
         $validCcTLD = TldLists::getValidCcTLD();
 
         return ''
-            // subdomains + domain + TLD
-            // e.g. www.twitter.com, foo.co.jp, bar.co.uk
-            . '(?:' . $validSubdomain . '+' . $validDomainName
+            // optional sub-domain + domain + TLD
+            // e.g. twitter.com, foo.co.jp, bar.co.uk
+            . '(?:' . $validSubdomain . '*' . $validDomainName
             . '(?:' . $validGTLD . '|' . $validCcTLD . '|' . static::$validPunycode . '))'
             // domain + gTLD | protocol + unicode domain + gTLD
             . '|(?:'
@@ -363,10 +363,6 @@ class Regex
             . ')'
             . $validGTLD
             . ')'
-            // domain + gTLD | some ccTLD
-            // e.g. twitter.com
-            . '|(?:' . $validDomainName
-            . '(?:' . static::$validPunycode . '|' . static::$validSpecialCcTLD . '))'
             // protocol + (domain | unicode domain) + ccTLD
             . '|(?:(?<=http:\/\/|https:\/\/)'
             . '(?:' . $validDomainName . '|' . $validUnicodeDomainName . ')'
