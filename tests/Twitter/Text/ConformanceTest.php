@@ -556,25 +556,6 @@ class ConformanceTest extends TestCase
 
     /**
      * @group conformance
-     * @group Validation
-     * @dataProvider  getTweetLengthProvider
-     */
-    public function testGetTweetLength($description, $text, $expected)
-    {
-        $validated = $this->validator->getTweetLength($text);
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
-     *
-     */
-    public function getTweetLengthProvider()
-    {
-        return $this->providerHelper('validate', 'lengths');
-    }
-
-    /**
-     * @group conformance
      * @group Validaion
      * @dataProvider getWeightedTweetsCounterTestProvider
      */

@@ -559,25 +559,6 @@ class InternalEncodingTest extends TestCase
 
     /**
      * @group encoding
-     * @group Validation
-     * @dataProvider  getTweetLengthProvider
-     */
-    public function testGetTweetLength($description, $text, $expected)
-    {
-        $validated = $this->validator->getTweetLength($text);
-        $this->assertSame($expected, $validated, $description);
-    }
-
-    /**
-     *
-     */
-    public function getTweetLengthProvider()
-    {
-        return $this->providerHelper('validate', 'lengths');
-    }
-
-    /**
-     * @group encoding
      * @group Validaion
      * @dataProvider getWeightedTweetsCounterTestProvider
      */
