@@ -92,6 +92,7 @@ class Extractor
     {
         return array(
             'hashtags' => $this->extractHashtags($tweet),
+            'cashtags' => $this->extractCashtags($tweet),
             'urls' => $this->extractURLs($tweet),
             'mentions' => $this->extractMentionedScreennames($tweet),
             'replyto' => $this->extractReplyScreenname($tweet),
