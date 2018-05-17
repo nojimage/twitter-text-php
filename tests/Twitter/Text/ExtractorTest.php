@@ -157,6 +157,11 @@ class ExtractorTest extends TestCase
             'hashtags' => array(
                 'hashtag1'
             ),
+            'cashtags' => array(
+                'TEST',
+                'Stock',
+                'symbol'
+            ),
             'urls' => array(
                 'http://example.com'
             ),
