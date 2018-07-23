@@ -74,7 +74,9 @@ twitter-text 2.0 introduces configuration files that define how Tweets are parse
 Some old methods from twitter-text-php 1.0 have been marked deprecated, such as the `Twitter\Text\Validator::isValidTweetText()`, `Twitter\Text\Validator::getTweetLength()` method. The new API is based on the following method, `Twitter\Text\Parser::parseTweet()`
 
 ```(php)
-$result = \Twitter\Text\Parser::parseTweet($text);
+use Twitter\Text\Parser;
+$parser = new Parser();
+$result = $parser->parseTweet($text);
 ```
 
 This method takes a string as input and returns a results object that contains information about the string. `Twitter\Text\ParseResults` object includes:
