@@ -216,7 +216,7 @@ class Validator
      * @param string $tweet The tweet to validate.
      * @param Configuration $config using configration
      * @return int  the length of a tweet.
-     * @deprecated instead use \Twitter\Text\Parser::parseText()
+     * @deprecated instead use \Twitter\Text\Parser::parseTweet()
      */
     public function getTweetLength($tweet, Configuration $config = null)
     {
