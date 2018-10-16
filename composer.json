@@ -56,8 +56,8 @@
     }
   },
   "autoload-dev": {
-    "psr-0": {
-      "Twitter\\Text\\": "tests/"
+    "psr-4": {
+      "Twitter\\Text\\TestCase\\": "tests/TestCase/"
     }
   },
   "scripts": {

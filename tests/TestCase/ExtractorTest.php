@@ -7,11 +7,12 @@
  * @package    Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Extractor;
+use Twitter\Text\StringUtils;
 
 /**
  * Twitter Extractor Class Unit Tests

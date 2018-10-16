@@ -8,7 +8,7 @@
 
   <testsuites>
     <testsuite name="twitter">
-      <directory suffix=".php">tests/Twitter</directory>
+      <directory suffix=".php">tests/TestCase</directory>
     </testsuite>
   </testsuites>
 

@@ -2,24 +2,27 @@
 
 /**
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright 2010, Mike Cochrane, Nick Pope
+ * @copyright  Copyright 2014, php-tips.com
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Autolink;
+use Twitter\Text\Configuration;
 use Twitter\Text\Extractor;
 use Twitter\Text\HitHighlighter;
+use Twitter\Text\Parser;
 use Twitter\Text\Validator;
 
 /**
- * Twitter Conformance TestCase
+ * A TestCase for the different internal encoding with UTF-8
  *
  * @author     Nick Pope <nick@nickpope.me.uk>
+ * @author     Takashi Nojima
  * @copyright  Copyright 2014, Mike Cochrane, Nick Pope, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
@@ -29,11 +32,12 @@ use Twitter\Text\Validator;
  * @property Validator $validator
  * @property Parser $parser
  */
-class ConformanceTest extends TestCase
+class InternalEncodingTest extends TestCase
 {
     protected function setUp()
     {
         parent::setUp();
+        mb_internal_encoding('iso-8859-1');
         $this->linker = new Autolink();
         $this->linker->setNoFollow(false)->setExternal(false)->setTarget('');
         $this->extractor = new Extractor();
@@ -45,6 +49,7 @@ class ConformanceTest extends TestCase
     protected function tearDown()
     {
         unset($this->linker);
+        mb_internal_encoding('UTF-8');
         parent::tearDown();
     }
 
@@ -62,7 +67,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkUsernamesProvider
      */
@@ -81,7 +86,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkListsProvider
      */
@@ -100,7 +105,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkHashtagsProvider
      */
@@ -119,7 +124,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkURLsProvider
      */
@@ -138,7 +143,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkCashtagsProvider
      */
@@ -157,7 +162,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkProvider
      */
@@ -176,7 +181,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkWithJSONProvider
      */
@@ -189,7 +194,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Autolink
      * @dataProvider  autoLinkWithJSONProvider
      */
@@ -210,7 +215,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractMentionedScreennamesProvider
      */
@@ -229,7 +234,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractMentionsWithIndicesProvider
      */
@@ -248,7 +253,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractMentionsOrListsWithIndicesProvider
      */
@@ -267,7 +272,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractReplyScreennameProvider
      */
@@ -286,7 +291,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractURLsProvider
      */
@@ -305,7 +310,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractURLsWithIndicesProvider
      */
@@ -324,45 +329,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
-     * @group Extractor
-     * @dataProvider  extractURLsWithDirectionalMarkersProvider
-     */
-    public function testExtractWithDirectionalMarkers($description, $text, $expected)
-    {
-        $extracted = $this->extractor->extractURLsWithIndices($text);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
-     *
-     */
-    public function extractURLsWithDirectionalMarkersProvider()
-    {
-        return $this->providerHelper('extract', 'urls_with_directional_markers');
-    }
-
-    /**
-     * @group conformance
-     * @group Extractor
-     * @dataProvider  extractTcoUrlsWithParamsProvider
-     */
-    public function testExtractTcoUrlsWithParams($description, $text, $expected)
-    {
-        $extracted = $this->extractor->extractURLs($text);
-        $this->assertSame($expected, $extracted, $description);
-    }
-
-    /**
-     *
-     */
-    public function extractTcoUrlsWithParamsProvider()
-    {
-        return $this->providerHelper('extract', 'tco_urls_with_params');
-    }
-
-    /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractHashtagsProvider
      */
@@ -381,7 +348,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractHashtagsFromAstralProvider
      */
@@ -400,7 +367,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractHashtagsWithIndicesProvider
      */
@@ -419,7 +386,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractCashtagsProvider
      */
@@ -438,7 +405,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Extractor
      * @dataProvider  extractCashtagsWithIndicesProvider
      */
@@ -457,7 +424,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group HitHighlighter
      * @dataProvider  highlightProvider
      */
@@ -479,7 +446,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validation
      * @dataProvider  isValidTweetTextProvider
      */
@@ -498,7 +465,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validation
      * @dataProvider  isValidUsernameProvider
      */
@@ -517,7 +484,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validation
      * @dataProvider  isValidListProvider
      */
@@ -536,7 +503,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validation
      * @dataProvider  isValidHashtagProvider
      */
@@ -555,7 +522,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validation
      * @dataProvider  isValidURLProvider
      */
@@ -574,7 +541,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validation
      * @dataProvider  isValidURLWithoutProtocolProvider
      */
@@ -593,7 +560,7 @@ class ConformanceTest extends TestCase
     }
 
     /**
-     * @group conformance
+     * @group encoding
      * @group Validaion
      * @dataProvider getWeightedTweetsCounterTestProvider
      */
@@ -609,24 +576,5 @@ class ConformanceTest extends TestCase
     public function getWeightedTweetsCounterTestProvider()
     {
         return $this->providerHelper('validate', 'WeightedTweetsCounterTest');
-    }
-
-    /**
-     * @group conformance
-     * @group Validaion
-     * @dataProvider getWeightedTweetsWithDiscountedEmojiCounterTestProvider
-     */
-    public function testGetWeightedTweetsWithDiscountedEmojiCounter($description, $text, $expected)
-    {
-        $result = $this->parser->parseTweet($text);
-        $this->assertSame($expected, $result->toArray(), $description);
-    }
-
-    /**
-     *
-     */
-    public function getWeightedTweetsWithDiscountedEmojiCounterTestProvider()
-    {
-        return $this->providerHelper('validate', 'WeightedTweetsWithDiscountedEmojiCounterTest');
     }
 }

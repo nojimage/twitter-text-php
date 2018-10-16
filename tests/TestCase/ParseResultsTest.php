@@ -7,7 +7,7 @@
  * @package   Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Twitter\Text\ParseResults;
