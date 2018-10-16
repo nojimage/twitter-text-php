@@ -326,6 +326,44 @@ class ConformanceTest extends TestCase
     /**
      * @group conformance
      * @group Extractor
+     * @dataProvider  extractURLsWithDirectionalMarkersProvider
+     */
+    public function testExtractWithDirectionalMarkers($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractURLsWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractURLsWithDirectionalMarkersProvider()
+    {
+        return $this->providerHelper('extract', 'urls_with_directional_markers');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
+     * @dataProvider  extractTcoUrlsWithParamsProvider
+     */
+    public function testExtractTcoUrlsWithParams($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractURLs($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractTcoUrlsWithParamsProvider()
+    {
+        return $this->providerHelper('extract', 'tco_urls_with_params');
+    }
+
+    /**
+     * @group conformance
+     * @group Extractor
      * @dataProvider  extractHashtagsProvider
      */
     public function testExtractHashtags($description, $text, $expected)
@@ -571,5 +609,24 @@ class ConformanceTest extends TestCase
     public function getWeightedTweetsCounterTestProvider()
     {
         return $this->providerHelper('validate', 'WeightedTweetsCounterTest');
+    }
+
+    /**
+     * @group conformance
+     * @group Validaion
+     * @dataProvider getWeightedTweetsWithDiscountedEmojiCounterTestProvider
+     */
+    public function testGetWeightedTweetsWithDiscountedEmojiCounter($description, $text, $expected)
+    {
+        $result = $this->parser->parseTweet($text);
+        $this->assertSame($expected, $result->toArray(), $description);
+    }
+
+    /**
+     *
+     */
+    public function getWeightedTweetsWithDiscountedEmojiCounterTestProvider()
+    {
+        return $this->providerHelper('validate', 'WeightedTweetsWithDiscountedEmojiCounterTest');
     }
 }
