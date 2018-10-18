@@ -12,7 +12,7 @@ class TldListsTest extends TestCase
 {
 
     /**
-     * @covers Twitter\Text\TldLists::getValidGTLD
+     * @covers \Twitter\Text\TldLists::getValidGTLD
      */
     public function testGetValidGTLD()
     {
@@ -25,7 +25,7 @@ class TldListsTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\TldLists::getValidCcTLD
+     * @covers \Twitter\Text\TldLists::getValidCcTLD
      */
     public function testGetValidCcTLD()
     {

@@ -43,7 +43,7 @@ class AutolinkTest extends TestCase
 
     public function testAutolinkWithEmoji()
     {
-        $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
+        $text = '@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg';
         $linkedText = $this->linker->autoLink($text);
 
         // @codingStandardsIgnoreStart

@@ -25,6 +25,13 @@ use Twitter\Text\StringUtils;
  */
 class ExtractorTest extends TestCase
 {
+    /**
+     * A Test Subject
+     *
+     * @var Extractor
+     */
+    private $extractor;
+
     protected function setUp()
     {
         parent::setUp();
@@ -97,7 +104,7 @@ class ExtractorTest extends TestCase
      */
     public function testExtractURLsWithEmoji()
     {
-        $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
+        $text = '@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg';
         $extracted = $this->extractor->extractURLsWithIndices($text);
         $this->assertSame(array(14, 45), $extracted[0]['indices']);
         $this->assertSame(

@@ -136,10 +136,10 @@ class ParseResultsTest extends TestCase
      * test set valiable
      *
      * @dataProvider dataSetInvalidRange
-     * @expectedException \RangeException
      */
     public function testSetInvalidRange($message, $key, $value)
     {
+        $this->expectException('\RangeException');
         $this->results->$key = $value;
     }
 

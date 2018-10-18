@@ -46,6 +46,7 @@
     "ext-intl": "*"
   },
   "require-dev": {
+    "ext-json": "*",
     "symfony/yaml": "~2.6.0",
     "phpunit/phpunit": "4.8.*|5.7.*|6.5.*",
     "twitter/twitter-text": "^3.0.0"
