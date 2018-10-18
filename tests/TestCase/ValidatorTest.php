@@ -53,7 +53,7 @@ class ValidatorTest extends TestCase
     /**
      * @group Validation
      */
-    public function testDefaultConfigraionIsV2()
+    public function testDefaultConfigrationIsV2()
     {
         $v2Config = new Configuration();
         $this->assertSame($v2Config->toArray(), $this->validator->getConfiguration()->toArray());
@@ -63,7 +63,7 @@ class ValidatorTest extends TestCase
     /**
      * @group Validation
      */
-    public function testConfiglationFromObject()
+    public function testConfigrationFromObject()
     {
         $conf = new Configuration();
         $validator = Validator::create($conf);

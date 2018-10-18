@@ -56,7 +56,7 @@ class ExtractorTest extends TestCase
     public function testExtractURLsWithoutProtocol()
     {
         $extracted = Extractor::create()
-            ->extractUrlWithoutProtocol(false)
+            ->extractURLWithoutProtocol(false)
             ->extractURLs('text: example.com http://foobar.example.com');
         $this->assertSame(array('http://foobar.example.com'), $extracted, 'Unextract url without protocol');
     }
@@ -67,7 +67,7 @@ class ExtractorTest extends TestCase
     public function testExtractURLsWithIndicesWithoutProtocol()
     {
         $extracted = Extractor::create()
-            ->extractUrlWithoutProtocol(false)
+            ->extractURLWithoutProtocol(false)
             ->extractURLsWithIndices('text: example.com');
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
@@ -88,7 +88,7 @@ class ExtractorTest extends TestCase
         $this->assertSame(array(0, 6), $extracted[0]['indices']);
         $this->assertSame(array(7, 14), $extracted[1]['indices']);
 
-        $extracted = $this->extractor->extractUrlWithoutProtocol(false)->extractURLsWithIndices($text);
+        $extracted = $this->extractor->extractURLWithoutProtocol(false)->extractURLsWithIndices($text);
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
 

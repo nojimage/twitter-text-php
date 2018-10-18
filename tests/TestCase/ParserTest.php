@@ -78,7 +78,7 @@ class ParserTest extends TestCase
     }
 
     /**
-     * test for parseTweet with v1 configration
+     * test for parseTweet with v1 configuration
      */
     public function testParseTweetWithV1Configuration()
     {
