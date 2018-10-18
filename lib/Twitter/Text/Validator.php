@@ -103,7 +103,7 @@ class Validator
      * Check whether a tweet is valid.
      *
      * @param string        $tweet  The tweet to validate.
-     * @param Configuration $config using configration
+     * @param Configuration $config using configuration
      * @return boolean  Whether the tweet is valid.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
@@ -214,7 +214,7 @@ class Validator
      * Determines the length of a tweet.  Takes shortening of URLs into account.
      *
      * @param string $tweet The tweet to validate.
-     * @param Configuration $config using configration
+     * @param Configuration $config using configuration
      * @return int  the length of a tweet.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
