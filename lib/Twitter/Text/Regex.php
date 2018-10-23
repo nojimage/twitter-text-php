@@ -90,6 +90,24 @@ class Regex
     private static $invalidCharacters = '\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}';
 
     /**
+     * Directional Characters
+     *
+     * 0x061C ARABIC LETTER MARK (ALM)
+     * 0x200E LEFT-TO-RIGHT MARK (LRM)
+     * 0x200F RIGHT-TO-LEFT MARK (RLM)
+     * 0x202A LEFT-TO-RIGHT EMBEDDING (LRE)
+     * 0x202B RIGHT-TO-LEFT EMBEDDING (RLE)
+     * 0x202C POP DIRECTIONAL FORMATTING (PDF)
+     * 0x202D LEFT-TO-RIGHT OVERRIDE (LRO)
+     * 0x202E RIGHT-TO-LEFT OVERRIDE (RLO)
+     * 0x2066 LEFT-TO-RIGHT ISOLATE (LRI)
+     * 0x2067 RIGHT-TO-LEFT ISOLATE (RLI)
+     * 0x2068 FIRST STRONG ISOLATE (FSI)
+     * 0x2069 POP DIRECTIONAL ISOLATE (PDI)
+     */
+    private static $directionalCharacters = '\x{061c}\x{200e}\x{200f}\x{202a}\x{202e}\x{2066}\x{2069}';
+
+    /**
      * Expression to match RTL characters.
      *
      * 0x0600-0x06FF Arabic
@@ -261,7 +279,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
+            $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|[' . static::$directionalCharacters . ']|^)';
             $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
             $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
             $validPortNumber = '[0-9]+';
@@ -446,7 +464,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/^(?:[' . static::$spaces . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
+            $regexp = '/^(?:[' . static::$spaces . static::$directionalCharacters . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
         }
 
         return $regexp;
@@ -557,7 +575,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/(^|[' . static::$spaces . '])([' . static::$cashSigns . '])'
+            $regexp = '/(^|[' . static::$spaces . static::$directionalCharacters . '])([' . static::$cashSigns . '])'
                 . '(' . static::$cashtag . ')(?=($|\s|[[:punct:]]))/iu';
         }
 
