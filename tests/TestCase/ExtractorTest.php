@@ -260,4 +260,36 @@ class ExtractorTest extends TestCase
 
         $this->assertSame($expects, $extracted);
     }
+
+    /**
+     * @group Extractor
+     */
+    public function testExtractEmojiWithIndices()
+    {
+        $text = 'Unicode 10.0; grinning face with one large and one small eye: 🤪;'
+            . ' woman with headscarf: 🧕;'
+            . ' (fitzpatrick) woman with headscarf + medium-dark skin tone: 🧕🏾;'
+            . ' flag (England): 🏴󠁧󠁢󠁥󠁮󠁧󠁿';
+
+        $expects = array(
+            array(
+                'emoji' => '🤪',
+                'indices' => array(62, 63),
+            ),
+            array(
+                'emoji' => '🧕',
+                'indices' => array(90, 91),
+            ),
+            array(
+                'emoji' => '🧕🏾',
+                'indices' => array(156, 158),
+            ),
+            array(
+                'emoji' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+                'indices' => array(182, 189),
+            ),
+        );
+
+        $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
+    }
 }

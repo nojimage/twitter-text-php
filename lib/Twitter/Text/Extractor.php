@@ -211,6 +211,31 @@ class Extractor
     }
 
     /**
+     * Extracts all the emoji and the indices they occur at from the tweet.
+     *
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The emoji chars in the tweet.
+     */
+    public function extractEmojiWithIndices($tweet)
+    {
+        preg_match_all(EmojiRegex::VALID_EMOJI_PATTERN, $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        $emojis = array();
+
+        foreach ($matches as $match) {
+            list($emoji) = $match;
+            $start_position = $emoji[1];
+            $end_position = $start_position + StringUtils::strlen($emoji[0]);
+
+            $emojis[] = array(
+                'emoji' => $emoji[0],
+                'indices' => array($start_position, $end_position)
+            );
+        }
+
+        return $emojis;
+    }
+
+    /**
      * Extracts all the hashtags and the indices they occur at from the tweet.
      *
      * @param string  $tweet  The tweet to extract.
