@@ -29,7 +29,6 @@ use Twitter\Text\TldLists;
  */
 class Regex
 {
-
     /**
      * Expression to match whitespace characters.
      *
@@ -124,23 +123,35 @@ class Regex
 
     # Expression to match at and hash sign characters:
     private static $atSigns = '@＠';
+
     private static $hashSigns = '#＃';
 
     # cash tags
     private static $cashSigns = '\$';
+
     private static $cashtag = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
 
     # These URL validation pattern strings are based on the ABNF from RFC 3986
     private static $validateUrlUnreserved = '[a-z\p{Cyrillic}0-9\-._~]';
+
     private static $validateUrlPctEncoded = '(?:%[0-9a-f]{2})';
+
     private static $validateUrlSubDelims = '[!$&\'()*+,;=]';
+
+    private static $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
+
+    private static $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
+
     // @codingStandardsIgnoreStart
     private static $validateUrlIpv4 = '(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3})'; // @codingStandardsIgnoreEnd
+
     private static $validateUrlIpv6 = '(?:\[[a-f0-9:\.]+\])';
+
     private static $validateUrlPort = '[0-9]{1,5}';
 
     # URL related hash regex collection
     private static $validSpecialCcTLD = '(?:(?:co|tv)(?=[^0-9a-z@]|$))';
+
     private static $validPunycode = '(?:xn--[0-9a-z]+)';
 
     /**
@@ -211,7 +222,8 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/^https?:\/\/t\.co\/([a-z0-9]+)/iu';
+            $regexp = '/^https?:\/\/t\.co\/([a-z0-9]+)'
+                . '(?:\?' . static::$validUrlQueryChars . '*' . static::$validUrlQueryEndingChars . ')?/iu';
         }
 
         return $regexp;
@@ -290,8 +302,8 @@ class Regex
                 . '(https?:\/\/)?'                     # $4 Protocol (optional)
                 . '(' . static::getValidDomain() . ')' # $5 Domain(s)
                 . '(?::(' . $validPortNumber . '))?'   # $6 Port number (optional)
-                . '(\/' . static::getValidUrlPath() . '*)?'                            # $7 URL Path
-                . '(\?' . $validUrlQueryChars . '*' . $validUrlQueryEndingChars . ')?' # $8 Query String
+                . '(\/' . static::getValidUrlPath() . '*)?' # $7 URL Path
+                . '(\?' . static::$validUrlQueryChars . '*' . static::$validUrlQueryEndingChars . ')?' # $8 Query String
                 . ')'
                 . ')/iux';
         }
