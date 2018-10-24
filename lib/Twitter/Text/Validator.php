@@ -77,7 +77,7 @@ class Validator
      */
     public function setConfiguration(Configuration $config = null)
     {
-        if (is_null($config)) {
+        if ($config === null) {
             // default use v2 config
             $this->config = new Configuration();
         } elseif (is_a($config, '\Twitter\Text\Configuration')) {
@@ -109,7 +109,7 @@ class Validator
      */
     public function isValidTweetText($tweet, Configuration $config = null)
     {
-        if (is_null($config)) {
+        if ($config === null) {
             $config = $this->config;
         }
 
@@ -220,7 +220,7 @@ class Validator
      */
     public function getTweetLength($tweet, Configuration $config = null)
     {
-        if (is_null($config)) {
+        if ($config === null) {
             $config = $this->config;
         }
 

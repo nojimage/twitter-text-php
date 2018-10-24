@@ -31,7 +31,7 @@ class StringUtils
      */
     public static function substr($str, $start, $length = null, $encoding = 'UTF-8')
     {
-        if (is_null($length)) {
+        if ($length === null) {
             // for PHP <= 5.4.7
             $length = mb_strlen($str, $encoding);
         }
@@ -87,7 +87,7 @@ class StringUtils
         }
         if ($length < 0) {
             $length = max(0, $string_length - $start + $length);
-        } elseif ((is_null($length) === true) || ($length > $string_length)) {
+        } elseif (($length === null) || ($length > $string_length)) {
             $length = $string_length;
         }
         if (($start + $length) > $string_length) {

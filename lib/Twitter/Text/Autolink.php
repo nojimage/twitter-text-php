@@ -401,7 +401,7 @@ class Autolink
      */
     public function autoLinkEntities($tweet = null, $entities = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
 
@@ -487,7 +487,7 @@ class Autolink
      */
     public function autoLink($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractURLWithoutProtocol(false)->extractEntitiesWithIndices($tweet);
@@ -504,7 +504,7 @@ class Autolink
      */
     public function autoLinkUsernamesAndLists($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractMentionsOrListsWithIndices($tweet);
@@ -520,7 +520,7 @@ class Autolink
      */
     public function autoLinkHashtags($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractHashtagsWithIndices($tweet);
@@ -537,7 +537,7 @@ class Autolink
      */
     public function autoLinkURLs($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractURLWithoutProtocol(false)->extractURLsWithIndices($tweet);
@@ -553,7 +553,7 @@ class Autolink
      */
     public function autoLinkCashtags($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractCashtagsWithIndices($tweet);
@@ -650,7 +650,7 @@ class Autolink
      */
     public function linkToHashtag($entity, $tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
 
@@ -712,7 +712,7 @@ class Autolink
      */
     public function linkToCashtag($entity, $tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $attributes = array();

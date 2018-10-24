@@ -120,7 +120,7 @@ class HitHighlighter
      */
     public function highlight($tweet = null, array $hits = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         if (empty($hits)) {
