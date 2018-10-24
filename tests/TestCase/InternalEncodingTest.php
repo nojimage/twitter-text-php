@@ -561,7 +561,7 @@ class InternalEncodingTest extends TestCase
 
     /**
      * @group encoding
-     * @group Validaion
+     * @group Validation
      * @dataProvider getWeightedTweetsCounterTestProvider
      */
     public function testGetWeightedTweetsCounter($description, $text, $expected)

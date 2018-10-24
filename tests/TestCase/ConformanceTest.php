@@ -596,7 +596,7 @@ class ConformanceTest extends TestCase
 
     /**
      * @group conformance
-     * @group Validaion
+     * @group Validation
      * @dataProvider getWeightedTweetsCounterTestProvider
      */
     public function testGetWeightedTweetsCounter($description, $text, $expected)
@@ -615,7 +615,7 @@ class ConformanceTest extends TestCase
 
     /**
      * @group conformance
-     * @group Validaion
+     * @group Validation
      * @dataProvider getWeightedTweetsWithDiscountedEmojiCounterTestProvider
      */
     public function testGetWeightedTweetsWithDiscountedEmojiCounter($description, $text, $expected)
