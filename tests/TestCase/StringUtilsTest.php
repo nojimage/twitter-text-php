@@ -8,9 +8,10 @@
 
 namespace Twitter\Text\TestCase;
 
+use PHPUnit\Framework\TestCase;
 use Twitter\Text\StringUtils;
 
-class StringUtilsTest extends \PHPUnit_Framework_TestCase
+class StringUtilsTest extends TestCase
 {
     /**
      * Test for strlen with emoji
