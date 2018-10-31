@@ -53,11 +53,11 @@ class ValidatorTest extends TestCase
     /**
      * @group Validation
      */
-    public function testDefaultConfigrationIsV2()
+    public function testDefaultConfigurationIsV3()
     {
-        $v2Config = new Configuration();
-        $this->assertSame($v2Config->toArray(), $this->validator->getConfiguration()->toArray());
-        $this->assertSame(2, $this->validator->getConfiguration()->version);
+        $v3Config = new Configuration();
+        $this->assertSame($v3Config->toArray(), $this->validator->getConfiguration()->toArray());
+        $this->assertSame(3, $this->validator->getConfiguration()->version);
     }
 
     /**
