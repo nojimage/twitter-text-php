@@ -10,10 +10,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Regex;
-use Twitter\Text\Extractor;
-use Twitter\Text\StringUtils;
-
 /**
  * Twitter Autolink Class
  *
@@ -401,7 +397,7 @@ class Autolink
      */
     public function autoLinkEntities($tweet = null, $entities = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
 
@@ -445,9 +441,7 @@ class Autolink
             $json = $this->object2array($json);
         }
         if (is_array($json)) {
-            foreach ($json as $key => $vals) {
-                $entities = array_merge($entities, $json[$key]);
-            }
+            $entities = call_user_func_array('array_merge', $json);
         }
 
         // map JSON entity to twitter-text entity
@@ -487,7 +481,7 @@ class Autolink
      */
     public function autoLink($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractURLWithoutProtocol(false)->extractEntitiesWithIndices($tweet);
@@ -504,7 +498,7 @@ class Autolink
      */
     public function autoLinkUsernamesAndLists($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractMentionsOrListsWithIndices($tweet);
@@ -520,7 +514,7 @@ class Autolink
      */
     public function autoLinkHashtags($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractHashtagsWithIndices($tweet);
@@ -537,7 +531,7 @@ class Autolink
      */
     public function autoLinkURLs($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractURLWithoutProtocol(false)->extractURLsWithIndices($tweet);
@@ -553,7 +547,7 @@ class Autolink
      */
     public function autoLinkCashtags($tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $entities = $this->extractor->extractCashtagsWithIndices($tweet);
@@ -650,7 +644,7 @@ class Autolink
      */
     public function linkToHashtag($entity, $tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
 
@@ -668,7 +662,7 @@ class Autolink
             $class[] = 'rtl';
         }
         if (!empty($class)) {
-            $attributes['class'] = join(' ', $class);
+            $attributes['class'] = implode(' ', $class);
         }
 
         return $this->linkToText($entity, $linkText, $attributes);
@@ -712,7 +706,7 @@ class Autolink
      */
     public function linkToCashtag($entity, $tweet = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         $attributes = array();
@@ -745,7 +739,7 @@ class Autolink
             $rel[] = 'nofollow';
         }
         if (!empty($rel)) {
-            $attributes['rel'] = join(' ', $rel);
+            $attributes['rel'] = implode(' ', $rel);
         }
         if ($this->target) {
             $attributes['target'] = $this->target;

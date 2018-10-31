@@ -31,11 +31,11 @@
       "type": "package",
       "package": {
         "name": "twitter/twitter-text",
-        "version": "2.0.5",
+        "version": "3.0.0",
         "source": {
           "url": "https://github.com/twitter/twitter-text.git",
           "type": "git",
-          "reference": "v2.0.5"
+          "reference": "v3.0.0"
         }
       }
     }
@@ -46,13 +46,19 @@
     "ext-intl": "*"
   },
   "require-dev": {
+    "ext-json": "*",
     "symfony/yaml": "~2.6.0",
     "phpunit/phpunit": "4.8.*|5.7.*|6.5.*",
-    "twitter/twitter-text": "^2.0.0"
+    "twitter/twitter-text": "^3.0.0"
   },
   "autoload": {
     "psr-0": {
       "Twitter\\Text\\": "lib/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Twitter\\Text\\TestCase\\": "tests/TestCase/"
     }
   },
   "scripts": {

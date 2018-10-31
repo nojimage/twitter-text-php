@@ -24,14 +24,14 @@ class StringUtils
      * alias of mb_substr
      *
      * @param string $str
-     * @param integer $start
-     * @param integer $length
+     * @param integer $start (character)
+     * @param integer $length (character)
      * @param string $encoding
      * @return string
      */
     public static function substr($str, $start, $length = null, $encoding = 'UTF-8')
     {
-        if (is_null($length)) {
+        if ($length === null) {
             // for PHP <= 5.4.7
             $length = mb_strlen($str, $encoding);
         }
@@ -87,7 +87,7 @@ class StringUtils
         }
         if ($length < 0) {
             $length = max(0, $string_length - $start + $length);
-        } elseif ((is_null($length) === true) || ($length > $string_length)) {
+        } elseif (($length === null) || ($length > $string_length)) {
             $length = $string_length;
         }
         if (($start + $length) > $string_length) {
@@ -156,5 +156,36 @@ class StringUtils
     public static function codePointAt($str, $offset, $encoding = 'UTF-8')
     {
         return static::ord(mb_substr($str, $offset, 1, $encoding), $encoding);
+    }
+
+    /**
+     * is surrogate pair char
+     *
+     * @param string $char
+     * @return bool
+     */
+    public static function isSurrogatePair($char)
+    {
+        return preg_match('/[\\x{10000}-\\x{10FFFF}]/u', $char);
+    }
+
+    /**
+     * get the character code count
+     *
+     * @param $string
+     * @param string $encoding
+     * @return int
+     */
+    public static function charCount($string, $encoding = 'UTF-8')
+    {
+        $count = 0;
+        $strlen = static::strlen($string);
+
+        for ($offset = 0; $offset < $strlen; $offset++) {
+            $char = static::substr($string, $offset, 1, $encoding);
+            $count += static::isSurrogatePair($char) ? 2 : 1;
+        }
+
+        return $count;
     }
 }

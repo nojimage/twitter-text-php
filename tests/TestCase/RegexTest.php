@@ -1,6 +1,6 @@
 <?php
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Twitter\Text\Regex;
@@ -12,7 +12,7 @@ class RegexTest extends TestCase
 {
 
     /**
-     * @covers Twitter\Text\Regex::getInvalidCharactersMatcher
+     * @covers \Twitter\Text\Regex::getInvalidCharactersMatcher
      */
     public function testGetInvalidCharactersMatcher()
     {
@@ -25,7 +25,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getRtlCharsMatcher
+     * @covers \Twitter\Text\Regex::getRtlCharsMatcher
      */
     public function testGetRtlCharsMatcher()
     {
@@ -38,7 +38,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidMentionsOrListsMatcher
+     * @covers \Twitter\Text\Regex::getValidMentionsOrListsMatcher
      */
     public function testGetValidMentionsOrListsMatcher()
     {
@@ -51,7 +51,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidReplyMatcher
+     * @covers \Twitter\Text\Regex::getValidReplyMatcher
      */
     public function testGetValidReplyMatcher()
     {
@@ -64,7 +64,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getEndMentionMatcher
+     * @covers \Twitter\Text\Regex::getEndMentionMatcher
      */
     public function testGetEndMentionMatcher()
     {
@@ -77,7 +77,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidHashtagMatcher
+     * @covers \Twitter\Text\Regex::getValidHashtagMatcher
      */
     public function testGetValidHashtagMatcher()
     {
@@ -90,7 +90,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getEndHashtagMatcher
+     * @covers \Twitter\Text\Regex::getEndHashtagMatcher
      */
     public function testGetEndHashtagMatcher()
     {
@@ -103,7 +103,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidCashtagMatcher
+     * @covers \Twitter\Text\Regex::getValidCashtagMatcher
      */
     public function testGetValidCashtagMatcher()
     {
@@ -116,7 +116,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getEndCashtagMatcher
+     * @covers \Twitter\Text\Regex::getEndCashtagMatcher
      */
     public function testGetEndCashtagMatcher()
     {
@@ -129,7 +129,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlUnencodedMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlUnencodedMatcher
      */
     public function testGetValidateUrlUnencodedMatcher()
     {
@@ -142,7 +142,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlUnicodeAuthorityMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlUnicodeAuthorityMatcher
      */
     public function testGetValidateUrlUnicodeAuthorityMatcher()
     {
@@ -155,7 +155,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlAuthorityMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlAuthorityMatcher
      */
     public function testGetValidateUrlAuthorityMatcher()
     {
@@ -168,7 +168,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlSchemeMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlSchemeMatcher
      */
     public function testGetValidateUrlSchemeMatcher()
     {
@@ -180,7 +180,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlPathMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlPathMatcher
      */
     public function testGetValidateUrlPathMatcher()
     {
@@ -193,7 +193,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlQueryMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlQueryMatcher
      */
     public function testGetValidateUrlQueryMatcher()
     {
@@ -206,7 +206,7 @@ class RegexTest extends TestCase
     }
 
     /**
-     * @covers Twitter\Text\Regex::getValidateUrlFragmentMatcher
+     * @covers \Twitter\Text\Regex::getValidateUrlFragmentMatcher
      */
     public function testGetValidateUrlFragmentMatcher()
     {
