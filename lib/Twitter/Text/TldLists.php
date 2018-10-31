@@ -2,7 +2,7 @@
 
 /**
  * @author     Takashi Nojima
- * @copyright  Copyright 2017, Takashi Nojima
+ * @copyright  Copyright 2018, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
  */
@@ -14,7 +14,6 @@ namespace Twitter\Text;
  */
 final class TldLists
 {
-
     /**
      * gTLDs
      *
@@ -51,6 +50,7 @@ final class TldLists
         '新闻',
         '政府',
         '政务',
+        '招聘',
         '手表',
         '手机',
         '我爱你',
@@ -306,6 +306,7 @@ final class TldLists
         'srl',
         'spreadbetting',
         'spot',
+        'sport',
         'spiegel',
         'space',
         'soy',
@@ -650,6 +651,7 @@ final class TldLists
         'locker',
         'loans',
         'loan',
+        'llc',
         'lixil',
         'living',
         'live',
@@ -755,6 +757,7 @@ final class TldLists
         'info',
         'infiniti',
         'industries',
+        'inc',
         'immobilien',
         'immo',
         'imdb',
@@ -1072,6 +1075,7 @@ final class TldLists
         'cheap',
         'chat',
         'chase',
+        'charity',
         'channel',
         'chanel',
         'cfd',
