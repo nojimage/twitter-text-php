@@ -7,32 +7,33 @@
  * @package    Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
-use Twitter\Text\HitHighlighter;
+use Twitter\Text\Configuration;
+use Twitter\Text\Validator;
 
 /**
- * Twitter HitHighlighter Class Unit Tests
+ * Twitter Validator Class Unit Tests
  *
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property   HitHighlighter $highlighter
+ * @property   Validator $validator
  */
-class HitHighlighterTest extends TestCase
+class ValidatorTest extends TestCase
 {
     protected function setUp()
     {
         parent::setUp();
-        $this->highlighter = new HitHighlighter();
+        $this->validator = new Validator();
     }
 
     protected function tearDown()
     {
-        unset($this->highlighter);
+        unset($this->validator);
         parent::tearDown();
     }
 
@@ -45,13 +46,27 @@ class HitHighlighterTest extends TestCase
      */
     protected function providerHelper($test)
     {
-        $data = Yaml::parse(DATA . '/hit_highlighting.yml');
+        $data = Yaml::parse(DATA . '/validate.yml');
         return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 
-    public function testCreate()
+    /**
+     * @group Validation
+     */
+    public function testDefaultConfigurationIsV3()
     {
-        $highlighter = HitHighlighter::create();
-        $this->assertInstanceOf('Twitter\\Text\\HitHighlighter', $highlighter);
+        $v3Config = new Configuration();
+        $this->assertSame($v3Config->toArray(), $this->validator->getConfiguration()->toArray());
+        $this->assertSame(3, $this->validator->getConfiguration()->version);
+    }
+
+    /**
+     * @group Validation
+     */
+    public function testConfigrationFromObject()
+    {
+        $conf = new Configuration();
+        $validator = Validator::create($conf);
+        $this->assertSame($conf, $validator->getConfiguration());
     }
 }

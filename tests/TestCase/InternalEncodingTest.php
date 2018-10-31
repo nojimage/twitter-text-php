@@ -7,13 +7,15 @@
  * @package    Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Autolink;
+use Twitter\Text\Configuration;
 use Twitter\Text\Extractor;
 use Twitter\Text\HitHighlighter;
+use Twitter\Text\Parser;
 use Twitter\Text\Validator;
 
 /**
@@ -329,6 +331,44 @@ class InternalEncodingTest extends TestCase
     /**
      * @group encoding
      * @group Extractor
+     * @dataProvider  extractURLsWithDirectionalMarkersProvider
+     */
+    public function testExtractWithDirectionalMarkers($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractURLsWithIndices($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractURLsWithDirectionalMarkersProvider()
+    {
+        return $this->providerHelper('extract', 'urls_with_directional_markers');
+    }
+
+    /**
+     * @group encoding
+     * @group Extractor
+     * @dataProvider  extractTcoUrlsWithParamsProvider
+     */
+    public function testExtractTcoUrlsWithParams($description, $text, $expected)
+    {
+        $extracted = $this->extractor->extractURLs($text);
+        $this->assertSame($expected, $extracted, $description);
+    }
+
+    /**
+     *
+     */
+    public function extractTcoUrlsWithParamsProvider()
+    {
+        return $this->providerHelper('extract', 'tco_urls_with_params');
+    }
+
+    /**
+     * @group encoding
+     * @group Extractor
      * @dataProvider  extractHashtagsProvider
      */
     public function testExtractHashtags($description, $text, $expected)
@@ -559,12 +599,13 @@ class InternalEncodingTest extends TestCase
 
     /**
      * @group encoding
-     * @group Validaion
+     * @group Validation
      * @dataProvider getWeightedTweetsCounterTestProvider
      */
     public function testGetWeightedTweetsCounter($description, $text, $expected)
     {
-        $result = $this->parser->parseTweet($text);
+        $parser = new Parser(Configuration::v2());
+        $result = $parser->parseTweet($text);
         $this->assertSame($expected, $result->toArray(), $description);
     }
 
@@ -574,5 +615,24 @@ class InternalEncodingTest extends TestCase
     public function getWeightedTweetsCounterTestProvider()
     {
         return $this->providerHelper('validate', 'WeightedTweetsCounterTest');
+    }
+
+    /**
+     * @group encoding
+     * @group Validation
+     * @dataProvider getWeightedTweetsWithDiscountedEmojiCounterTestProvider
+     */
+    public function testGetWeightedTweetsWithDiscountedEmojiCounter($description, $text, $expected)
+    {
+        $result = $this->parser->parseTweet($text);
+        $this->assertSame($expected, $result->toArray(), $description);
+    }
+
+    /**
+     *
+     */
+    public function getWeightedTweetsWithDiscountedEmojiCounterTestProvider()
+    {
+        return $this->providerHelper('validate', 'WeightedTweetsWithDiscountedEmojiCounterTest');
     }
 }

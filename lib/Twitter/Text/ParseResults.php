@@ -93,11 +93,17 @@ class ParseResults
     {
         if ($name === 'displayRangeStart') {
             return $this->displayTextRange[0];
-        } elseif ($name === 'displayRangeEnd') {
+        }
+
+        if ($name === 'displayRangeEnd') {
             return $this->displayTextRange[1];
-        } elseif ($name === 'validRangeStart') {
+        }
+
+        if ($name === 'validRangeStart') {
             return $this->validTextRange[0];
-        } elseif ($name === 'validRangeEnd') {
+        }
+
+        if ($name === 'validRangeEnd') {
             return $this->validTextRange[1];
         }
 

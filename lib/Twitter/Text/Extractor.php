@@ -10,9 +10,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Regex;
-use Twitter\Text\StringUtils;
-
 /**
  * Twitter Extractor Class
  *
@@ -211,6 +208,32 @@ class Extractor
     }
 
     /**
+     * Extracts all the emoji and the indices they occur at from the tweet.
+     *
+     * @param string  $tweet  The tweet to extract.
+     * @return array  The emoji chars in the tweet.
+     */
+    public function extractEmojiWithIndices($tweet)
+    {
+        preg_match_all(EmojiRegex::VALID_EMOJI_PATTERN, $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        $entities = array();
+
+        foreach ($matches as $match) {
+            list($emoji) = $match;
+            list($emojiChar, $offset) = $emoji;
+            $startPosition = StringUtils::strlen(substr($tweet, 0, $offset));
+            $endPosition = $startPosition + StringUtils::strlen($emojiChar) - 1;
+
+            $entities[] = array(
+                'emoji' => $emoji[0],
+                'indices' => array($startPosition, $endPosition)
+            );
+        }
+
+        return $entities;
+    }
+
+    /**
      * Extracts all the hashtags and the indices they occur at from the tweet.
      *
      * @param string  $tweet  The tweet to extract.
@@ -219,7 +242,7 @@ class Extractor
      */
     public function extractHashtagsWithIndices($tweet, $checkUrlOverlap = true)
     {
-        if (!preg_match('/[#＃]/iu', $tweet)) {
+        if (!preg_match('/[#＃]/u', $tweet)) {
             return array();
         }
 
@@ -268,7 +291,7 @@ class Extractor
      */
     public function extractCashtagsWithIndices($tweet)
     {
-        if (!preg_match('/\$/iu', $tweet)) {
+        if (!preg_match('/\$/u', $tweet)) {
             return array();
         }
 
@@ -372,8 +395,7 @@ class Extractor
             } else {
                 // In the case of t.co URLs, don't allow additional path characters
                 if (preg_match(Regex::getValidTcoUrlMatcher(), $url, $tcoUrlMatches)) {
-                    $url = $tcoUrlMatches[0];
-                    $tcoUrlSlug = $tcoUrlMatches[1];
+                    list($url, $tcoUrlSlug) = $tcoUrlMatches;
                     $end_position = $start_position + StringUtils::strlen($url);
 
                     // In the case of t.co URLs, don't allow additional path characters and
@@ -426,7 +448,7 @@ class Extractor
         // The punycodeEncoded host length might be different now, offset that length from the URL.
         $encodedUrlLength = $originalUrlLength + $punycodeEncodedHostLength - $originalHostLength;
         // Add the protocol to our length check, if there isn't one, to ensure it doesn't go over the limit.
-        $urlLengthWithProtocol = $encodedUrlLength + ($protocol == null ? self::URL_GROUP_PROTOCOL_LENGTH : 0);
+        $urlLengthWithProtocol = $encodedUrlLength + (empty($protocol) ? self::URL_GROUP_PROTOCOL_LENGTH : 0);
 
         return $urlLengthWithProtocol <= self::MAX_URL_LENGTH;
     }
@@ -458,7 +480,7 @@ class Extractor
      */
     public function extractMentionsOrListsWithIndices($tweet)
     {
-        if (!preg_match('/[@＠]/iu', $tweet)) {
+        if (!preg_match('/[@＠]/u', $tweet)) {
             return array();
         }
 
@@ -493,11 +515,11 @@ class Extractor
      * setter/getter for extractURLWithoutProtocol
      *
      * @param boolean $flag
-     * @return Extractor
+     * @return bool|Extractor
      */
     public function extractURLWithoutProtocol($flag = null)
     {
-        if (is_null($flag)) {
+        if ($flag === null) {
             return $this->extractURLWithoutProtocol;
         }
         $this->extractURLWithoutProtocol = (bool) $flag;
@@ -514,11 +536,11 @@ class Extractor
     public function removeOverlappingEntities($entities)
     {
         $result = array();
-        usort($entities, array($this, 'sortEntites'));
+        usort($entities, array($this, 'sortEntities'));
 
         $prev = null;
         foreach ($entities as $entity) {
-            if (isset($prev) && $entity['indices'][0] < $prev['indices'][1]) {
+            if ($prev !== null && $entity['indices'][0] < $prev['indices'][1]) {
                 continue;
             }
             $prev = $entity;
@@ -534,9 +556,9 @@ class Extractor
      * @param array $b
      * @return int
      */
-    protected function sortEntites($a, $b)
+    protected function sortEntities($a, $b)
     {
-        if ($a['indices'][0] == $b['indices'][0]) {
+        if ($a['indices'][0] === $b['indices'][0]) {
             return 0;
         }
         return ($a['indices'][0] < $b['indices'][0]) ? -1 : 1;

@@ -7,7 +7,7 @@
  * @package   Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Twitter\Text\ParseResults;
@@ -103,11 +103,11 @@ class ParseResultsTest extends TestCase
     }
 
     /**
-     * test set valiable
+     * test set variable
      *
-     * @dataProvider dataSetValiable
+     * @dataProvider dataSetVariable
      */
-    public function testSetValiable($message, $key, $value, $expected)
+    public function testSetVariable($message, $key, $value, $expected)
     {
         $this->results->$key = $value;
 
@@ -115,11 +115,11 @@ class ParseResultsTest extends TestCase
     }
 
     /**
-     * data for testSetValiable
+     * data for testSetVariable
      *
      * @return array
      */
-    public function dataSetValiable()
+    public function dataSetVariable()
     {
         return array(
             array('weightedLength to be integer', 'weightedLength', '1', 1),

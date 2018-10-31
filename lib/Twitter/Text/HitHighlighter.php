@@ -9,9 +9,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Regex;
-use Twitter\Text\StringUtils;
-
 /**
  * Twitter HitHighlighter Class
  *
@@ -113,14 +110,12 @@ class HitHighlighter
      * @param string $tweet The tweet to be hit highlighted.
      * @param array  $hits  An array containing the start and end index pairs
      *                        for the highlighting.
-     * @param bool   $escape      Whether to escape the tweet (default: true).
-     * @param bool   $full_encode  Whether to encode all special characters.
      *
      * @return string  The hit highlighted tweet.
      */
     public function highlight($tweet = null, array $hits = null)
     {
-        if (is_null($tweet)) {
+        if ($tweet === null) {
             $tweet = $this->tweet;
         }
         if (empty($hits)) {
@@ -146,12 +141,10 @@ class HitHighlighter
             $offset = 0;
             $start_in_chunk = false;
             # Flatten the multidimensional hits array:
-            $hits_flat = array();
-            foreach ($hits as $hit) {
-                $hits_flat = array_merge($hits_flat, $hit);
-            }
+            $hits_flat = call_user_func_array('array_merge', $hits);
+            $hits_flat_count = count($hits_flat);
             # Loop over the hit indices:
-            for ($index = 0; $index < count($hits_flat); $index++) {
+            for ($index = 0; $index < $hits_flat_count; $index++) {
                 $hit = $hits_flat[$index];
                 $tag = $tags[$index % 2];
                 $placed = false;
@@ -186,7 +179,8 @@ class HitHighlighter
                 if ($chunk_cursor < StringUtils::strlen($chunk)) {
                     $highlightTweet .= StringUtils::substr($chunk, $chunk_cursor);
                 }
-                for ($index = $chunk_index + 1; $index < count($chunks); $index++) {
+                $chunks_count = count($chunks);
+                for ($index = $chunk_index + 1; $index < $chunks_count; $index++) {
                     $highlightTweet .= ($index % 2 === 0 ? $chunks[$index] : '<' . $chunks[$index] . '>');
                 }
             }

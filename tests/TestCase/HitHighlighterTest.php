@@ -7,32 +7,32 @@
  * @package    Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
-use Twitter\Text\Validator;
+use Twitter\Text\HitHighlighter;
 
 /**
- * Twitter Validator Class Unit Tests
+ * Twitter HitHighlighter Class Unit Tests
  *
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property   Validator $validator
+ * @property   HitHighlighter $highlighter
  */
-class ValidatorTest extends TestCase
+class HitHighlighterTest extends TestCase
 {
     protected function setUp()
     {
         parent::setUp();
-        $this->validator = new Validator();
+        $this->highlighter = new HitHighlighter();
     }
 
     protected function tearDown()
     {
-        unset($this->validator);
+        unset($this->highlighter);
         parent::tearDown();
     }
 
@@ -45,27 +45,13 @@ class ValidatorTest extends TestCase
      */
     protected function providerHelper($test)
     {
-        $data = Yaml::parse(DATA . '/validate.yml');
+        $data = Yaml::parse(DATA . '/hit_highlighting.yml');
         return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 
-    /**
-     * @group Validation
-     */
-    public function testDefaultConfigraionIsV2()
+    public function testCreate()
     {
-        $v2Config = new Configuration();
-        $this->assertSame($v2Config->toArray(), $this->validator->getConfiguration()->toArray());
-        $this->assertSame(2, $this->validator->getConfiguration()->version);
-    }
-
-    /**
-     * @group Validation
-     */
-    public function testConfiglationFromObject()
-    {
-        $conf = new Configuration();
-        $validator = Validator::create($conf);
-        $this->assertSame($conf, $validator->getConfiguration());
+        $highlighter = HitHighlighter::create();
+        $this->assertInstanceOf('Twitter\\Text\\HitHighlighter', $highlighter);
     }
 }

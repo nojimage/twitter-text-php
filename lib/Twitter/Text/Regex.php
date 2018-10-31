@@ -10,8 +10,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\TldLists;
-
 /**
  * Twitter Regex Abstract Class
  *
@@ -29,7 +27,6 @@ use Twitter\Text\TldLists;
  */
 class Regex
 {
-
     /**
      * Expression to match whitespace characters.
      *
@@ -90,6 +87,24 @@ class Regex
     private static $invalidCharacters = '\x{202a}-\x{202e}\x{feff}\x{fffe}\x{ffff}';
 
     /**
+     * Directional Characters
+     *
+     * 0x061C ARABIC LETTER MARK (ALM)
+     * 0x200E LEFT-TO-RIGHT MARK (LRM)
+     * 0x200F RIGHT-TO-LEFT MARK (RLM)
+     * 0x202A LEFT-TO-RIGHT EMBEDDING (LRE)
+     * 0x202B RIGHT-TO-LEFT EMBEDDING (RLE)
+     * 0x202C POP DIRECTIONAL FORMATTING (PDF)
+     * 0x202D LEFT-TO-RIGHT OVERRIDE (LRO)
+     * 0x202E RIGHT-TO-LEFT OVERRIDE (RLO)
+     * 0x2066 LEFT-TO-RIGHT ISOLATE (LRI)
+     * 0x2067 RIGHT-TO-LEFT ISOLATE (RLI)
+     * 0x2068 FIRST STRONG ISOLATE (FSI)
+     * 0x2069 POP DIRECTIONAL ISOLATE (PDI)
+     */
+    private static $directionalCharacters = '\x{061c}\x{200e}\x{200f}\x{202a}\x{202e}\x{2066}\x{2069}';
+
+    /**
      * Expression to match RTL characters.
      *
      * 0x0600-0x06FF Arabic
@@ -106,23 +121,35 @@ class Regex
 
     # Expression to match at and hash sign characters:
     private static $atSigns = '@＠';
+
     private static $hashSigns = '#＃';
 
     # cash tags
     private static $cashSigns = '\$';
+
     private static $cashtag = '[a-z]{1,6}(?:[._][a-z]{1,2})?';
 
     # These URL validation pattern strings are based on the ABNF from RFC 3986
     private static $validateUrlUnreserved = '[a-z\p{Cyrillic}0-9\-._~]';
+
     private static $validateUrlPctEncoded = '(?:%[0-9a-f]{2})';
+
     private static $validateUrlSubDelims = '[!$&\'()*+,;=]';
+
+    private static $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
+
+    private static $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
+
     // @codingStandardsIgnoreStart
     private static $validateUrlIpv4 = '(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3})'; // @codingStandardsIgnoreEnd
+
     private static $validateUrlIpv6 = '(?:\[[a-f0-9:\.]+\])';
+
     private static $validateUrlPort = '[0-9]{1,5}';
 
     # URL related hash regex collection
     private static $validSpecialCcTLD = '(?:(?:co|tv)(?=[^0-9a-z@]|$))';
+
     private static $validPunycode = '(?:xn--[0-9a-z]+)';
 
     /**
@@ -193,7 +220,8 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/^https?:\/\/t\.co\/([a-z0-9]+)/iu';
+            $regexp = '/^https?:\/\/t\.co\/([a-z0-9]+)'
+                . '(?:\?' . static::$validUrlQueryChars . '*' . static::$validUrlQueryEndingChars . ')?/iu';
         }
 
         return $regexp;
@@ -261,9 +289,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|^)';
-            $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
-            $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
+            $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|[' . static::$directionalCharacters . ']|^)';
             $validPortNumber = '[0-9]+';
 
             $regexp = '/(?:'                           # $1 Complete match (preg_match() already matches everything.)
@@ -272,8 +298,8 @@ class Regex
                 . '(https?:\/\/)?'                     # $4 Protocol (optional)
                 . '(' . static::getValidDomain() . ')' # $5 Domain(s)
                 . '(?::(' . $validPortNumber . '))?'   # $6 Port number (optional)
-                . '(\/' . static::getValidUrlPath() . '*)?'                            # $7 URL Path
-                . '(\?' . $validUrlQueryChars . '*' . $validUrlQueryEndingChars . ')?' # $8 Query String
+                . '(\/' . static::getValidUrlPath() . '*)?' # $7 URL Path
+                . '(\?' . static::$validUrlQueryChars . '*' . static::$validUrlQueryEndingChars . ')?' # $8 Query String
                 . ')'
                 . ')/iux';
         }
@@ -446,7 +472,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/^(?:[' . static::$spaces . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
+            $regexp = '/^(?:[' . static::$spaces . static::$directionalCharacters . '])*[' . static::$atSigns . ']([a-z0-9_]{1,20})(?=(.*|$))/iu';
         }
 
         return $regexp;
@@ -557,7 +583,7 @@ class Regex
         static $regexp = null;
 
         if ($regexp === null) {
-            $regexp = '/(^|[' . static::$spaces . '])([' . static::$cashSigns . '])'
+            $regexp = '/(^|[' . static::$spaces . static::$directionalCharacters . '])([' . static::$cashSigns . '])'
                 . '(' . static::$cashtag . ')(?=($|\s|[[:punct:]]))/iu';
         }
 

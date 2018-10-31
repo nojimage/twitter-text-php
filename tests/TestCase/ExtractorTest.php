@@ -7,11 +7,12 @@
  * @package    Twitter.Text
  */
 
-namespace Twitter\Text;
+namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Extractor;
+use Twitter\Text\StringUtils;
 
 /**
  * Twitter Extractor Class Unit Tests
@@ -24,6 +25,13 @@ use Twitter\Text\Extractor;
  */
 class ExtractorTest extends TestCase
 {
+    /**
+     * A Test Subject
+     *
+     * @var Extractor
+     */
+    private $extractor;
+
     protected function setUp()
     {
         parent::setUp();
@@ -55,7 +63,7 @@ class ExtractorTest extends TestCase
     public function testExtractURLsWithoutProtocol()
     {
         $extracted = Extractor::create()
-            ->extractUrlWithoutProtocol(false)
+            ->extractURLWithoutProtocol(false)
             ->extractURLs('text: example.com http://foobar.example.com');
         $this->assertSame(array('http://foobar.example.com'), $extracted, 'Unextract url without protocol');
     }
@@ -66,7 +74,7 @@ class ExtractorTest extends TestCase
     public function testExtractURLsWithIndicesWithoutProtocol()
     {
         $extracted = Extractor::create()
-            ->extractUrlWithoutProtocol(false)
+            ->extractURLWithoutProtocol(false)
             ->extractURLsWithIndices('text: example.com');
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
@@ -87,7 +95,7 @@ class ExtractorTest extends TestCase
         $this->assertSame(array(0, 6), $extracted[0]['indices']);
         $this->assertSame(array(7, 14), $extracted[1]['indices']);
 
-        $extracted = $this->extractor->extractUrlWithoutProtocol(false)->extractURLsWithIndices($text);
+        $extracted = $this->extractor->extractURLWithoutProtocol(false)->extractURLsWithIndices($text);
         $this->assertSame(array(), $extracted, 'Unextract url without protocol');
     }
 
@@ -96,7 +104,7 @@ class ExtractorTest extends TestCase
      */
     public function testExtractURLsWithEmoji()
     {
-        $text = "@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg";
+        $text = '@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg';
         $extracted = $this->extractor->extractURLsWithIndices($text);
         $this->assertSame(array(14, 45), $extracted[0]['indices']);
         $this->assertSame(
@@ -251,5 +259,83 @@ class ExtractorTest extends TestCase
         );
 
         $this->assertSame($expects, $extracted);
+    }
+
+    /**
+     * @group Extractor
+     */
+    public function testExtractEmojiWithIndices()
+    {
+        $text = 'Unicode 10.0; grinning face with one large and one small eye: 🤪;'
+            . ' woman with headscarf: 🧕;'
+            . ' (fitzpatrick) woman with headscarf + medium-dark skin tone: 🧕🏾;'
+            . ' flag (England): 🏴󠁧󠁢󠁥󠁮󠁧󠁿';
+
+        $expects = array(
+            array(
+                'emoji' => '🤪',
+                'indices' => array(62, 62),
+            ),
+            array(
+                'emoji' => '🧕',
+                'indices' => array(87, 87),
+            ),
+            array(
+                'emoji' => '🧕🏾',
+                'indices' => array(150, 151),
+            ),
+            array(
+                'emoji' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+                'indices' => array(170, 176),
+            ),
+        );
+
+        $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
+    }
+
+    /**
+     * test for extract a mix of single byte single word, and double word unicode characters
+     */
+    public function testExtractEmojiWithIndicesEmojiAndChars()
+    {
+        $text = 'H🐱☺👨‍👩‍👧‍👦';
+
+        $expects = array(
+            array(
+                'emoji' => '🐱',
+                'indices' => array(1, 1),
+            ),
+            array(
+                'emoji' => '☺',
+                'indices' => array(2, 2),
+            ),
+            array(
+                'emoji' => '👨‍👩‍👧‍👦',
+                'indices' => array(3, 9),
+            ),
+        );
+
+        $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
+    }
+
+    /**
+     * test for extract unicode emoji chars outside the basic multilingual plane with skin tone modifiers
+     */
+    public function testParseTweetWithEmojiOutsideMultilingualPlanWithSkinTone()
+    {
+        $text = '🙋🏽👨‍🎤';
+
+        $expects = array(
+            array(
+                'emoji' => '🙋🏽',
+                'indices' => array(0, 1),
+            ),
+            array(
+                'emoji' => '👨‍🎤',
+                'indices' => array(2, 4),
+            ),
+        );
+
+        $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
     }
 }

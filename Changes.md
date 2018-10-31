@@ -1,5 +1,12 @@
 # Changes
 
+## 3.0.0
+
+- Pass twitter-text conformance 3.0.0
+- Change default configuration to v3 (emojiParsingEnabled=true)
+- Add t.co with query string support
+- Add Directional Characters support
+
 ## 2.0.2
 
 - Pass twitter-text conformance 2.0.5
