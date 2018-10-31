@@ -274,19 +274,65 @@ class ExtractorTest extends TestCase
         $expects = array(
             array(
                 'emoji' => '🤪',
-                'indices' => array(62, 63),
+                'indices' => array(62, 62),
             ),
             array(
                 'emoji' => '🧕',
-                'indices' => array(90, 91),
+                'indices' => array(87, 87),
             ),
             array(
                 'emoji' => '🧕🏾',
-                'indices' => array(156, 158),
+                'indices' => array(150, 151),
             ),
             array(
                 'emoji' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-                'indices' => array(182, 189),
+                'indices' => array(170, 176),
+            ),
+        );
+
+        $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
+    }
+
+    /**
+     * test for extract a mix of single byte single word, and double word unicode characters
+     */
+    public function testExtractEmojiWithIndicesEmojiAndChars()
+    {
+        $text = 'H🐱☺👨‍👩‍👧‍👦';
+
+        $expects = array(
+            array(
+                'emoji' => '🐱',
+                'indices' => array(1, 1),
+            ),
+            array(
+                'emoji' => '☺',
+                'indices' => array(2, 2),
+            ),
+            array(
+                'emoji' => '👨‍👩‍👧‍👦',
+                'indices' => array(3, 9),
+            ),
+        );
+
+        $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
+    }
+
+    /**
+     * test for extract unicode emoji chars outside the basic multilingual plane with skin tone modifiers
+     */
+    public function testParseTweetWithEmojiOutsideMultilingualPlanWithSkinTone()
+    {
+        $text = '🙋🏽👨‍🎤';
+
+        $expects = array(
+            array(
+                'emoji' => '🙋🏽',
+                'indices' => array(0, 1),
+            ),
+            array(
+                'emoji' => '👨‍🎤',
+                'indices' => array(2, 4),
             ),
         );
 

@@ -219,20 +219,32 @@ class Extractor
     public function extractEmojiWithIndices($tweet)
     {
         preg_match_all(EmojiRegex::VALID_EMOJI_PATTERN, $tweet, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
-        $emojis = array();
+        $entities = array();
 
         foreach ($matches as $match) {
             list($emoji) = $match;
-            $start_position = $emoji[1];
-            $end_position = $start_position + StringUtils::strlen($emoji[0]);
+            list($emojiChar, $offset) = $emoji;
+            $startPosition = StringUtils::strlen(substr($tweet, 0, $offset));
+            $endPosition = $startPosition + StringUtils::strlen($emojiChar) - 1;
 
-            $emojis[] = array(
+            $entities[] = array(
                 'emoji' => $emoji[0],
-                'indices' => array($start_position, $end_position)
+                'indices' => array($startPosition, $endPosition)
             );
         }
 
-        return $emojis;
+        return $entities;
+    }
+
+    /**
+     * Check the character is emoji
+     *
+     * @param string $char a char
+     * @return bool
+     */
+    private function isValidEmoji($char)
+    {
+        return (bool)preg_match(EmojiRegex::VALID_EMOJI_PATTERN, $char);
     }
 
     /**
@@ -518,11 +530,11 @@ class Extractor
      * setter/getter for extractURLWithoutProtocol
      *
      * @param boolean $flag
-     * @return Extractor
+     * @return bool|Extractor
      */
     public function extractURLWithoutProtocol($flag = null)
     {
-        if (is_null($flag)) {
+        if ($flag === null) {
             return $this->extractURLWithoutProtocol;
         }
         $this->extractURLWithoutProtocol = (bool) $flag;

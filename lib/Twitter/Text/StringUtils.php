@@ -24,8 +24,8 @@ class StringUtils
      * alias of mb_substr
      *
      * @param string $str
-     * @param integer $start
-     * @param integer $length
+     * @param integer $start (character)
+     * @param integer $length (character)
      * @param string $encoding
      * @return string
      */
@@ -156,5 +156,37 @@ class StringUtils
     public static function codePointAt($str, $offset, $encoding = 'UTF-8')
     {
         return static::ord(mb_substr($str, $offset, 1, $encoding), $encoding);
+    }
+
+    /**
+     * is surrogate pair char
+     *
+     * @param string $char
+     * @return bool
+     */
+    public static function isSurrogatePair($char)
+    {
+        return preg_match('/[\\x{10000}-\\x{10FFFF}]/u', $char);
+    }
+
+    /**
+     * get the character code count
+     *
+     * @param $string
+     * @param string $encoding
+     * @return int
+     */
+    public static function charCount($string, $encoding = 'UTF-8')
+    {
+        $count = 0;
+        $offset = 0;
+        $strlen = static::strlen($string);
+
+        for ($offset = 0; $offset < $strlen; $offset++) {
+            $char = static::substr($string, $offset, 1, $encoding);
+            $count += static::isSurrogatePair($char) ? 2 : 1;
+        }
+
+        return $count;
     }
 }

@@ -601,7 +601,8 @@ class ConformanceTest extends TestCase
      */
     public function testGetWeightedTweetsCounter($description, $text, $expected)
     {
-        $result = $this->parser->parseTweet($text);
+        $parser = new Parser(Configuration::v2());
+        $result = $parser->parseTweet($text);
         $this->assertSame($expected, $result->toArray(), $description);
     }
 

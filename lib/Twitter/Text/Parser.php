@@ -19,7 +19,6 @@ namespace Twitter\Text;
  */
 class Parser
 {
-
     /**
      * @var Configuration
      */
@@ -58,20 +57,22 @@ class Parser
      */
     public function parseTweet($tweet)
     {
-        if ($tweet === null || strlen($tweet) === 0) {
+        if ($tweet === null || '' === $tweet) {
             return new ParseResults;
         }
 
         $normalizedTweet = StringUtils::normalizeFromNFC($tweet);
-        $normalizedtweetLength = StringUtils::strlen($normalizedTweet);
+        $normalizedTweetLength = StringUtils::strlen($normalizedTweet);
 
-        $defaultWeight = $this->config->defaultWeight;
+        $emojiParsingEnabled = $this->config->getEmojiParsingEnabled();
         $maxWeightedTweetLength = $this->config->getScaledMaxWeightedTweetLength();
         $transformedUrlWeight = $this->config->getScaledTransformedURLLength();
-        $ranges = $this->config->ranges;
 
         $extractor = new Extractor();
-        $urlEntities = $extractor->extractURLsWithIndices($normalizedTweet);
+        $urlEntitiesMap = $this->transformEntitiesToHash($extractor->extractURLsWithIndices($normalizedTweet));
+        $emojiEntitiesMap = $emojiParsingEnabled
+            ? $this->transformEntitiesToHash($extractor->extractEmojiWithIndices($normalizedTweet))
+            : array();
 
         $hasInvalidCharacters = false;
         $weightedCount = 0;
@@ -79,50 +80,41 @@ class Parser
         $displayOffset = 0;
         $validOffset = 0;
 
-        while ($offset < $normalizedtweetLength) {
-            $charWeight = $defaultWeight;
-            $matchedUrlEntityIdx = false;
+        while ($offset < $normalizedTweetLength) {
+            if (isset($urlEntitiesMap[$offset])) {
+                list($urlStart, $urlEnd) = $urlEntitiesMap[$offset]['indices'];
+                $urlLength = $urlEnd - $urlStart;
 
-            foreach ($urlEntities as $idx => $urlEntity) {
-                $urlStart = $urlEntity['indices'][0];
-                $urlEnd = $urlEntity['indices'][1];
-
-                if ($offset === $urlStart) {
-                    $urlLength = $urlEnd - $urlStart;
-
-                    $weightedCount += $transformedUrlWeight;
-                    $offset += $urlLength;
-                    $displayOffset += $urlLength;
-                    if ($weightedCount <= $maxWeightedTweetLength) {
-                        $validOffset += $urlLength;
-                    }
-
-                    $matchedUrlEntityIdx = $idx;
-                    break;
+                $weightedCount += $transformedUrlWeight;
+                $offset += $urlLength;
+                $displayOffset += $urlLength;
+                if ($weightedCount <= $maxWeightedTweetLength) {
+                    $validOffset += $urlLength;
                 }
-            }
+            } elseif ($emojiParsingEnabled && isset($emojiEntitiesMap[$offset])) {
+                $emoji = $emojiEntitiesMap[$offset]['emoji'];
+                list($emojiStart, $emojiEnd) = $emojiEntitiesMap[$offset]['indices'];
+                $emojiLength = StringUtils::strlen($emoji);
+                $charCount = StringUtils::charCount($emoji);
 
-            if ($matchedUrlEntityIdx !== false) {
-                unset($urlEntities[$matchedUrlEntityIdx]);
-                continue;
-            }
-
-            if ($offset < $normalizedtweetLength) {
-                $char = StringUtils::substr($normalizedTweet, $offset, 1);
-                $codePoint = StringUtils::ord($char);
-
-                foreach ($ranges as $range) {
-                    if ($this->inRange($codePoint, $range)) {
-                        $charWeight = $range['weight'];
-                        break;
-                    }
+                $charWeight = 0;
+                for ($i = 0; $i < $emojiLength; $i++) {
+                    $charWeight += $this->getCharacterWeight(StringUtils::substr($emoji, $i, 1), $this->config);
                 }
-
-                $weightedCount += $charWeight;
+                $weightedCount += $this->getCharacterWeight(StringUtils::substr($emoji, 0, 1), $this->config);
+                $offset += $emojiLength;
+                $displayOffset += $charCount;
+                if ($weightedCount <= $maxWeightedTweetLength) {
+                    $validOffset += $charCount;
+                }
+            } else {
+                $char =  StringUtils::substr($normalizedTweet, $offset, 1);
 
                 $hasInvalidCharacters = $hasInvalidCharacters || $this->hasInvalidCharacters($char);
                 $charCount = StringUtils::strlen($char);
-                $charWidth = $this->isSurrogatePair($char) ? 2 : 1;
+                $charWidth = StringUtils::isSurrogatePair($char) ? 2 : 1;
+
+                $weightedCount += $this->getCharacterWeight($char, $this->config);
                 $offset += $charCount;
                 $displayOffset += $charWidth;
 
@@ -136,11 +128,46 @@ class Parser
         $permillage = $scaledWeightedLength * 1000 / $this->config->maxWeightedTweetLength;
         $isValid = !$hasInvalidCharacters && $weightedCount <= $maxWeightedTweetLength;
 
-        $normalizedTweetOffset = StringUtils::strlen($tweet) - $normalizedtweetLength;
+        $normalizedTweetOffset = StringUtils::strlen($tweet) - $normalizedTweetLength;
         $displayTextRange = array(0, $displayOffset + $normalizedTweetOffset - 1);
         $validTextRange = array(0, $validOffset + $normalizedTweetOffset - 1);
 
         return new ParseResults($scaledWeightedLength, $permillage, $isValid, $displayTextRange, $validTextRange);
+    }
+
+    /**
+     * Convert to Hash by indices start
+     *
+     * @param array $entities
+     * @return array
+     */
+    private function transformEntitiesToHash(array $entities)
+    {
+        return array_reduce($entities, function ($map, $entity) {
+            $map[$entity['indices'][0]] = $entity;
+
+            return $map;
+        }, array());
+    }
+
+    /**
+     * Get the character weight from ranges
+     *
+     * @param string $char the Character
+     * @param Configuration $config the parse configuration
+     * @return int
+     */
+    private function getCharacterWeight($char, Configuration $config)
+    {
+        $codePoint = StringUtils::ord($char);
+
+        foreach ($config->ranges as $range) {
+            if ($this->inRange($codePoint, $range)) {
+                return $range['weight'];
+            }
+        }
+
+        return $config->defaultWeight;
     }
 
     /**
@@ -164,16 +191,5 @@ class Parser
     private function hasInvalidCharacters($char)
     {
         return preg_match(Regex::getInvalidCharactersMatcher(), $char);
-    }
-
-    /**
-     * is surrogate pair char
-     *
-     * @param string $char
-     * @return bool
-     */
-    private function isSurrogatePair($char)
-    {
-        return preg_match('/[\\x{10000}-\\x{10FFFF}]/u', $char);
     }
 }

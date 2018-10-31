@@ -158,6 +158,42 @@ class ParserTest extends TestCase
     }
 
     /**
+     * test for parseTweet Count a mix of single byte single word, and double word unicode characters
+     */
+    public function testParseTweetWithEmojiAndChars()
+    {
+        $text = 'H🐱☺👨‍👩‍👧‍👦';
+
+        $result = $this->parser->parseTweet($text);
+
+        $this->assertSame(7, $result->weightedLength);
+        $this->assertSame(true, $result->valid);
+        $this->assertSame(25, $result->permillage);
+        $this->assertSame(0, $result->displayRangeStart);
+        $this->assertSame(14, $result->displayRangeEnd);
+        $this->assertSame(0, $result->validRangeStart);
+        $this->assertSame(14, $result->validRangeEnd);
+    }
+
+    /**
+     * test for parseTweet Count unicode emoji chars outside the basic multilingual plane with skin tone modifiers
+     */
+    public function testParseTweetWithEmojiOutsideMultilingualPlanWithSkinTone()
+    {
+        $text = '🙋🏽👨‍🎤';
+
+        $result = $this->parser->parseTweet($text);
+
+        $this->assertSame(4, $result->weightedLength);
+        $this->assertSame(true, $result->valid);
+        $this->assertSame(14, $result->permillage);
+        $this->assertSame(0, $result->displayRangeStart);
+        $this->assertSame(8, $result->displayRangeEnd);
+        $this->assertSame(0, $result->validRangeStart);
+        $this->assertSame(8, $result->validRangeEnd);
+    }
+
+    /**
      * test for parseTweet given CJK strings
      */
     public function testParseTweetWithCJK()
