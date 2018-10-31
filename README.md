@@ -69,7 +69,14 @@ composer require nojimage/twitter-text-php
 
 ## Length validation ##
 
-twitter-text 2.0 introduces configuration files that define how Tweets are parsed for length. This allows for backwards compatibility and flexibility going forward. Old-style traditional 140-character parsing is defined by the v1.json configuration file, whereas v2.json is updated for "weighted" Tweets where ranges of Unicode code points can have independent weights aside from the default weight. The sum of all code points, each weighted appropriately, should not exceed the max weighted length.
+twitter-text 3.0 updates the config file with `emojiParsingEnabled` config option.
+When true, twitter-text-php will parse and discount emoji supported by the [Unicode Emoji 11.0](http://www.unicode.org/emoji/charts-11.0) (NOTE: Original [twitter-text](https://github.com/twitter/twitter-text) supported [twemoji library](https://github.com/twitter/twemoji)).
+The length of these emoji will be the default weight (200 or two characters) even if they contain multiple code points combined by zero-width joiners.
+This means that emoji with skin tone and gender modifiers no longer count as more characters than those without such modifiers.
+
+twitter-text 2.0 introduced configuration files that define how Tweets are parsed for length. This allows for backwards compatibility and flexibility going forward.
+Old-style traditional 140-character parsing is defined by the v1.json configuration file, whereas v2.json is updated for "weighted" Tweets where ranges of Unicode code points can have independent weights aside from the default weight.
+The sum of all code points, each weighted appropriately, should not exceed the max weighted length.
 
 Some old methods from twitter-text-php 1.0 have been marked deprecated, such as the `Twitter\Text\Validator::isValidTweetText()`, `Twitter\Text\Validator::getTweetLength()` method. The new API is based on the following method, `Twitter\Text\Parser::parseTweet()`
 
