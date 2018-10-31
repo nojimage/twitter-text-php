@@ -9,10 +9,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Regex;
-use Twitter\Text\Extractor;
-use Twitter\Text\StringUtils;
-
 /**
  * Twitter Validator Class
  *
@@ -33,13 +29,13 @@ class Validator
      *
      * @var Extractor
      */
-    protected $extractor = null;
+    protected $extractor;
 
     /**
      *
      * @var Configuration
      */
-    protected $config = null;
+    protected $config;
 
     /**
      * Provides fluent method chaining.
@@ -109,13 +105,8 @@ class Validator
      */
     public function isValidTweetText($tweet, Configuration $config = null)
     {
-        if ($config === null) {
-            $config = $this->config;
-        }
 
-        $result = Parser::create($config)->parseTweet($tweet);
-
-        return $result->valid;
+        return $this->parseTweet($tweet, $config)->valid;
     }
 
     /**
@@ -146,9 +137,14 @@ class Validator
         if (empty($list) || !$length) {
             return false;
         }
-        preg_match(Regex::getValidMentionsOrListsMatcher(), $list, $matches);
-        $matches = array_pad($matches, 5, '');
-        return isset($matches) && $matches[1] === '' && $matches[4] && !empty($matches[4]) && $matches[5] === '';
+
+        if (preg_match(Regex::getValidMentionsOrListsMatcher(), $list, $matches)) {
+            $matches = array_pad($matches, 5, '');
+
+            return $matches[1] === '' && !empty($matches[4]) && $matches[4] && $matches[5] === '';
+        }
+
+        return false;
     }
 
     /**
@@ -220,13 +216,7 @@ class Validator
      */
     public function getTweetLength($tweet, Configuration $config = null)
     {
-        if ($config === null) {
-            $config = $this->config;
-        }
-
-        $result = Parser::create($config)->parseTweet($tweet);
-
-        return $result->weightedLength;
+        return $this->parseTweet($tweet, $config)->weightedLength;
     }
 
     /**
@@ -243,8 +233,24 @@ class Validator
         $found = preg_match($pattern, $string, $matches);
         if (!$optional) {
             return (($string || $string === '') && $found && $matches[0] === $string);
-        } else {
-            return !(($string || $string === '') && (!$found || $matches[0] !== $string));
         }
+
+        return !(($string || $string === '') && (!$found || $matches[0] !== $string));
+    }
+
+    /**
+     * Parse tweet
+     *
+     * @param string $tweet The tweet to parse.
+     * @param Configuration|null $config using configuration
+     * @return ParseResults
+     */
+    private function parseTweet($tweet, Configuration $config = null)
+    {
+        if ($config === null) {
+            $config = $this->config;
+        }
+
+        return Parser::create($config)->parseTweet($tweet);
     }
 }

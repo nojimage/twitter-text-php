@@ -93,14 +93,9 @@ class Parser
                 }
             } elseif ($emojiParsingEnabled && isset($emojiEntitiesMap[$offset])) {
                 $emoji = $emojiEntitiesMap[$offset]['emoji'];
-                list($emojiStart, $emojiEnd) = $emojiEntitiesMap[$offset]['indices'];
                 $emojiLength = StringUtils::strlen($emoji);
                 $charCount = StringUtils::charCount($emoji);
 
-                $charWeight = 0;
-                for ($i = 0; $i < $emojiLength; $i++) {
-                    $charWeight += $this->getCharacterWeight(StringUtils::substr($emoji, $i, 1), $this->config);
-                }
                 $weightedCount += $this->getCharacterWeight(StringUtils::substr($emoji, 0, 1), $this->config);
                 $offset += $emojiLength;
                 $displayOffset += $charCount;

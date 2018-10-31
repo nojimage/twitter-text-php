@@ -10,8 +10,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\TldLists;
-
 /**
  * Twitter Regex Abstract Class
  *
@@ -292,8 +290,6 @@ class Regex
 
         if ($regexp === null) {
             $validUrlPrecedingChars = '(?:[^a-z0-9_@＠\$#＃' . static::$invalidCharacters . ']|[' . static::$directionalCharacters . ']|^)';
-            $validUrlQueryChars = '[a-z0-9!?\*\'\(\);:&=\+\$\/%#\[\]\-_\.,~|@]';
-            $validUrlQueryEndingChars = '[a-z0-9_&=#\/\-]';
             $validPortNumber = '[0-9]+';
 
             $regexp = '/(?:'                           # $1 Complete match (preg_match() already matches everything.)

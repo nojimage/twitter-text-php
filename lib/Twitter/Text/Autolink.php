@@ -10,10 +10,6 @@
 
 namespace Twitter\Text;
 
-use Twitter\Text\Regex;
-use Twitter\Text\Extractor;
-use Twitter\Text\StringUtils;
-
 /**
  * Twitter Autolink Class
  *
@@ -445,9 +441,7 @@ class Autolink
             $json = $this->object2array($json);
         }
         if (is_array($json)) {
-            foreach ($json as $key => $vals) {
-                $entities = array_merge($entities, $json[$key]);
-            }
+            $entities = call_user_func_array('array_merge', $json);
         }
 
         // map JSON entity to twitter-text entity
@@ -668,7 +662,7 @@ class Autolink
             $class[] = 'rtl';
         }
         if (!empty($class)) {
-            $attributes['class'] = join(' ', $class);
+            $attributes['class'] = implode(' ', $class);
         }
 
         return $this->linkToText($entity, $linkText, $attributes);
@@ -745,7 +739,7 @@ class Autolink
             $rel[] = 'nofollow';
         }
         if (!empty($rel)) {
-            $attributes['rel'] = join(' ', $rel);
+            $attributes['rel'] = implode(' ', $rel);
         }
         if ($this->target) {
             $attributes['target'] = $this->target;

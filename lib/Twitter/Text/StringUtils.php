@@ -179,7 +179,6 @@ class StringUtils
     public static function charCount($string, $encoding = 'UTF-8')
     {
         $count = 0;
-        $offset = 0;
         $strlen = static::strlen($string);
 
         for ($offset = 0; $offset < $strlen; $offset++) {
