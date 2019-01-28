@@ -130,6 +130,14 @@ class Autolink
     protected $invisibleTagAttrs = "style='position:absolute;left:-9999px;'";
 
     /**
+     * If the at mark '@' should be included in the link (false by default)
+     *
+     * @var bool
+     * @since 3.0.1
+     */
+    protected $usernameIncludeSymbol = false;
+
+    /**
      *
      * @var Extractor
      */
@@ -388,6 +396,29 @@ class Autolink
     }
 
     /**
+     * @return bool
+     * @since 3.0.1
+     */
+    public function isUsernameIncludeSymbol()
+    {
+        return $this->usernameIncludeSymbol;
+    }
+
+    /**
+     * Set if the at mark '@' should be included in the link (false by default)
+     *
+     * @param bool $usernameIncludeSymbol if username includes symbol
+     * @return Autolink
+     * @since 3.0.1
+     */
+    public function setUsernameIncludeSymbol($usernameIncludeSymbol)
+    {
+        $this->usernameIncludeSymbol = $usernameIncludeSymbol;
+
+        return $this;
+    }
+
+    /**
      * Autolink with entities
      *
      * @param string $tweet
@@ -404,18 +435,14 @@ class Autolink
         $text = '';
         $beginIndex = 0;
         foreach ($entities as $entity) {
-            if (isset($entity['screen_name'])) {
-                $text .= StringUtils::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex + 1);
-            } else {
-                $text .= StringUtils::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
-            }
+            $text .= StringUtils::substr($tweet, $beginIndex, $entity['indices'][0] - $beginIndex);
 
             if (isset($entity['url'])) {
                 $text .= $this->linkToUrl($entity);
             } elseif (isset($entity['hashtag'])) {
                 $text .= $this->linkToHashtag($entity, $tweet);
             } elseif (isset($entity['screen_name'])) {
-                $text .= $this->linkToMentionAndList($entity);
+                $text .= $this->linkToMentionAndList($entity, $tweet);
             } elseif (isset($entity['cashtag'])) {
                 $text .= $this->linkToCashtag($entity, $tweet);
             }
@@ -651,7 +678,7 @@ class Autolink
         $attributes = array();
         $class = array();
         $hash = StringUtils::substr($tweet, $entity['indices'][0], 1);
-        $linkText = $hash . $entity['hashtag'];
+        $linkText = $entity['hashtag'];
 
         $attributes['href'] = $this->url_base_hash . $entity['hashtag'];
         $attributes['title'] = '#' . $entity['hashtag'];
@@ -665,18 +692,20 @@ class Autolink
             $attributes['class'] = implode(' ', $class);
         }
 
-        return $this->linkToText($entity, $linkText, $attributes);
+        return $this->linkToTextWithSymbol($entity, $hash, $linkText, $attributes);
     }
 
     /**
      *
      * @param array  $entity
+     * @param string $tweet
      * @return string
      * @since 1.1.0
      */
-    public function linkToMentionAndList($entity)
+    public function linkToMentionAndList($entity, $tweet)
     {
         $attributes = array();
+        $symbol = StringUtils::substr($tweet, $entity['indices'][0], 1);
 
         if (!empty($entity['list_slug'])) {
             # Replace the list and username
@@ -694,7 +723,7 @@ class Autolink
         }
         $attributes['href'] = $url;
 
-        return $this->linkToText($entity, $linkText, $attributes);
+        return $this->linkToTextWithSymbol($entity, $symbol, $linkText, $attributes);
     }
 
     /**
@@ -710,15 +739,15 @@ class Autolink
             $tweet = $this->tweet;
         }
         $attributes = array();
-        $doller = StringUtils::substr($tweet, $entity['indices'][0], 1);
-        $linkText = $doller . $entity['cashtag'];
+        $dollar = StringUtils::substr($tweet, $entity['indices'][0], 1);
+        $linkText = $entity['cashtag'];
         $attributes['href'] = $this->url_base_cash . $entity['cashtag'];
-        $attributes['title'] = $linkText;
+        $attributes['title'] = '$' . $linkText;
         if (!empty($this->class_cash)) {
             $attributes['class'] = $this->class_cash;
         }
 
-        return $this->linkToText($entity, $linkText, $attributes);
+        return $this->linkToTextWithSymbol($entity, $dollar, $linkText, $attributes);
     }
 
     /**
@@ -750,6 +779,28 @@ class Autolink
         }
         $link .= '>' . $text . '</a>';
         return $link;
+    }
+
+    /**
+     *
+     * @param array $entity
+     * @param string $symbol
+     * @param string $linkText
+     * @param array $attributes
+     * @return string
+     * @since 3.0.1
+     */
+    protected function linkToTextWithSymbol(array $entity, $symbol, $linkText, array $attributes)
+    {
+        $includeSymbol = $this->usernameIncludeSymbol || !preg_match('/[@＠]/u', $symbol);
+
+        if (!$includeSymbol) {
+            return $symbol . $this->linkToText($entity, $linkText, $attributes);
+        }
+
+        $linkText = $symbol . $linkText;
+
+        return $this->linkToText($entity, $linkText, $attributes);
     }
 
     /**

@@ -52,4 +52,16 @@ class AutolinkTest extends TestCase
 
         $this->assertSame($expected, $linkedText);
     }
+
+    public function testUsernameIncludeSymbol()
+    {
+        $tweet = 'Testing @mention and @mention/list';
+        // @codingStandardsIgnoreStart
+        $expected = 'Testing <a class="tweet-url username" href="https://twitter.com/mention" rel="external nofollow" target="_blank">@mention</a> and <a class="tweet-url list-slug" href="https://twitter.com/mention/list" rel="external nofollow" target="_blank">@mention/list</a>';
+        // @codingStandardsIgnoreEnd
+
+        $this->linker->setUsernameIncludeSymbol(true);
+        $linkedText = $this->linker->autoLink($tweet);
+        $this->assertSame($expected, $linkedText);
+    }
 }
