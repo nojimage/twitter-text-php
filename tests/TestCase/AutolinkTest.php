@@ -41,6 +41,45 @@ class AutolinkTest extends TestCase
         $this->assertInstanceOf('Twitter\\Text\\AutoLink', $linker);
     }
 
+    /**
+     * test for accessor / mutator
+     */
+    public function testAccessorMutator()
+    {
+        $this->assertSame('', $this->linker->getURLClass());
+        $this->assertSame('-url', $this->linker->setURLClass('-url')->getURLClass());
+
+        $this->assertSame('tweet-url username', $this->linker->getUsernameClass());
+        $this->assertSame('-username', $this->linker->setUsernameClass('-username')->getUsernameClass());
+
+        $this->assertSame('tweet-url list-slug', $this->linker->getListClass());
+        $this->assertSame('-list', $this->linker->setListClass('-list')->getListClass());
+
+        $this->assertSame('tweet-url hashtag', $this->linker->getHashtagClass());
+        $this->assertSame('-hashtag', $this->linker->setHashtagClass('-hashtag')->getHashtagClass());
+
+        $this->assertSame('tweet-url cashtag', $this->linker->getCashtagClass());
+        $this->assertSame('-cashtag', $this->linker->setCashtagClass('-cashtag')->getCashtagClass());
+
+        $this->assertSame('_blank', $this->linker->getTarget());
+        $this->assertSame('', $this->linker->setTarget(false)->getTarget());
+
+        $this->assertSame(true, $this->linker->getExternal());
+        $this->assertSame(false, $this->linker->setExternal(false)->getExternal());
+
+        $this->assertSame(true, $this->linker->getNoFollow());
+        $this->assertSame(false, $this->linker->setNoFollow(false)->getNoFollow());
+
+        $this->assertSame(false, $this->linker->isUsernameIncludeSymbol());
+        $this->assertSame(true, $this->linker->setUsernameIncludeSymbol(true)->isUsernameIncludeSymbol());
+
+        $this->assertSame('', $this->linker->getSymbolTag());
+        $this->assertSame('i', $this->linker->setSymbolTag('i')->getSymbolTag());
+
+        $this->assertSame('', $this->linker->getTextWithSymbolTag());
+        $this->assertSame('b', $this->linker->setTextWithSymbolTag('b')->getTextWithSymbolTag());
+    }
+
     public function testAutolinkWithEmoji()
     {
         $text = '@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg';
