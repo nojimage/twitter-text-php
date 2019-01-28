@@ -64,4 +64,26 @@ class AutolinkTest extends TestCase
         $linkedText = $this->linker->autoLink($tweet);
         $this->assertSame($expected, $linkedText);
     }
+
+    public function testSymbolTag()
+    {
+        $this->linker
+            ->setExternal(false)
+            ->setTarget(false)
+            ->setNoFollow(false)
+            ->setSymbolTag('s')
+            ->setTextWithSymbolTag('b');
+
+        $tweet = '#hash';
+        $expected = '<a href="https://twitter.com/search?q=%23hash" title="#hash" class="tweet-url hashtag"><s>#</s><b>hash</b></a>';
+        $this->assertSame($expected, $this->linker->autoLink($tweet));
+
+        $tweet = '@mention';
+        $expected = '<s>@</s><a class="tweet-url username" href="https://twitter.com/mention"><b>mention</b></a>';
+        $this->assertSame($expected, $this->linker->autoLink($tweet));
+
+        $this->linker->setUsernameIncludeSymbol(true);
+        $expected = '<a class="tweet-url username" href="https://twitter.com/mention"><s>@</s><b>mention</b></a>';
+        $this->assertSame($expected, $this->linker->autoLink($tweet));
+    }
 }

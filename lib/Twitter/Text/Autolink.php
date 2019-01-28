@@ -138,6 +138,22 @@ class Autolink
     protected $usernameIncludeSymbol = false;
 
     /**
+     * HTML tag to be applied around #/@/# symbols in hashtags/usernames/lists/cashtag
+     *
+     * @var string
+     * @since 3.0.1
+     */
+    protected $symbolTag = '';
+
+    /**
+     * HTML tag to be applied around text part of hashtags/usernames/lists/cashtag
+     *
+     * @var string
+     * @since 3.0.1
+     */
+    protected $textWithSymbolTag = '';
+
+    /**
      *
      * @var Extractor
      */
@@ -414,6 +430,52 @@ class Autolink
     public function setUsernameIncludeSymbol($usernameIncludeSymbol)
     {
         $this->usernameIncludeSymbol = $usernameIncludeSymbol;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @since 3.0.1
+     */
+    public function getSymbolTag()
+    {
+        return $this->symbolTag;
+    }
+
+    /**
+     * Set HTML tag to be applied around #/@/# symbols in hashtags/usernames/lists/cashtag
+     *
+     * @param string $symbolTag HTML tag without bracket. e.g., 'b' or 's'
+     * @return Autolink
+     * @since 3.0.1
+     */
+    public function setSymbolTag($symbolTag)
+    {
+        $this->symbolTag = $symbolTag;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @since 3.0.1
+     */
+    public function getTextWithSymbolTag()
+    {
+        return $this->textWithSymbolTag;
+    }
+
+    /**
+     * Set HTML tag to be applied around text part of hashtags/usernames/lists/cashtag
+     *
+     * @param string $textWithSymbolTag HTML tag without bracket. e.g., 'b' or 's'
+     * @return Autolink
+     * @since 3.0.1
+     */
+    public function setTextWithSymbolTag($textWithSymbolTag)
+    {
+        $this->textWithSymbolTag = $textWithSymbolTag;
 
         return $this;
     }
@@ -793,6 +855,13 @@ class Autolink
     protected function linkToTextWithSymbol(array $entity, $symbol, $linkText, array $attributes)
     {
         $includeSymbol = $this->usernameIncludeSymbol || !preg_match('/[@＠]/u', $symbol);
+
+        if (!empty($this->symbolTag)) {
+            $symbol = sprintf('<%1$s>%2$s</%1$s>', $this->symbolTag, $symbol);
+        }
+        if (!empty($this->textWithSymbolTag)) {
+            $linkText = sprintf('<%1$s>%2$s</%1$s>', $this->textWithSymbolTag, $linkText);
+        }
 
         if (!$includeSymbol) {
             return $symbol . $this->linkToText($entity, $linkText, $attributes);
