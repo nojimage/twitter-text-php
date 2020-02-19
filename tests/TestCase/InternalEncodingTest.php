@@ -62,7 +62,12 @@ class InternalEncodingTest extends TestCase
      */
     protected function providerHelper($type, $test)
     {
-        $data = Yaml::parse(DATA . '/' . $type . '.yml');
+        $yamlParseMethod = 'parseFile';
+        if (!method_exists('\Symfony\Component\Yaml\Yaml', $yamlParseMethod)) {
+            $yamlParseMethod = 'parse';
+        }
+        $data = Yaml::$yamlParseMethod(DATA . '/' . $type . '.yml');
+
         return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 

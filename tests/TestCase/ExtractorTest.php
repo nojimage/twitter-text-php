@@ -10,7 +10,6 @@
 namespace Twitter\Text\TestCase;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
 use Twitter\Text\Extractor;
 use Twitter\Text\StringUtils;
 
@@ -42,19 +41,6 @@ class ExtractorTest extends TestCase
     {
         unset($this->extractor);
         parent::tearDown();
-    }
-
-    /**
-     * A helper function for providers.
-     *
-     * @param string  $test  The test to fetch data for.
-     *
-     * @return array  The test data to provide.
-     */
-    protected function providerHelper($test)
-    {
-        $data = Yaml::parse(DATA . '/extract.yml');
-        return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
     }
 
     /**
