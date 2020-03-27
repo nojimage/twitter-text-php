@@ -33,6 +33,14 @@ You can install this library into your application using [Composer](https://getc
 composer require nojimage/twitter-text-php
 ```
 
+### Note for Older Server ###
+
+This library use intl/libICU.
+Some older server and PHP 7.2+ combinations may have deprecated warnings due to older ICU versions. [refs #32](https://github.com/nojimage/twitter-text-php/issues/32)
+
+If you are using RHEL/CentOS 6, installing PHP using [the remi repository](https://rpms.remirepo.net/) is the best choice.
+If you use remi, you can use the new ICU.
+
 ## Features ##
 
 ### Autolink ##
