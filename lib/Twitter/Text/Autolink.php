@@ -198,6 +198,24 @@ class Autolink
     }
 
     /**
+     * Set CSS class to all link types.
+     *
+     * @param string $v CSS class for links.
+     *
+     * @return Autolink Fluid method chaining.
+     */
+    public function setToAllLinkClasses($v)
+    {
+        $this->setURLClass($v);
+        $this->setUsernameClass($v);
+        $this->setListClass($v);
+        $this->setHashtagClass($v);
+        $this->setCashtagClass($v);
+
+        return $this;
+    }
+
+    /**
      * CSS class for auto-linked URLs.
      *
      * @return string  CSS class for URL links.

@@ -184,4 +184,36 @@ class AutolinkTest extends TestCase
             ),
         );
     }
+
+    /**
+     * setToAllLinkClasses can set class to all link types
+     */
+    public function testSetToAllLinkClasses()
+    {
+        $this->assertSame('', $this->linker->getURLClass());
+        $this->assertSame('tweet-url username', $this->linker->getUsernameClass());
+        $this->assertSame('tweet-url list-slug', $this->linker->getListClass());
+        $this->assertSame('tweet-url hashtag', $this->linker->getHashtagClass());
+        $this->assertSame('tweet-url cashtag', $this->linker->getCashtagClass());
+
+        // set default css class
+        $this->assertSame($this->linker, $this->linker->setToAllLinkClasses('my-custom-class'));
+        $this->assertSame('my-custom-class', $this->linker->getURLClass(), 'getURLClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getUsernameClass(), 'getUsernameClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getListClass(), 'getListClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getHashtagClass(), 'getHashtagClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getCashtagClass(), 'getCashtagClass will return default class');
+
+        // override each classes
+        $this->linker->setURLClass('my-url-class');
+        $this->linker->setUsernameClass('my-username-class');
+        $this->linker->setListClass('my-list-class');
+        $this->linker->setHashtagClass('my-hashtag-class');
+        $this->linker->setCashtagClass('my-cashtag-class');
+        $this->assertSame('my-url-class', $this->linker->getURLClass(), 'getURLClass will return specific class');
+        $this->assertSame('my-username-class', $this->linker->getUsernameClass(), 'getUsernameClass will return specific class');
+        $this->assertSame('my-list-class', $this->linker->getListClass(), 'getListClass will return specific class');
+        $this->assertSame('my-hashtag-class', $this->linker->getHashtagClass(), 'getHashtagClass will return specific class');
+        $this->assertSame('my-cashtag-class', $this->linker->getCashtagClass(), 'getCashtagClass will return specific class');
+    }
 }
