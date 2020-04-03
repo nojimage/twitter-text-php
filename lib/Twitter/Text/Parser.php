@@ -96,7 +96,7 @@ class Parser
                 $emojiLength = StringUtils::strlen($emoji);
                 $charCount = StringUtils::charCount($emoji);
 
-                $weightedCount += $this->getCharacterWeight(StringUtils::substr($emoji, 0, 1), $this->config);
+                $weightedCount += $this->config->defaultWeight;
                 $offset += $emojiLength;
                 $displayOffset += $charCount;
                 if ($weightedCount <= $maxWeightedTweetLength) {
