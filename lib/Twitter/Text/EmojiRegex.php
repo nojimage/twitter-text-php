@@ -12,7 +12,7 @@ namespace Twitter\Text;
  * EmojiRegex
  *
  * @link http://unicode.org/Public/emoji/12.1/
- * @link https://unicode.org/emoji/charts/full-emoji-list.html
+ * @link https://unicode.org/emoji/charts-12.1/full-emoji-list.html
  */
 class EmojiRegex
 {
