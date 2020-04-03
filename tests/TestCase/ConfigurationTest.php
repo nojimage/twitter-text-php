@@ -34,7 +34,7 @@ class ConfigurationTest extends TestCase
      */
     protected function setUp()
     {
-        $this->config = new Configuration;
+        $this->config = new Configuration();
     }
 
     /**

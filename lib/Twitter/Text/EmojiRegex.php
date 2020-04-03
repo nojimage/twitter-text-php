@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     Takashi Nojima
  * @copyright  Copyright 2020, Takashi Nojima

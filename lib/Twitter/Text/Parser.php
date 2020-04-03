@@ -58,7 +58,7 @@ class Parser
     public function parseTweet($tweet)
     {
         if ($tweet === null || '' === $tweet) {
-            return new ParseResults;
+            return new ParseResults();
         }
 
         $normalizedTweet = StringUtils::normalizeFromNFC($tweet);

@@ -36,7 +36,7 @@ class ParserTest extends TestCase
      */
     protected function setUp()
     {
-        $this->parser = new Parser;
+        $this->parser = new Parser();
     }
 
     /**

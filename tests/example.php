@@ -10,6 +10,7 @@
  * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  */
+
 if (!defined('E_DEPRECATED')) {
     define('E_DEPRECATED', 8192);
 }
