@@ -35,7 +35,7 @@ class ParseResultsTest extends TestCase
      */
     protected function setUp()
     {
-        $this->results = new ParseResults;
+        $this->results = new ParseResults();
     }
 
     /**
@@ -73,7 +73,7 @@ class ParseResultsTest extends TestCase
      */
     public function testConstructEmpty()
     {
-        $result = new ParseResults;
+        $result = new ParseResults();
 
         $this->assertSame(0, $result->weightedLength);
         $this->assertSame(0, $result->permillage);

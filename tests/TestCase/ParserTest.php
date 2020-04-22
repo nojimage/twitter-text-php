@@ -36,7 +36,7 @@ class ParserTest extends TestCase
      */
     protected function setUp()
     {
-        $this->parser = new Parser;
+        $this->parser = new Parser();
     }
 
     /**
@@ -228,5 +228,23 @@ class ParserTest extends TestCase
         $this->assertSame(67, $result->displayRangeEnd);
         $this->assertSame(0, $result->validRangeStart);
         $this->assertSame(67, $result->validRangeEnd);
+    }
+
+    /**
+     * test for parseTweet Count unicode emoji #, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 + keycap (\x{20e3})
+     */
+    public function testParseTweetWithEmojiNumberWithKeycapWithoutVariantSelector()
+    {
+        $text = '1⃣';
+
+        $result = $this->parser->parseTweet($text);
+
+        $this->assertSame(2, $result->weightedLength);
+        $this->assertTrue($result->valid);
+        $this->assertSame(7, $result->permillage);
+        $this->assertSame(0, $result->displayRangeStart);
+        $this->assertSame(1, $result->displayRangeEnd);
+        $this->assertSame(0, $result->validRangeStart);
+        $this->assertSame(1, $result->validRangeEnd);
     }
 }

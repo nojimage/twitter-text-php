@@ -64,14 +64,14 @@ class AutolinkTest extends TestCase
         $this->assertSame('_blank', $this->linker->getTarget());
         $this->assertSame('', $this->linker->setTarget(false)->getTarget());
 
-        $this->assertSame(true, $this->linker->getExternal());
-        $this->assertSame(false, $this->linker->setExternal(false)->getExternal());
+        $this->assertTrue($this->linker->getExternal());
+        $this->assertFalse($this->linker->setExternal(false)->getExternal());
 
-        $this->assertSame(true, $this->linker->getNoFollow());
-        $this->assertSame(false, $this->linker->setNoFollow(false)->getNoFollow());
+        $this->assertTrue($this->linker->getNoFollow());
+        $this->assertFalse($this->linker->setNoFollow(false)->getNoFollow());
 
-        $this->assertSame(false, $this->linker->isUsernameIncludeSymbol());
-        $this->assertSame(true, $this->linker->setUsernameIncludeSymbol(true)->isUsernameIncludeSymbol());
+        $this->assertFalse($this->linker->isUsernameIncludeSymbol());
+        $this->assertTrue($this->linker->setUsernameIncludeSymbol(true)->isUsernameIncludeSymbol());
 
         $this->assertSame('', $this->linker->getSymbolTag());
         $this->assertSame('i', $this->linker->setSymbolTag('i')->getSymbolTag());
@@ -124,5 +124,96 @@ class AutolinkTest extends TestCase
         $this->linker->setUsernameIncludeSymbol(true);
         $expected = '<a class="tweet-url username" href="https://twitter.com/mention"><s>@</s><b>mention</b></a>';
         $this->assertSame($expected, $this->linker->autoLink($tweet));
+    }
+
+    /**
+     * test for rel attribute
+     *
+     * @dataProvider dataWithRel
+     * @return void
+     */
+    public function testWithRel($setupCallback, $expectedRel, $expectedAutolink)
+    {
+        $this->linker->setTarget(false);
+        $this->linker->setUsernameClass('');
+        $linker = call_user_func($setupCallback, $this->linker);
+
+        $this->assertSame($expectedRel, $linker->getRel());
+
+        $tweet = 'tweet @mention https://example.com';
+        $this->assertSame($expectedAutolink, $linker->autoLink($tweet));
+    }
+
+    public function dataWithRel()
+    {
+        return array(
+            'default' => array(
+                function (Autolink $linker) {
+                    return $linker;
+                },
+                'external nofollow',
+                'tweet @<a href="https://twitter.com/mention" rel="external nofollow">mention</a> <a href="https://example.com" rel="external nofollow">https://example.com</a>',
+            ),
+            'external=false, nofollow=false' => array(
+                function (Autolink $linker) {
+                    return $linker->setExternal(false)->setNoFollow(false);
+                },
+                '',
+                'tweet @<a href="https://twitter.com/mention">mention</a> <a href="https://example.com">https://example.com</a>',
+            ),
+            'set rel as string' => array(
+                function (Autolink $linker) {
+                    return $linker->setRel('noopener noreferrer');
+                },
+                'noopener noreferrer',
+                'tweet @<a href="https://twitter.com/mention" rel="noopener noreferrer">mention</a> <a href="https://example.com" rel="noopener noreferrer">https://example.com</a>',
+            ),
+            'set rel as array' => array(
+                function (Autolink $linker) {
+                    return $linker->setRel(array('noopener', 'noreferrer'));
+                },
+                'noopener noreferrer',
+                'tweet @<a href="https://twitter.com/mention" rel="noopener noreferrer">mention</a> <a href="https://example.com" rel="noopener noreferrer">https://example.com</a>',
+            ),
+            'set rel with merge' => array(
+                function (Autolink $linker) {
+                    return $linker->setRel('noopener', true);
+                },
+                'external nofollow noopener',
+                'tweet @<a href="https://twitter.com/mention" rel="external nofollow noopener">mention</a> <a href="https://example.com" rel="external nofollow noopener">https://example.com</a>',
+            ),
+        );
+    }
+
+    /**
+     * setToAllLinkClasses can set class to all link types
+     */
+    public function testSetToAllLinkClasses()
+    {
+        $this->assertSame('', $this->linker->getURLClass());
+        $this->assertSame('tweet-url username', $this->linker->getUsernameClass());
+        $this->assertSame('tweet-url list-slug', $this->linker->getListClass());
+        $this->assertSame('tweet-url hashtag', $this->linker->getHashtagClass());
+        $this->assertSame('tweet-url cashtag', $this->linker->getCashtagClass());
+
+        // set default css class
+        $this->assertSame($this->linker, $this->linker->setToAllLinkClasses('my-custom-class'));
+        $this->assertSame('my-custom-class', $this->linker->getURLClass(), 'getURLClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getUsernameClass(), 'getUsernameClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getListClass(), 'getListClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getHashtagClass(), 'getHashtagClass will return default class');
+        $this->assertSame('my-custom-class', $this->linker->getCashtagClass(), 'getCashtagClass will return default class');
+
+        // override each classes
+        $this->linker->setURLClass('my-url-class');
+        $this->linker->setUsernameClass('my-username-class');
+        $this->linker->setListClass('my-list-class');
+        $this->linker->setHashtagClass('my-hashtag-class');
+        $this->linker->setCashtagClass('my-cashtag-class');
+        $this->assertSame('my-url-class', $this->linker->getURLClass(), 'getURLClass will return specific class');
+        $this->assertSame('my-username-class', $this->linker->getUsernameClass(), 'getUsernameClass will return specific class');
+        $this->assertSame('my-list-class', $this->linker->getListClass(), 'getListClass will return specific class');
+        $this->assertSame('my-hashtag-class', $this->linker->getHashtagClass(), 'getHashtagClass will return specific class');
+        $this->assertSame('my-cashtag-class', $this->linker->getCashtagClass(), 'getCashtagClass will return specific class');
     }
 }

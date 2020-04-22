@@ -1619,7 +1619,7 @@ final class TldLists
         }
 
         $gTLD = implode('|', static::$gTLDs);
-        $regex = '(?:(?:' . $gTLD . ')(?=[^0-9a-z@]|$))';
+        $regex = '(?:(?:' . $gTLD . ')(?=[^0-9a-z@+-]|$))';
 
         return $regex;
     }
@@ -1639,7 +1639,7 @@ final class TldLists
         }
 
         $ccTLD = implode('|', static::$ccTLDs);
-        $regex = '(?:(?:' . $ccTLD . ')(?=[^0-9a-z@]|$))';
+        $regex = '(?:(?:' . $ccTLD . ')(?=[^0-9a-z@+-]|$))';
 
         return $regex;
     }
