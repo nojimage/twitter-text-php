@@ -1,4 +1,4 @@
-name: Setup PHP Action
+name: UnitTest & Lint
 
 on:
   push:
@@ -73,7 +73,7 @@ jobs:
         if: matrix.coverage == 'coverage'
         uses: codecov/codecov-action@v1
 
-  cscheck:
+  codestyle:
     runs-on: ubuntu-20.04
 
     steps:
