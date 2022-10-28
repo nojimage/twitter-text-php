@@ -106,7 +106,7 @@ class ParseResults
             return $this->validTextRange[1];
         }
 
-        return isset($this->result[$name]) ? $this->result[$name] : null;
+        return $this->result[$name] ?? null;
     }
 
     /**
