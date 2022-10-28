@@ -33,7 +33,7 @@ use Twitter\Text\Validator;
  */
 class ConformanceTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->linker = new Autolink();
@@ -44,7 +44,7 @@ class ConformanceTest extends TestCase
         $this->parser = new Parser();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->linker);
         parent::tearDown();

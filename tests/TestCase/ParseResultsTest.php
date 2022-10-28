@@ -33,7 +33,7 @@ class ParseResultsTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->results = new ParseResults();
     }
@@ -43,7 +43,7 @@ class ParseResultsTest extends TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->results);
     }
@@ -136,10 +136,11 @@ class ParseResultsTest extends TestCase
      * test set valiable
      *
      * @dataProvider dataSetInvalidRange
-     * @expectedException \RangeException
      */
     public function testSetInvalidRange($message, $key, $value)
     {
+        $this->expectException(\RangeException::class);
+
         $this->results->$key = $value;
     }
 

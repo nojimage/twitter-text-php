@@ -23,13 +23,13 @@ use Twitter\Text\HitHighlighter;
  */
 class HitHighlighterTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->highlighter = new HitHighlighter();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->highlighter);
         parent::tearDown();

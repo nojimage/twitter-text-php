@@ -3,8 +3,7 @@
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         syntaxCheck="true">
+         convertWarningsToExceptions="true">
 
   <testsuites>
     <testsuite name="twitter">
@@ -12,10 +11,10 @@
     </testsuite>
   </testsuites>
 
-  <filter>
-    <whitelist addUncoveredFilesFromWhitelist="true">
+  <coverage>
+    <include>
       <directory suffix=".php">lib/Twitter</directory>
-    </whitelist>
-  </filter>
+    </include>
+  </coverage>
 
 </phpunit>

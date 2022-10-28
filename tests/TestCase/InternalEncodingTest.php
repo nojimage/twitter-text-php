@@ -34,7 +34,7 @@ use Twitter\Text\Validator;
  */
 class InternalEncodingTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         mb_internal_encoding('iso-8859-1');
@@ -46,7 +46,7 @@ class InternalEncodingTest extends TestCase
         $this->parser = new Parser();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->linker);
         mb_internal_encoding('UTF-8');

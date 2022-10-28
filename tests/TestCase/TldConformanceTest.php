@@ -24,13 +24,13 @@ use Twitter\Text\Extractor;
  */
 class TldConformanceTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->extractor = new Extractor();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->extractor);
         parent::tearDown();

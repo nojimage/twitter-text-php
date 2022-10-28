@@ -31,13 +31,13 @@ class ExtractorTest extends TestCase
      */
     private $extractor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->extractor = Extractor::create();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->extractor);
         parent::tearDown();
