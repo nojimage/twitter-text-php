@@ -37,7 +37,7 @@ class ParseResults
      * @var array
      * @link https://developer.twitter.com/en/docs/tweets/tweet-updates
      */
-    protected $displayTextRange = array(0, 0);
+    protected $displayTextRange = [0, 0];
 
     /**
      * A pair of unicode code point indices identifying the inclusive start and exclusive end of
@@ -46,16 +46,16 @@ class ParseResults
      * @var array
      * @link https://developer.twitter.com/en/docs/tweets/tweet-updates
      */
-    protected $validTextRange = array(0, 0);
+    protected $validTextRange = [0, 0];
 
     /**
      * @var array
      */
-    protected $result = array(
+    protected $result = [
         'weightedLength' => 0,
         'valid' => false,
         'permillage' => 0,
-    );
+    ];
 
     /**
      * Tweet parsed results
@@ -70,8 +70,8 @@ class ParseResults
         $weightedLength = 0,
         $permillage = 0,
         $isValid = false,
-        array $displayTextRange = array(0, 0),
-        array $validTextRange = array(0, 0)
+        array $displayTextRange = [0, 0],
+        array $validTextRange = [0, 0]
     ) {
         $this->weightedLength = $weightedLength;
         $this->permillage = $permillage;
@@ -192,11 +192,11 @@ class ParseResults
      */
     public function toArray()
     {
-        return array_merge($this->result, array(
+        return array_merge($this->result, [
             'displayRangeStart' => $this->displayRangeStart,
             'displayRangeEnd' => $this->displayRangeEnd,
             'validRangeStart' => $this->validRangeStart,
             'validRangeEnd' => $this->validRangeEnd,
-        ));
+        ]);
     }
 }

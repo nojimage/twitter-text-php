@@ -146,43 +146,43 @@ class AutolinkTest extends TestCase
 
     public function dataWithRel()
     {
-        return array(
-            'default' => array(
+        return [
+            'default' => [
                 function (Autolink $linker) {
                     return $linker;
                 },
                 'external nofollow',
                 'tweet @<a href="https://twitter.com/mention" rel="external nofollow">mention</a> <a href="https://example.com" rel="external nofollow">https://example.com</a>',
-            ),
-            'external=false, nofollow=false' => array(
+            ],
+            'external=false, nofollow=false' => [
                 function (Autolink $linker) {
                     return $linker->setExternal(false)->setNoFollow(false);
                 },
                 '',
                 'tweet @<a href="https://twitter.com/mention">mention</a> <a href="https://example.com">https://example.com</a>',
-            ),
-            'set rel as string' => array(
+            ],
+            'set rel as string' => [
                 function (Autolink $linker) {
                     return $linker->setRel('noopener noreferrer');
                 },
                 'noopener noreferrer',
                 'tweet @<a href="https://twitter.com/mention" rel="noopener noreferrer">mention</a> <a href="https://example.com" rel="noopener noreferrer">https://example.com</a>',
-            ),
-            'set rel as array' => array(
+            ],
+            'set rel as array' => [
                 function (Autolink $linker) {
-                    return $linker->setRel(array('noopener', 'noreferrer'));
+                    return $linker->setRel(['noopener', 'noreferrer']);
                 },
                 'noopener noreferrer',
                 'tweet @<a href="https://twitter.com/mention" rel="noopener noreferrer">mention</a> <a href="https://example.com" rel="noopener noreferrer">https://example.com</a>',
-            ),
-            'set rel with merge' => array(
+            ],
+            'set rel with merge' => [
                 function (Autolink $linker) {
                     return $linker->setRel('noopener', true);
                 },
                 'external nofollow noopener',
                 'tweet @<a href="https://twitter.com/mention" rel="external nofollow noopener">mention</a> <a href="https://example.com" rel="external nofollow noopener">https://example.com</a>',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

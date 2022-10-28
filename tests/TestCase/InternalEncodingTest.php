@@ -68,7 +68,7 @@ class InternalEncodingTest extends TestCase
         }
         $data = Yaml::$yamlParseMethod(DATA . '/' . $type . '.yml');
 
-        return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
+        return $data['tests'][$test] ?? [];
     }
 
     /**

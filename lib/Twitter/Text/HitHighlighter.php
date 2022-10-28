@@ -121,7 +121,7 @@ class HitHighlighter
             return $tweet;
         }
         $highlightTweet = '';
-        $tags = array('<' . $this->tag . '>', '</' . $this->tag . '>');
+        $tags = ['<' . $this->tag . '>', '</' . $this->tag . '>'];
         # Check whether we can simply replace or whether we need to chunk...
         if (strpos($tweet, '<') === false) {
             $ti = 0; // tag increment (for added tags)

@@ -51,7 +51,7 @@ class ExtractorTest extends TestCase
         $extracted = Extractor::create()
             ->extractURLWithoutProtocol(false)
             ->extractURLs('text: example.com http://foobar.example.com');
-        $this->assertSame(array('http://foobar.example.com'), $extracted, 'Unextract url without protocol');
+        $this->assertSame(['http://foobar.example.com'], $extracted, 'Unextract url without protocol');
     }
 
     /**
@@ -62,7 +62,7 @@ class ExtractorTest extends TestCase
         $extracted = Extractor::create()
             ->extractURLWithoutProtocol(false)
             ->extractURLsWithIndices('text: example.com');
-        $this->assertSame(array(), $extracted, 'Unextract url without protocol');
+        $this->assertSame([], $extracted, 'Unextract url without protocol');
     }
 
     /**
@@ -72,17 +72,17 @@ class ExtractorTest extends TestCase
     {
         $text = 'MLB.tv vine.co';
         $this->assertSame(
-            array('MLB.tv', 'vine.co'),
+            ['MLB.tv', 'vine.co'],
             $this->extractor->extractURLs($text),
             'Extract Some ccTLD(co|tv) URLs without protocol'
         );
 
         $extracted = $this->extractor->extractURLsWithIndices($text);
-        $this->assertSame(array(0, 6), $extracted[0]['indices']);
-        $this->assertSame(array(7, 14), $extracted[1]['indices']);
+        $this->assertSame([0, 6], $extracted[0]['indices']);
+        $this->assertSame([7, 14], $extracted[1]['indices']);
 
         $extracted = $this->extractor->extractURLWithoutProtocol(false)->extractURLsWithIndices($text);
-        $this->assertSame(array(), $extracted, 'Unextract url without protocol');
+        $this->assertSame([], $extracted, 'Unextract url without protocol');
     }
 
     /**
@@ -92,7 +92,7 @@ class ExtractorTest extends TestCase
     {
         $text = '@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg';
         $extracted = $this->extractor->extractURLsWithIndices($text);
-        $this->assertSame(array(14, 45), $extracted[0]['indices']);
+        $this->assertSame([14, 45], $extracted[0]['indices']);
         $this->assertSame(
             'https://i.imgur.com/I32CQ81.jpg',
             StringUtils::substr($text, $extracted[0]['indices'][0], $extracted[0]['indices'][1])
@@ -105,7 +105,7 @@ class ExtractorTest extends TestCase
     public function testExtractURLsPrecededByEllipsis()
     {
         $extracted = $this->extractor->extractURLs('text: ...http://www.example.com');
-        $this->assertSame(array('http://www.example.com'), $extracted, 'Unextract url preceded by ellipsis');
+        $this->assertSame(['http://www.example.com'], $extracted, 'Unextract url preceded by ellipsis');
     }
 
     /**
@@ -116,7 +116,7 @@ class ExtractorTest extends TestCase
         $text = 'randomurlrandomurlrandomurlrandomurlrandomurlrandomurlrandomurls.com';
         $extracted = $this->extractor->extractURLsWithIndices($text);
 
-        $this->assertSame(array(), $extracted, 'Handle a 64 character domain without protocol');
+        $this->assertSame([], $extracted, 'Handle a 64 character domain without protocol');
     }
 
     /**
@@ -129,12 +129,12 @@ class ExtractorTest extends TestCase
         // @codingStandardsIgnoreEnd
 
         $extracted = $this->extractor->extractURLsWithIndices($text);
-        $this->assertSame(array(
-            array(
+        $this->assertSame([
+            [
                 'url' => 'https://validurl.com',
-                'indices' => array(12056, 12076),
-            ),
-        ), $extracted, 'Handle long url with invalid domain labels and short url');
+                'indices' => [12056, 12076],
+            ],
+        ], $extracted, 'Handle long url with invalid domain labels and short url');
     }
 
     /**
@@ -147,51 +147,51 @@ class ExtractorTest extends TestCase
         // @codingStandardsIgnoreEnd
 
         $extracted = $this->extractor->extract($text);
-        $expects = array(
-            'hashtags' => array(
+        $expects = [
+            'hashtags' => [
                 'hashtag1'
-            ),
-            'cashtags' => array(
+            ],
+            'cashtags' => [
                 'TEST',
                 'Stock',
                 'symbol'
-            ),
-            'urls' => array(
+            ],
+            'urls' => [
                 'http://example.com'
-            ),
-            'mentions' => array(
+            ],
+            'mentions' => [
                 'someone',
                 'otheruser',
                 'username'
-            ),
+            ],
             'replyto' => 'someone',
-            'hashtags_with_indices' => array(
-                array(
+            'hashtags_with_indices' => [
+                [
                     'hashtag' => 'hashtag1',
-                    'indices' => array(60, 69)
-                )
-            ),
-            'urls_with_indices' => array(
-                array(
+                    'indices' => [60, 69]
+                ]
+            ],
+            'urls_with_indices' => [
+                [
                     'url' => 'http://example.com',
-                    'indices' => array(70, 88)
-                )
-            ),
-            'mentions_with_indices' => array(
-                array(
+                    'indices' => [70, 88]
+                ]
+            ],
+            'mentions_with_indices' => [
+                [
                     'screen_name' => 'someone',
-                    'indices' => array(0, 8)
-                ),
-                array(
+                    'indices' => [0, 8]
+                ],
+                [
                     'screen_name' => 'otheruser',
-                    'indices' => array(27, 50)
-                ),
-                array(
+                    'indices' => [27, 50]
+                ],
+                [
                     'screen_name' => 'username',
-                    'indices' => array(132, 141)
-                )
-            )
-        );
+                    'indices' => [132, 141]
+                ]
+            ]
+        ];
 
         $this->assertSame($expects, $extracted);
     }
@@ -206,43 +206,43 @@ class ExtractorTest extends TestCase
         // @codingStandardsIgnoreEnd
 
         $extracted = $this->extractor->extractEntitiesWithIndices($text);
-        $expects = array(
-            array(
+        $expects = [
+            [
                 'screen_name' => 'someone',
                 'list_slug' => '',
-                'indices' => array(0, 8)
-            ),
-            array(
+                'indices' => [0, 8]
+            ],
+            [
                 'screen_name' => 'otheruser',
                 'list_slug' => '/list_name-01',
-                'indices' => array(27, 50)
-            ),
-            array(
+                'indices' => [27, 50]
+            ],
+            [
                 'hashtag' => 'hashtag1',
-                'indices' => array(60, 69)
-            ),
-            array(
+                'indices' => [60, 69]
+            ],
+            [
                 'url' => 'http://example.com',
-                'indices' => array(70, 88)
-            ),
-            array(
+                'indices' => [70, 88]
+            ],
+            [
                 'cashtag' => 'TEST',
-                'indices' => array(107, 112)
-            ),
-            array(
+                'indices' => [107, 112]
+            ],
+            [
                 'cashtag' => 'Stock',
-                'indices' => array(113, 119)
-            ),
-            array(
+                'indices' => [113, 119]
+            ],
+            [
                 'cashtag' => 'symbol',
-                'indices' => array(120, 127)
-            ),
-            array(
+                'indices' => [120, 127]
+            ],
+            [
                 'screen_name' => 'username',
                 'list_slug' => '',
-                'indices' => array(132, 141)
-            )
-        );
+                'indices' => [132, 141]
+            ]
+        ];
 
         $this->assertSame($expects, $extracted);
     }
@@ -257,24 +257,24 @@ class ExtractorTest extends TestCase
             . ' (fitzpatrick) woman with headscarf + medium-dark skin tone: 🧕🏾;'
             . ' flag (England): 🏴󠁧󠁢󠁥󠁮󠁧󠁿';
 
-        $expects = array(
-            array(
+        $expects = [
+            [
                 'emoji' => '🤪',
-                'indices' => array(62, 62),
-            ),
-            array(
+                'indices' => [62, 62],
+            ],
+            [
                 'emoji' => '🧕',
-                'indices' => array(87, 87),
-            ),
-            array(
+                'indices' => [87, 87],
+            ],
+            [
                 'emoji' => '🧕🏾',
-                'indices' => array(150, 151),
-            ),
-            array(
+                'indices' => [150, 151],
+            ],
+            [
                 'emoji' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-                'indices' => array(170, 176),
-            ),
-        );
+                'indices' => [170, 176],
+            ],
+        ];
 
         $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
     }
@@ -286,20 +286,20 @@ class ExtractorTest extends TestCase
     {
         $text = 'H🐱☺👨‍👩‍👧‍👦';
 
-        $expects = array(
-            array(
+        $expects = [
+            [
                 'emoji' => '🐱',
-                'indices' => array(1, 1),
-            ),
-            array(
+                'indices' => [1, 1],
+            ],
+            [
                 'emoji' => '☺',
-                'indices' => array(2, 2),
-            ),
-            array(
+                'indices' => [2, 2],
+            ],
+            [
                 'emoji' => '👨‍👩‍👧‍👦',
-                'indices' => array(3, 9),
-            ),
-        );
+                'indices' => [3, 9],
+            ],
+        ];
 
         $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
     }
@@ -311,16 +311,16 @@ class ExtractorTest extends TestCase
     {
         $text = '🙋🏽👨‍🎤';
 
-        $expects = array(
-            array(
+        $expects = [
+            [
                 'emoji' => '🙋🏽',
-                'indices' => array(0, 1),
-            ),
-            array(
+                'indices' => [0, 1],
+            ],
+            [
                 'emoji' => '👨‍🎤',
-                'indices' => array(2, 4),
-            ),
-        );
+                'indices' => [2, 4],
+            ],
+        ];
 
         $this->assertSame($expects, $this->extractor->extractEmojiWithIndices($text));
     }

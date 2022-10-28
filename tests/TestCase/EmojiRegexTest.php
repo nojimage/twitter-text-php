@@ -21,7 +21,7 @@ class EmojiRegexTest extends TestCase
             . ' (fitzpatrick) woman with headscarf + medium-dark skin tone: 🧕🏾;'
             . ' flag (England): 🏴󠁧󠁢󠁥󠁮󠁧󠁿';
 
-        $expected = array('🤪', '🧕', '🧕🏾', '🏴󠁧󠁢󠁥󠁮󠁧󠁿');
+        $expected = ['🤪', '🧕', '🧕🏾', '🏴󠁧󠁢󠁥󠁮󠁧󠁿'];
 
         $result = preg_match_all(EmojiRegex::VALID_EMOJI_PATTERN, $text, $matches);
 
@@ -32,7 +32,7 @@ class EmojiRegexTest extends TestCase
     {
         $text = 'Unicode 9.0; face with cowboy hat: 🤠;'
             . 'woman dancing: 💃, woman dancing + medium-dark skin tone: 💃🏾';
-        $expected = array('🤠', '💃', '💃🏾');
+        $expected = ['🤠', '💃', '💃🏾'];
 
         $result = preg_match_all(EmojiRegex::VALID_EMOJI_PATTERN, $text, $matches);
 
