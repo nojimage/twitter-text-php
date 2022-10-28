@@ -26,14 +26,14 @@ function print_array(array $a)
 {
     $p = print_r($a, true);
     $p = str_replace('  ', ' ', $p);
-    echo preg_replace(array(
+    echo preg_replace([
         '!^Array\s+\(\s+!',
         '!=> Array\s+\(!',
         '!  (\[\d|\))!',
         '!\s+\)\s*$!',
-        ), array(
+    ], [
         '  ', '=> (', '\1', '',
-        ), $p);
+    ], $p);
 }
 $text = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
 
@@ -205,7 +205,7 @@ echo PHP_EOL;
 $code = <<<EOPHP
 <?php
 \$text = 'Tweet mentioning @mikenz and referring to his list @mikeNZ/sports and website http://mikenz.geek.nz #awesome';
-\$hits  = array(array(70, 77), array(101, 108));
+\$hits  = [[70, 77], [101, 108]];
 \$html = \\Twitter\\Text\\HitHighlighter::create()
   ->highlight(\$text, \$hits);
 echo \$html;
@@ -222,7 +222,7 @@ if ($browser) {
 }
 
 $html = \Twitter\Text\HitHighlighter::create()
-    ->highlight($text, array(array(70, 77), array(101, 108)));
+    ->highlight($text, [[70, 77], [101, 108]]);
 
 if ($browser) {
     echo '<h3>Markup</h3>', PHP_EOL;

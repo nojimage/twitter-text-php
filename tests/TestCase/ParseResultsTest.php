@@ -22,7 +22,6 @@ use Twitter\Text\ParseResults;
  */
 class ParseResultsTest extends TestCase
 {
-
     /**
      * @var ParseResults
      */
@@ -33,7 +32,7 @@ class ParseResultsTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->results = new ParseResults();
     }
@@ -43,7 +42,7 @@ class ParseResultsTest extends TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->results);
     }
@@ -55,7 +54,7 @@ class ParseResultsTest extends TestCase
      */
     public function testConstruct()
     {
-        $result = new ParseResults(192, 685, true, array(0, 210), array(0, 210));
+        $result = new ParseResults(192, 685, true, [0, 210], [0, 210]);
 
         $this->assertSame(192, $result->weightedLength);
         $this->assertSame(685, $result->permillage);
@@ -89,9 +88,9 @@ class ParseResultsTest extends TestCase
      */
     public function testToArray()
     {
-        $result = new ParseResults(192, 685, true, array(0, 210), array(0, 210));
+        $result = new ParseResults(192, 685, true, [0, 210], [0, 210]);
 
-        $this->assertSame(array(
+        $this->assertSame([
             'weightedLength' => 192,
             'valid' => true,
             'permillage' => 685,
@@ -99,7 +98,7 @@ class ParseResultsTest extends TestCase
             'displayRangeEnd' => 210,
             'validRangeStart' => 0,
             'validRangeEnd' => 210,
-        ), $result->toArray());
+        ], $result->toArray());
     }
 
     /**
@@ -121,25 +120,26 @@ class ParseResultsTest extends TestCase
      */
     public function dataSetVariable()
     {
-        return array(
-            array('weightedLength to be integer', 'weightedLength', '1', 1),
-            array('permillage to be integer', 'permillage', '1', 1),
-            array('isValid to be boolean', 'valid', '1', true),
-            array('displayRangeStart to be integer', 'displayRangeStart', '0', 0),
-            array('displayRangeEnd to be integer', 'displayRangeEnd', '0', 0),
-            array('validRangeStart to be integer', 'validRangeStart', '0', 0),
-            array('validRangeEnd to be integer', 'validRangeEnd', '0', 0),
-        );
+        return [
+            ['weightedLength to be integer', 'weightedLength', '1', 1],
+            ['permillage to be integer', 'permillage', '1', 1],
+            ['isValid to be boolean', 'valid', '1', true],
+            ['displayRangeStart to be integer', 'displayRangeStart', '0', 0],
+            ['displayRangeEnd to be integer', 'displayRangeEnd', '0', 0],
+            ['validRangeStart to be integer', 'validRangeStart', '0', 0],
+            ['validRangeEnd to be integer', 'validRangeEnd', '0', 0],
+        ];
     }
 
     /**
      * test set valiable
      *
      * @dataProvider dataSetInvalidRange
-     * @expectedException \RangeException
      */
     public function testSetInvalidRange($message, $key, $value)
     {
+        $this->expectException(\RangeException::class);
+
         $this->results->$key = $value;
     }
 
@@ -150,9 +150,9 @@ class ParseResultsTest extends TestCase
      */
     public function dataSetInvalidRange()
     {
-        return array(
-            array('displayRangeStart less than displayRangeEnd', 'displayRangeStart', 1),
-            array('validRangeStart less than validRangeEnd', 'validRangeStart', 1),
-        );
+        return [
+            ['displayRangeStart less than displayRangeEnd', 'displayRangeStart', 1],
+            ['validRangeStart less than validRangeEnd', 'validRangeStart', 1],
+        ];
     }
 }

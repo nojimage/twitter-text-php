@@ -24,13 +24,13 @@ use Twitter\Text\Extractor;
  */
 class TldConformanceTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->extractor = new Extractor();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->extractor);
         parent::tearDown();
@@ -51,7 +51,7 @@ class TldConformanceTest extends TestCase
         }
         $data = Yaml::$yamlParseMethod(DATA . '/' . $type . '.yml');
 
-        return isset($data['tests'][$test]) ? $data['tests'][$test] : array();
+        return $data['tests'][$test] ?? [];
     }
 
     /**

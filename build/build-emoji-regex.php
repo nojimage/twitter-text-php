@@ -32,7 +32,7 @@ $codeRegexList = array_reduce($emojiCodes, function ($carry, $codes) {
     }, $codes));
 
     return $carry;
-}, array());
+}, []);
 
 $regex = implode('|', $codeRegexList);
 
