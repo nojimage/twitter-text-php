@@ -28,7 +28,6 @@ namespace Twitter\Text;
  */
 class Autolink
 {
-
     /**
      * CSS class for auto-linked URLs.
      *

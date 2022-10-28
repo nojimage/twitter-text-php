@@ -30,7 +30,6 @@ namespace Twitter\Text;
  */
 class ParseResults
 {
-
     /**
      * A pair of unicode code point indices identifying the inclusive start and exclusive end of
      * the displayable content of the Tweet.

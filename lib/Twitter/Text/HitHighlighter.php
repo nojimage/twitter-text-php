@@ -26,7 +26,6 @@ namespace Twitter\Text;
  */
 class HitHighlighter
 {
-
     /**
      * The tag to surround hits with.
      *

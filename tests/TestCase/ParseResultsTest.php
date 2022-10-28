@@ -22,7 +22,6 @@ use Twitter\Text\ParseResults;
  */
 class ParseResultsTest extends TestCase
 {
-
     /**
      * @var ParseResults
      */

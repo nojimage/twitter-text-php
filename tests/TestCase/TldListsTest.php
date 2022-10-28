@@ -10,7 +10,6 @@ use Twitter\Text\TldLists;
  */
 class TldListsTest extends TestCase
 {
-
     /**
      * @covers \Twitter\Text\TldLists::getValidGTLD
      */

@@ -28,7 +28,6 @@ namespace Twitter\Text;
  */
 class Extractor
 {
-
     /**
      * The maximum url length that the Twitter backend supports.
      */

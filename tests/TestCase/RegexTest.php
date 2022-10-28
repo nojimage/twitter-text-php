@@ -10,7 +10,6 @@ use Twitter\Text\Regex;
  */
 class RegexTest extends TestCase
 {
-
     /**
      * @covers \Twitter\Text\Regex::getInvalidCharactersMatcher
      */

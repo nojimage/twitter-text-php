@@ -23,7 +23,6 @@ use Twitter\Text\Parser;
  */
 class ParserTest extends TestCase
 {
-
     /**
      * @var Parser
      */

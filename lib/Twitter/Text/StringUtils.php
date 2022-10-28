@@ -19,7 +19,6 @@ namespace Twitter\Text;
  */
 class StringUtils
 {
-
     /**
      * alias of mb_substr
      *
