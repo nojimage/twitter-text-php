@@ -139,7 +139,7 @@ class Configuration
      */
     public function __get($name)
     {
-        return isset($this->config[$name]) ? $this->config[$name] : null;
+        return $this->config[$name] ?? null;
     }
 
     /**
