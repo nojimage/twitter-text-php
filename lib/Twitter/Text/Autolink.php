@@ -552,7 +552,7 @@ class Autolink
             $json = $this->object2array($json);
         }
         if (is_array($json)) {
-            $entities = call_user_func_array('array_merge', $json);
+            $entities = call_user_func_array('array_merge', array_values($json));
         }
 
         // map JSON entity to twitter-text entity
