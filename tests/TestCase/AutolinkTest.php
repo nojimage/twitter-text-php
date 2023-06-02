@@ -23,6 +23,9 @@ use Twitter\Text\Autolink;
  */
 class AutolinkTest extends TestCase
 {
+    /** @var Autolink $linker */
+    private $linker;
+
     protected function setUp(): void
     {
         parent::setUp();
