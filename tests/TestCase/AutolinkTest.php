@@ -23,6 +23,9 @@ use Twitter\Text\Autolink;
  */
 class AutolinkTest extends TestCase
 {
+    /** @var Autolink $linker */
+    private $linker;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -215,5 +218,78 @@ class AutolinkTest extends TestCase
         $this->assertSame('my-list-class', $this->linker->getListClass(), 'getListClass will return specific class');
         $this->assertSame('my-hashtag-class', $this->linker->getHashtagClass(), 'getHashtagClass will return specific class');
         $this->assertSame('my-cashtag-class', $this->linker->getCashtagClass(), 'getCashtagClass will return specific class');
+    }
+
+    public function testSetCustomUrlBase()
+    {
+        $this->assertSame('https://twitter.com/', $this->linker->getUrlBaseUser());
+        $this->assertSame('https://twitter.com/', $this->linker->getUrlBaseList());
+        $this->assertSame('https://twitter.com/search?q=%23', $this->linker->getUrlBaseHash());
+        $this->assertSame('https://twitter.com/search?q=%24', $this->linker->getUrlBaseCash());
+
+        // Override URLs
+        $baseUrl = 'https://example.com';
+        $expectedUserUrl = $baseUrl . '/user/';
+        $expectedListUrl = $baseUrl . '/list/';
+        $expectedHashUrl = $baseUrl . '/hash/';
+        $expectedCashUrl = $baseUrl . '/cash/';
+        $this->linker->setUrlBaseUser($expectedUserUrl);
+        $this->linker->setUrlBaseList($expectedListUrl);
+        $this->linker->setUrlBaseHash($expectedHashUrl);
+        $this->linker->setUrlBaseCash($expectedCashUrl);
+
+        $this->assertSame($expectedUserUrl, $this->linker->getUrlBaseUser(), 'getUrlBaseUser will return custom url base');
+        $this->assertSame($expectedListUrl, $this->linker->getUrlBaseList(), 'getUrlBaseList will return custom url base');
+        $this->assertSame($expectedHashUrl, $this->linker->getUrlBaseHash(), 'getUrlBaseHash will return custom url base');
+        $this->assertSame($expectedCashUrl, $this->linker->getUrlBaseCash(), 'getUrlBaseCash will return custom url base');
+    }
+
+    public function testSetUrlBaseUser()
+    {
+        $this->linker->setUrlBaseUser('https://example.com/user/');
+
+        $tweet = '@ummjackson 🤡 https://i.imgur.com/I32CQ81.jpg';
+        // @codingStandardsIgnoreStart
+        $expected = '@<a class="tweet-url username" href="https://example.com/user/ummjackson" rel="external nofollow" target="_blank">ummjackson</a> 🤡 <a href="https://i.imgur.com/I32CQ81.jpg" rel="external nofollow" target="_blank">https://i.imgur.com/I32CQ81.jpg</a>';
+        // @codingStandardsIgnoreEnd
+
+        $linkedText = $this->linker->autoLink($tweet);
+        $this->assertSame($expected, $linkedText);
+    }
+
+    public function testSetUrlBaseList()
+    {
+        $tweet = 'Testing @mention/list';
+        // @codingStandardsIgnoreStart
+        $expected = 'Testing @<a class="tweet-url list-slug" href="https://example.com/list/mention/list" rel="external nofollow" target="_blank">mention/list</a>';
+        // @codingStandardsIgnoreEnd
+
+        $this->linker->setUrlBaseList('https://example.com/list/');
+        $linkedText = $this->linker->autoLink($tweet);
+        $this->assertSame($expected, $linkedText);
+    }
+
+    public function testSetUrlBaseHash()
+    {
+        $tweet = 'Testing #hashtags';
+        // @codingStandardsIgnoreStart
+        $expected = 'Testing <a href="https://example.com/hash/hashtags" title="#hashtags" class="tweet-url hashtag" rel="external nofollow" target="_blank">#hashtags</a>';
+        // @codingStandardsIgnoreEnd
+
+        $this->linker->setUrlBaseHash('https://example.com/hash/');
+        $linkedText = $this->linker->autoLink($tweet);
+        $this->assertSame($expected, $linkedText);
+    }
+
+    public function testSetUrlBaseCash()
+    {
+        $tweet = 'Testing $APPL';
+        // @codingStandardsIgnoreStart
+        $expected = 'Testing <a href="https://example.com/cash/APPL" title="$APPL" class="tweet-url cashtag" rel="external nofollow" target="_blank">$APPL</a>';
+        // @codingStandardsIgnoreEnd
+
+        $this->linker->setUrlBaseCash('https://example.com/cash/');
+        $linkedText = $this->linker->autoLinkCashtags($tweet);
+        $this->assertSame($expected, $linkedText);
     }
 }

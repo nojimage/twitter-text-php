@@ -921,6 +921,94 @@ class Autolink
     }
 
     /**
+     * Get URL base for usernames
+     * @return string
+     */
+    public function getUrlBaseUser()
+    {
+        return $this->url_base_user;
+    }
+
+    /**
+     * Set the URL base for usernames
+     *
+     * @param string $url
+     * @return $this
+     */
+    public function setUrlBaseUser($url)
+    {
+        $this->url_base_user = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get URL base for list links
+     * @return string
+     */
+    public function getUrlBaseList()
+    {
+        return $this->url_base_list;
+    }
+
+    /**
+     * Set the URL base for list links
+     *
+     * @param string $url
+     * @return $this
+     */
+    public function setUrlBaseList($url)
+    {
+        $this->url_base_list = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get URL base for hashtags links
+     * @return string
+     */
+    public function getUrlBaseHash()
+    {
+        return $this->url_base_hash;
+    }
+
+    /**
+     * Set the URL base for hashtags links
+     *
+     * @param string $url
+     * @return $this
+     */
+    public function setUrlBaseHash($url)
+    {
+        $this->url_base_hash = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get URL base for cashtags links
+     * @return string
+     */
+    public function getUrlBaseCash()
+    {
+        return $this->url_base_cash;
+    }
+
+    /**
+     * Set the URL base for cashtags links
+     *
+     * @param string $url
+     * @return $this
+     */
+    public function setUrlBaseCash($url)
+    {
+        $this->url_base_cash = $url;
+
+        return $this;
+    }
+
+    /**
      * html escape
      *
      * @param string $text
