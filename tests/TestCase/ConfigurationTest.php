@@ -22,10 +22,7 @@ use Twitter\Text\Configuration;
  */
 class ConfigurationTest extends TestCase
 {
-    /**
-     * @var Configuration
-     */
-    private $config;
+    private Configuration $config;
 
     /**
      * Set up fixtures

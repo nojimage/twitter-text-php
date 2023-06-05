@@ -19,10 +19,11 @@ use Twitter\Text\HitHighlighter;
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property   HitHighlighter $highlighter
  */
 class HitHighlighterTest extends TestCase
 {
+    private HitHighlighter $highlighter;
+
     protected function setUp(): void
     {
         parent::setUp();

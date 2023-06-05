@@ -26,14 +26,19 @@ use Twitter\Text\Validator;
  * @copyright  Copyright 2014, Mike Cochrane, Nick Pope, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property Autolink $linker
- * @property Extractor $extractor
- * @property HitHighlighter $highlighter
- * @property Validator $validator
- * @property Parser $parser
  */
 class InternalEncodingTest extends TestCase
 {
+    private Autolink $linker;
+
+    private Extractor $extractor;
+
+    private HitHighlighter $highlighter;
+
+    private Validator $validator;
+
+    private Parser $parser;
+
     protected function setUp(): void
     {
         parent::setUp();

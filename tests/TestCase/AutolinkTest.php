@@ -19,12 +19,10 @@ use Twitter\Text\Autolink;
  * @copyright  Copyright © 2010, Mike Cochrane, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property Autolink $linker
  */
 class AutolinkTest extends TestCase
 {
-    /** @var Autolink $linker */
-    private $linker;
+    private Autolink $linker;
 
     protected function setUp(): void
     {

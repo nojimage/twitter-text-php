@@ -20,10 +20,11 @@ use Twitter\Text\Extractor;
  * @copyright  Copyright 2017, Takashi Nojima
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property Extractor $extractor
  */
 class TldConformanceTest extends TestCase
 {
+    private Extractor $extractor;
+
     protected function setUp(): void
     {
         parent::setUp();

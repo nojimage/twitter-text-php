@@ -22,10 +22,7 @@ use Twitter\Text\ParseResults;
  */
 class ParseResultsTest extends TestCase
 {
-    /**
-     * @var ParseResults
-     */
-    private $results;
+    private ParseResults $results;
 
     /**
      * Set up fixtures

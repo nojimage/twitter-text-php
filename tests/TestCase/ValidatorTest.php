@@ -20,10 +20,11 @@ use Twitter\Text\Validator;
  * @copyright  Copyright © 2010, Nick Pope
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License v2.0
  * @package    Twitter.Text
- * @property   Validator $validator
  */
 class ValidatorTest extends TestCase
 {
+    private Validator $validator;
+
     protected function setUp(): void
     {
         parent::setUp();

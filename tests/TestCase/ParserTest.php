@@ -23,10 +23,7 @@ use Twitter\Text\Parser;
  */
 class ParserTest extends TestCase
 {
-    /**
-     * @var Parser
-     */
-    private $parser;
+    private Parser $parser;
 
     /**
      * Set up fixtures
