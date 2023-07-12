@@ -61,6 +61,7 @@ class Parser
             return new ParseResults();
         }
 
+        $tweet = StringUtils::normalizeLineFeed($tweet);
         $normalizedTweet = StringUtils::normalizeFromNFC($tweet);
         $normalizedTweetLength = StringUtils::strlen($normalizedTweet);
 

@@ -39,4 +39,15 @@ class StringUtilsTest extends TestCase
         $this->assertSame(4, StringUtils::charCount('🧕🏾'), 'U+1F9D5 U+1F3FE woman with headscarf with medium-dark skin tone has 4 code point');
         $this->assertSame(14, StringUtils::charCount('🏴󠁧󠁢󠁥󠁮󠁧󠁿'), 'flag (England) has 14 code point');
     }
+
+    /**
+     * Test for strip carriage return characters
+     *
+     * @return void
+     */
+    public function testNormalizeLineFeed(): void
+    {
+        $this->assertSame("foo\nbar\n", StringUtils::normalizeLineFeed("foo\r\nbar\r\n"), "Strip CR and leave LF");
+        $this->assertSame("foo\rbar", StringUtils::normalizeLineFeed("foo\rbar"), "Do not strip CR only");
+    }
 }

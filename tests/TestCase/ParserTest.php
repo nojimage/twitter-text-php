@@ -243,4 +243,24 @@ class ParserTest extends TestCase
         $this->assertSame(0, $result->validRangeStart);
         $this->assertSame(1, $result->validRangeEnd);
     }
+
+    /**
+     * test for parseTweet with Carriage Return characters
+     */
+    public function testParseTweetWithCarriageReturn(): void
+    {
+        // @codingStandardsIgnoreStart
+        $text = "We're expanding the character limit! We want it to be easier and faster for everyone to express themselves.\r\n\r\nMore characters. More expression. More of what's happening.\r\nhttps://cards.twitter.com/cards/gsby/4ztbu";
+        // @codingStandardsIgnoreEnd
+        $result = $this->parser->parseTweet($text);
+
+        $this->assertInstanceOf('\Twitter\Text\ParseResults', $result);
+        $this->assertSame(192, $result->weightedLength);
+        $this->assertSame(685, $result->permillage);
+        $this->assertSame(true, $result->valid);
+        $this->assertSame(0, $result->displayRangeStart);
+        $this->assertSame(210, $result->displayRangeEnd);
+        $this->assertSame(0, $result->validRangeStart);
+        $this->assertSame(210, $result->validRangeEnd);
+    }
 }
