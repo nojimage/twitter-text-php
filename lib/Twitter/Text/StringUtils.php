@@ -178,4 +178,13 @@ class StringUtils
 
         return $count;
     }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    public static function normalizeLineFeed(string $string): string
+    {
+        return str_replace("\r\n", "\n", $string);
+    }
 }
