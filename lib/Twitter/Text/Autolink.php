@@ -162,7 +162,7 @@ class Autolink
      *
      * @see __construct()
      *
-     * @return Autolink
+     * @return static
      */
     public static function create($tweet = null, $full_encode = false)
     {
@@ -177,9 +177,9 @@ class Autolink
      *
      * @see htmlspecialchars()
      *
-     * @param string  $tweet        [deprecated] The tweet to be converted.
-     * @param bool    $escape       [deprecated] Whether to escape the tweet (default: true).
-     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
+     * @param string|null $tweet       [deprecated] The tweet to be converted.
+     * @param bool        $escape      [deprecated] Whether to escape the tweet (default: true).
+     * @param bool        $full_encode [deprecated] Whether to encode all special characters.
      */
     public function __construct($tweet = null, $escape = true, $full_encode = false)
     {

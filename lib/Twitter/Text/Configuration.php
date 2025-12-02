@@ -156,17 +156,17 @@ class Configuration
      * Create configuration from json string
      *
      * @param string $json as configuration
-     * @return Configuration
+     * @return self
      */
     public static function fromJson($json)
     {
-        return new Configuration(json_decode($json, true));
+        return new self(json_decode($json, true));
     }
 
     /**
      * Get twitter-text 1.x configuration
      *
-     * @return Configuration
+     * @return self
      */
     public static function v1()
     {
@@ -176,7 +176,7 @@ class Configuration
     /**
      * Get twitter-text 2.x configuration
      *
-     * @return Configuration
+     * @return self
      */
     public static function v2()
     {
