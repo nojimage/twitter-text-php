@@ -1,7 +1,7 @@
 <?php
 
 # Set up error reporting:
-error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
+error_reporting(E_ALL | E_DEPRECATED);
 
 # Set default timezone to hide warnings:
 date_default_timezone_set('Europe/London');

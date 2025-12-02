@@ -61,7 +61,7 @@ class Extractor
      *
      * @see __construct()
      *
-     * @return Extractor
+     * @return self
      */
     public static function create()
     {

@@ -49,7 +49,7 @@ class HitHighlighter
      *
      * @see __construct()
      *
-     * @return HitHighlighter
+     * @return self
      */
     public static function create($tweet = null, $full_encode = false)
     {
@@ -63,9 +63,9 @@ class HitHighlighter
      *
      * @see htmlspecialchars()
      *
-     * @param string  $tweet        [deprecated] The tweet to be hit highlighted.
-     * @param bool    $escape       [deprecated] Whether to escape the tweet (default: true).
-     * @param bool    $full_encode  [deprecated] Whether to encode all special characters.
+     * @param string|null $tweet       [deprecated] The tweet to be hit highlighted.
+     * @param bool        $escape      [deprecated] Whether to escape the tweet (default: true).
+     * @param bool        $full_encode [deprecated] Whether to encode all special characters.
      */
     public function __construct($tweet = null, $escape = true, $full_encode = false)
     {
@@ -106,13 +106,11 @@ class HitHighlighter
     /**
      * Hit highlights the tweet.
      *
-     * @param string $tweet The tweet to be hit highlighted.
-     * @param array  $hits  An array containing the start and end index pairs
-     *                        for the highlighting.
-     *
-     * @return string  The hit highlighted tweet.
+     * @param string|null $tweet The tweet to be hit highlighted.
+     * @param array|null $hits An array containing the start and end index pairs for the highlighting.
+     * @return string The hit highlighted tweet.
      */
-    public function highlight($tweet = null, array $hits = null)
+    public function highlight($tweet = null, ?array $hits = null)
     {
         if ($tweet === null) {
             $tweet = $this->tweet;

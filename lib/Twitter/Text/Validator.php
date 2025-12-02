@@ -40,13 +40,11 @@ class Validator
     /**
      * Provides fluent method chaining.
      *
-     * @param Configuration $config A Twitter Text Configuration
-     *
+     * @param Configuration|null $config A Twitter Text Configuration
+     * @return self
      * @see __construct()
-     *
-     * @return Validator
      */
-    public static function create(Configuration $config = null)
+    public static function create(?Configuration $config = null)
     {
         return new self($config);
     }
@@ -54,9 +52,9 @@ class Validator
     /**
      * Reads in a tweet to be parsed and validates it.
      *
-     * @param Configuration $config A Twitter Text Configuration
+     * @param Configuration|null $config A Twitter Text Configuration
      */
-    public function __construct(Configuration $config = null)
+    public function __construct(?Configuration $config = null)
     {
         $this->setConfiguration($config);
         $this->extractor = Extractor::create();
@@ -71,7 +69,7 @@ class Validator
      * @return Validator
      * @throws \InvalidArgumentException
      */
-    public function setConfiguration(Configuration $config = null)
+    public function setConfiguration(?Configuration $config = null)
     {
         if ($config === null) {
             // default use v2 config
@@ -98,12 +96,12 @@ class Validator
     /**
      * Check whether a tweet is valid.
      *
-     * @param string        $tweet  The tweet to validate.
-     * @param Configuration $config using configuration
+     * @param string $tweet The tweet to validate.
+     * @param Configuration|null $config using configuration
      * @return boolean  Whether the tweet is valid.
      * @deprecated instead use \Twitter\Text\Parser::parseText()
      */
-    public function isValidTweetText($tweet, Configuration $config = null)
+    public function isValidTweetText($tweet, ?Configuration $config = null)
     {
 
         return $this->parseTweet($tweet, $config)->valid;
@@ -212,11 +210,11 @@ class Validator
      * Determines the length of a tweet.  Takes shortening of URLs into account.
      *
      * @param string $tweet The tweet to validate.
-     * @param Configuration $config using configuration
+     * @param Configuration|null $config using configuration
      * @return int  the length of a tweet.
      * @deprecated instead use \Twitter\Text\Parser::parseTweet()
      */
-    public function getTweetLength($tweet, Configuration $config = null)
+    public function getTweetLength($tweet, ?Configuration $config = null)
     {
         return $this->parseTweet($tweet, $config)->weightedLength;
     }
@@ -247,7 +245,7 @@ class Validator
      * @param Configuration|null $config using configuration
      * @return ParseResults
      */
-    private function parseTweet($tweet, Configuration $config = null)
+    private function parseTweet($tweet, ?Configuration $config = null)
     {
         if ($config === null) {
             $config = $this->config;
