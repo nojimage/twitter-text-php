@@ -27,10 +27,10 @@ class Parser
     /**
      * Create a Parser
      *
-     * @param Configuration $config
-     * @return Parser
+     * @param Configuration|null $config
+     * @return self
      */
-    public static function create(Configuration $config = null)
+    public static function create(?Configuration $config = null)
     {
         return new self($config);
     }
@@ -38,9 +38,9 @@ class Parser
     /**
      * construct
      *
-     * @param Configuration $config
+     * @param Configuration|null $config
      */
-    public function __construct(Configuration $config = null)
+    public function __construct(?Configuration $config = null)
     {
         if ($config === null) {
             $config = new Configuration();

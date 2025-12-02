@@ -120,9 +120,9 @@ class Configuration
     /**
      * construct
      *
-     * @param array $config
+     * @param array|null $config
      */
-    public function __construct(array $config = null)
+    public function __construct(?array $config = null)
     {
         if ($config === null) {
             $config = static::$v3Config;

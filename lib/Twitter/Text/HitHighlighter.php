@@ -106,13 +106,11 @@ class HitHighlighter
     /**
      * Hit highlights the tweet.
      *
-     * @param string $tweet The tweet to be hit highlighted.
-     * @param array  $hits  An array containing the start and end index pairs
-     *                        for the highlighting.
-     *
-     * @return string  The hit highlighted tweet.
+     * @param string|null $tweet The tweet to be hit highlighted.
+     * @param array|null $hits An array containing the start and end index pairs for the highlighting.
+     * @return string The hit highlighted tweet.
      */
-    public function highlight($tweet = null, array $hits = null)
+    public function highlight($tweet = null, ?array $hits = null)
     {
         if ($tweet === null) {
             $tweet = $this->tweet;
